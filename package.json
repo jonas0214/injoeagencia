@@ -1,0 +1,15 @@
+{
+  "name": "injoe-agencia",
+  "version": "1.0.0",
+  "description": "Sitio web corporativo Injoe Agencia",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "devDependencies": {
+    "sass": "^1.83.0",
+    "vite": "^6.0.5",
+    "vite-plugin-live-reload": "^3.0.1"
+  }
+}
