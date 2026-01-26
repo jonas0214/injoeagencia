@@ -28,7 +28,7 @@
         <div class="container header-content">
             
             <a href="#" class="logo-area">
-                <img src="/InjoeAgencia/public/logo-injoe.png" alt="INJOE" class="header-logo-img">
+                <img src="public/logo-injoe.png" alt="INJOE" class="header-logo-img">
             </a>
 
             <nav class="desktop-nav">
@@ -101,6 +101,7 @@
             <div class="card-internal-label">MARCAS QUE CONFÍAN EN EL FUTURO</div>
             <div class="logo-wall-inner">
                 <?php
+                // Mantenemos la lógica de escaneo, pero corregimos la ruta de salida
                 $logopath = __DIR__ . '/public/logos/';
                 if (is_dir($logopath)) {
                     $logos = glob($logopath . '*.{jpg,jpeg,png}', GLOB_BRACE);
@@ -113,7 +114,8 @@
                     else {
                         $fullList = array_merge($logosList, $logosList, $logosList); 
                         foreach ($fullList as $logoFile) {
-                            $webPath = '/InjoeAgencia/public/logos/' . basename($logoFile);
+                            // RUTA CORREGIDA: public/logos/
+                            $webPath = 'public/logos/' . basename($logoFile);
                             echo '<img src="' . $webPath . '" alt="Logo" class="brand-logo">';
                         }
                     }
@@ -142,7 +144,7 @@
                 </div>
             </div>
             <div class="card-image-side">
-                <img src="/InjoeAgencia/public/hero-main.jpeg" alt="Oficina Injoe" class="cover-img">
+                <img src="public/hero-main.jpeg" alt="Oficina Injoe" class="cover-img">
             </div>
         </section>
 
@@ -155,7 +157,7 @@
             
             <div class="services-grid-4">
                 <div class="tech-card service-card">
-                    <div class="grid-bg" style="background-image: url('/InjoeAgencia/public/hero-brain.jpg');"></div>
+                    <div class="grid-bg" style="background-image: url('public/hero-brain.jpg');"></div>
                     <div class="service-content">
                         <div class="service-header">
                             <h3>SOCIAL MEDIA</h3>
@@ -168,7 +170,7 @@
                 </div>
 
                 <div class="tech-card service-card">
-                    <div class="grid-bg" style="background-image: url('/InjoeAgencia/public/service-branding.jpg');"></div>
+                    <div class="grid-bg" style="background-image: url('public/service-branding.jpg');"></div>
                     <div class="service-content">
                         <div class="service-header">
                             <h3>BRANDING</h3>
@@ -181,7 +183,7 @@
                 </div>
 
                 <div class="tech-card service-card">
-                    <div class="grid-bg" style="background-image: url('/InjoeAgencia/public/service-dev.jpg');"></div>
+                    <div class="grid-bg" style="background-image: url('public/service-dev.jpg');"></div>
                     <div class="service-content">
                         <div class="service-header">
                             <h3>DESARROLLO WEB</h3>
@@ -194,7 +196,7 @@
                 </div>
 
                 <div class="tech-card service-card">
-                    <div class="grid-bg" style="background-image: url('/InjoeAgencia/public/service-ads.png');"></div>
+                    <div class="grid-bg" style="background-image: url('public/service-ads.png');"></div>
                     <div class="service-content">
                         <div class="service-header">
                             <h3>CAMPAÑAS ADS</h3>
@@ -227,19 +229,19 @@
                 
                 <div class="social-wall-preview">
                     <a href="https://www.instagram.com/injoefundacion/" target="_blank" class="social-item">
-                        <img src="/InjoeAgencia/public/fund1.png" alt="Jornada Social">
+                        <img src="public/fund1.png" alt="Jornada Social">
                         <div class="social-overlay"><i class="fab fa-instagram"></i></div>
                     </a>
                     <a href="https://www.instagram.com/injoefundacion/" target="_blank" class="social-item">
-                        <img src="/InjoeAgencia/public/fund2.png" alt="Actividad Fundación">
+                        <img src="public/fund2.png" alt="Actividad Fundación">
                         <div class="social-overlay"><i class="fab fa-instagram"></i></div>
                     </a>
                     <a href="https://www.instagram.com/injoefundacion/" target="_blank" class="social-item">
-                        <img src="/InjoeAgencia/public/fund3.png" alt="Evento">
+                        <img src="public/fund3.png" alt="Evento">
                         <div class="social-overlay"><i class="fab fa-instagram"></i></div>
                     </a>
                     <a href="https://www.instagram.com/injoefundacion/" target="_blank" class="social-item">
-                        <img src="/InjoeAgencia/public/fund4.png" alt="Comunidad">
+                        <img src="public/fund4.png" alt="Comunidad">
                         <div class="social-overlay"><i class="fab fa-instagram"></i></div>
                     </a>
                 </div>
