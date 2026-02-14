@@ -39,10 +39,10 @@
             </nav>
 
             <div class="header-actions">
-                <a href="https://limbani.com" target="_blank" class="btn-limbani">
-                    <i class="fas fa-lock"></i> ACCESO LIMBANI
+                <a href="http://localhost:8000/login" class="btn-limbani">
+                    ACCESO LIMBANI
                 </a>
-                <div class="menu-trigger" id="menuToggle">
+                    <div class="menu-trigger" id="menuToggle">
                     <span class="menu-text">MENU</span>
                     <div class="hamburger"><span></span><span></span></div>
                 </div>
