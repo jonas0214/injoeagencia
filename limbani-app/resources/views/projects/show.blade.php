@@ -3,8 +3,11 @@
 @section('content')
 <style>
     /* MODO ENFOQUE: Ocultar Sidebar y expandir contenido */
-    aside, .sidebar, #sidebar, nav[class*="w-"] { display: none !important; }
-    main, .main-content, div[class*="lg:col-span-"] { margin-left: 0 !important; width: 100% !important; max-width: 100% !important; grid-column: span 12 !important; }
+    /* En móviles el layout ya maneja el sidebar, pero para forzar el modo enfoque en desktop si fuera necesario: */
+    @media (min-width: 768px) {
+        aside { display: none !important; }
+        main { margin-left: 0 !important; width: 100% !important; max-width: 100% !important; }
+    }
     
     body {
         background-color: #0f1012 !important; /* Color de fondo corregido */
@@ -21,15 +24,15 @@
 
 <div x-data="projectManager()" class="flex h-screen w-full bg-[#0f1012] text-white overflow-hidden relative">
 
-    <div class="flex-1 flex flex-col min-w-0 transition-all duration-300" 
-         :class="openPanel ? 'mr-[450px]' : ''">
+    <div class="flex-1 flex flex-col min-w-0 transition-all duration-300"
+         :class="openPanel ? 'md:mr-[450px]' : ''">
         
-        <div class="px-8 py-6 border-b border-white/5 bg-[#0f1012] z-10 flex justify-between items-center shrink-0">
-            <div class="flex items-center gap-4">
+        <div class="px-4 md:px-8 py-4 md:py-6 border-b border-white/5 bg-[#0f1012] z-10 flex flex-col md:flex-row justify-between items-start md:items-center shrink-0 gap-4">
+            <div class="flex items-center gap-3 md:gap-4 w-full md:w-auto">
                 <a href="{{ route('dashboard') }}" class="w-10 h-10 rounded-xl bg-[#1a1a1a] border border-white/10 flex items-center justify-center shadow-lg hover:bg-white/5 transition-colors text-gray-400">
                     <i class="fas fa-arrow-left"></i>
                 </a>
-                <div class="w-12 h-12 rounded-xl bg-[#1a1a1a] border border-white/10 flex items-center justify-center shadow-lg shadow-orange-900/10">
+                <div class="hidden sm:flex w-12 h-12 rounded-xl bg-[#1a1a1a] border border-white/10 items-center justify-center shadow-lg shadow-orange-900/10">
                     <i class="fas fa-layer-group text-orange-500 text-lg"></i>
                 </div>
                 <div>
@@ -38,11 +41,11 @@
                         <i class="fas fa-chevron-right text-[8px] opacity-50"></i>
                         <span class="text-green-500">Activo</span>
                     </div>
-                    <h1 class="text-3xl font-medium tracking-tight text-white">{{ $project->name }}</h1>
+                    <h1 class="text-xl md:text-3xl font-medium tracking-tight text-white truncate max-w-[200px] md:max-w-none">{{ $project->name }}</h1>
                 </div>
             </div>
             
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
                 <div class="flex -space-x-2">
                     @foreach($project->tasks->flatMap->subtasks->pluck('user')->unique('id')->take(3) as $user)
                         <div class="w-8 h-8 rounded-full bg-[#1a1a1a] border border-[#0f1012] flex items-center justify-center text-xs text-gray-400 font-bold" title="{{ $user->name ?? 'Usuario' }}">
@@ -56,19 +59,19 @@
             </div>
         </div>
 
-        <div class="px-8 py-2 border-b border-white/5 bg-[#0f1012]/50 backdrop-blur-sm flex items-center gap-6 text-sm font-medium text-gray-400 shrink-0">
-            <button class="text-white border-b-2 border-orange-500 pb-2 px-1">Lista</button>
-            <button class="hover:text-white transition-colors pb-2 px-1">Tablero</button>
-            <button class="hover:text-white transition-colors pb-2 px-1">Cronograma</button>
+        <div class="px-4 md:px-8 py-2 border-b border-white/5 bg-[#0f1012]/50 backdrop-blur-sm flex items-center gap-4 md:gap-6 text-xs md:text-sm font-medium text-gray-400 shrink-0 overflow-x-auto scrollbar-hide">
+            <button class="text-white border-b-2 border-orange-500 pb-2 px-1 whitespace-nowrap">Lista</button>
+            <button class="hover:text-white transition-colors pb-2 px-1 whitespace-nowrap">Tablero</button>
+            <button class="hover:text-white transition-colors pb-2 px-1 whitespace-nowrap">Cronograma</button>
         </div>
 
-        <div class="grid grid-cols-12 gap-4 px-8 py-3 border-b border-white/5 text-[10px] font-bold text-gray-500 uppercase tracking-wider bg-[#1a1a1a]/30 shrink-0">
+        <div class="hidden md:grid grid-cols-12 gap-4 px-8 py-3 border-b border-white/5 text-[10px] font-bold text-gray-500 uppercase tracking-wider bg-[#1a1a1a]/30 shrink-0">
             <div class="col-span-7">Tarea</div>
             <div class="col-span-3">Responsable</div>
             <div class="col-span-2 text-right">Fecha Entrega</div>
         </div>
 
-        <div class="flex-1 overflow-y-auto custom-scroll p-8 space-y-2">
+        <div class="flex-1 overflow-y-auto custom-scroll p-4 md:p-8 space-y-2">
             
             @foreach($project->tasks as $section)
                 <div x-data="{ expanded: true }" class="mb-8">
@@ -88,10 +91,10 @@
                         
                         {{-- Filtramos solo las subtareas que NO tienen padre (Nivel 1 dentro de la sección) --}}
                         @foreach($section->subtasks->whereNull('parent_id') as $task)
-                            <div @click="openTaskPanel({{ $task }})" 
-                                 class="group relative grid grid-cols-12 gap-4 py-3 px-4 rounded-lg border border-transparent hover:bg-[#1a1a1a] hover:border-white/5 transition-all cursor-pointer items-center">
+                            <div @click="openTaskPanel({{ $task }})"
+                                 class="group relative flex flex-col md:grid md:grid-cols-12 gap-2 md:gap-4 py-3 px-4 rounded-lg border border-white/5 md:border-transparent bg-[#1a1a1a]/40 md:bg-transparent hover:bg-[#1a1a1a] hover:border-white/5 transition-all cursor-pointer md:items-center">
                                 
-                                <div class="col-span-7 flex items-center gap-4">
+                                <div class="md:col-span-7 flex items-center gap-4">
                                     <div class="relative flex items-center justify-center w-5 h-5 shrink-0" @click.stop>
                                         <input type="checkbox" 
                                                :checked="{{ $task->is_completed ? 'true' : 'false' }}"
@@ -104,28 +107,31 @@
                                     </span>
                                 </div>
 
-                                <div class="col-span-3 flex items-center">
-                                    <div class="flex items-center gap-2 px-2 py-1 rounded-full bg-white/5 border border-white/5 group-hover:border-white/10 transition-colors">
-                                        <div class="w-5 h-5 rounded-full bg-orange-500 flex items-center justify-center text-[8px] text-black font-bold">
-                                            {{ substr(Auth::user()->name, 0, 1) }}
+                                <div class="flex items-center justify-between md:contents">
+                                    <div class="md:col-span-3 flex items-center">
+                                        <div class="flex items-center gap-2 px-2 py-1 rounded-full bg-white/5 border border-white/5 group-hover:border-white/10 transition-colors">
+                                            <div class="w-5 h-5 rounded-full bg-orange-500 flex items-center justify-center text-[8px] text-black font-bold">
+                                                {{ substr(Auth::user()->name, 0, 1) }}
+                                            </div>
+                                            <span class="text-[10px] text-gray-400 truncate max-w-[80px]">{{ Auth::user()->name }}</span>
                                         </div>
-                                        <span class="text-[10px] text-gray-400 truncate max-w-[80px]">{{ Auth::user()->name }}</span>
                                     </div>
-                                </div>
 
-                                <div class="col-span-2 text-right">
-                                    <span class="text-xs font-mono text-gray-500 group-hover:text-orange-400 transition-colors">
-                                        {{ $task->due_date ? \Carbon\Carbon::parse($task->due_date)->format('M d') : '--/--' }}
-                                    </span>
+                                    <div class="md:col-span-2 text-right">
+                                        <span class="text-[10px] md:text-xs font-mono text-gray-500 group-hover:text-orange-400 transition-colors">
+                                            <i class="far fa-calendar-alt md:hidden mr-1"></i>
+                                            {{ $task->due_date ? \Carbon\Carbon::parse($task->due_date)->format('M d') : '--/--' }}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                             
                             {{-- SUBTAREAS DE NIVEL 2 (Indentadas) --}}
                             @foreach($task->children as $child)
                                 <div @click="openTaskPanel({{ $child }})" 
-                                     class="group relative grid grid-cols-12 gap-4 py-2 px-4 rounded-lg hover:bg-[#1a1a1a] transition-all cursor-pointer items-center ml-8 border-l border-white/5">
+                                     class="group relative flex md:grid md:grid-cols-12 gap-4 py-2 px-4 rounded-lg hover:bg-[#1a1a1a] transition-all cursor-pointer items-center ml-4 md:ml-8 border-l border-white/5">
                                      
-                                    <div class="col-span-7 flex items-center gap-4">
+                                    <div class="flex-1 md:col-span-7 flex items-center gap-4">
                                         <div class="absolute left-[-1px] top-1/2 w-4 h-[1px] bg-white/10"></div>
                                         
                                         <div class="relative flex items-center justify-center w-4 h-4 shrink-0" @click.stop>
@@ -168,14 +174,14 @@
         </div>
     </div>
 
-    <div x-show="openPanel" 
+    <div x-show="openPanel"
          x-transition:enter="transform transition ease-in-out duration-300"
          x-transition:enter-start="translate-x-full"
          x-transition:enter-end="translate-x-0"
          x-transition:leave="transform transition ease-in-out duration-300"
          x-transition:leave-start="translate-x-0"
          x-transition:leave-end="translate-x-full"
-         class="fixed inset-y-0 right-0 w-[450px] bg-[#1a1a1a]/95 backdrop-blur-xl border-l border-white/10 shadow-2xl z-50 flex flex-col"
+         class="fixed inset-y-0 right-0 w-full md:w-[450px] bg-[#1a1a1a]/95 backdrop-blur-xl border-l border-white/10 shadow-2xl z-50 flex flex-col"
          style="display: none;">
         
         <div class="px-6 py-4 border-b border-white/5 flex justify-between items-center bg-[#1a1a1a]">

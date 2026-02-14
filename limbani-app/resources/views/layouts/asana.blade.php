@@ -19,14 +19,20 @@
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="bg-[#0f1012] text-gray-300 antialiased selection:bg-orange-500 selection:text-white overflow-hidden">
+<body class="bg-[#0f1012] text-gray-300 antialiased selection:bg-orange-500 selection:text-white overflow-x-hidden md:overflow-hidden" x-data="{ mobileMenu: false }">
     
-    <div class="flex h-screen overflow-hidden">
+    <div class="flex h-screen overflow-hidden relative">
         
-        <aside class="w-64 bg-[#0a0a0a] border-r border-white/5 text-gray-400 flex flex-col flex-shrink-0 transition-all duration-300 relative z-20">
+        <!-- Sidebar -->
+        <aside
+            :class="mobileMenu ? 'translate-x-0' : '-translate-x-full md:translate-x-0'"
+            class="fixed md:relative w-64 h-full bg-[#0a0a0a] border-r border-white/5 text-gray-400 flex flex-col flex-shrink-0 transition-transform duration-300 ease-in-out z-50">
             
-            <div class="h-20 flex items-center px-8 border-b border-white/5">
+            <div class="h-20 flex items-center justify-between px-8 border-b border-white/5">
                 <span class="text-white font-black text-2xl tracking-tighter">LIMBANI<span class="text-orange-500">.</span></span>
+                <button @click="mobileMenu = false" class="md:hidden text-gray-500 hover:text-white">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
             </div>
 
             <nav class="flex-1 px-4 py-6 space-y-8 overflow-y-auto">
@@ -80,8 +86,30 @@
             </div>
         </aside>
 
-        <main class="flex-1 overflow-y-auto bg-[#0f1012] focus:outline-none relative">
-            <div class="fixed top-0 left-64 w-full h-full bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-orange-900/20 via-[#0f1012] to-[#0f1012] pointer-events-none z-0"></div>
+        <!-- Overlay for mobile -->
+        <div
+            x-show="mobileMenu"
+            @click="mobileMenu = false"
+            x-transition:enter="transition opacity-ease-out duration-300"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="transition opacity-ease-in duration-200"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden"
+            style="display: none;">
+        </div>
+
+        <main class="flex-1 overflow-y-auto bg-[#0f1012] focus:outline-none relative w-full">
+            <!-- Mobile Header -->
+            <div class="md:hidden h-16 bg-[#0a0a0a] border-b border-white/5 flex items-center justify-between px-6 sticky top-0 z-30">
+                <span class="text-white font-black text-xl tracking-tighter">LIMBANI<span class="text-orange-500">.</span></span>
+                <button @click="mobileMenu = true" class="text-gray-400 hover:text-white p-2">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+
+            <div class="fixed top-0 left-0 md:left-64 w-full h-full bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-orange-900/20 via-[#0f1012] to-[#0f1012] pointer-events-none z-0"></div>
             
             <div class="relative z-10">
                 @yield('content')

@@ -15,43 +15,46 @@
         /* Forzar que el layout no imponga fondo blanco */
         main, .py-12 { background-color: transparent !important; }
     </style>
-    <div class="py-12 px-8 max-w-[1600px] mx-auto" x-data="{ showMemberPanel: false, activeMember: {} }">
+    <div class="py-12 px-8 max-w-[1600px] mx-auto" x-data="{ showMemberPanel: false, activeMember: {}, tab: 'team' }">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             
             <!-- Header Minimalista -->
-            <div class="mb-16 flex justify-between items-end border-b border-white/5 pb-8">
+            <div class="mb-8 md:mb-16 flex flex-col md:flex-row justify-between items-start md:items-end border-b border-white/5 pb-8 gap-4">
                 <div>
-                    <h1 class="text-4xl font-light text-white tracking-wide mb-1">
+                    <h1 class="text-2xl md:text-4xl font-light text-white tracking-wide mb-1">
                         Gestión de <span class="font-medium text-white">Talento Humano</span>
                     </h1>
-                    <p class="text-gray-500 text-xs font-medium tracking-[0.15em] uppercase">
+                    <p class="text-gray-500 text-[10px] md:text-xs font-medium tracking-[0.15em] uppercase">
                         Administra la información de tus colaboradores, cargos y nómina
                     </p>
                 </div>
             </div>
 
             <!-- Pestañas de Navegación Estilo Asana -->
-            <div class="flex items-center gap-8 border-b border-white/5 mb-10 text-sm font-medium">
+            <div class="flex items-center gap-4 md:gap-8 border-b border-white/5 mb-10 text-xs md:text-sm font-medium overflow-x-auto scrollbar-hide whitespace-nowrap">
                 <a href="{{ route('dashboard') }}" class="pb-4 text-gray-500 hover:text-gray-300 transition-colors">
                     Proyectos
                 </a>
-                <a href="{{ route('team.index') }}" class="pb-4 text-white border-b-2 border-orange-500">
+                <button @click="tab = 'team'" :class="tab === 'team' ? 'text-white border-b-2 border-orange-500' : 'text-gray-500 hover:text-gray-300'" class="pb-4 transition-all">
                     Equipo & Nómina
-                </a>
+                </button>
+                <button @click="tab = 'attendance'" :class="tab === 'attendance' ? 'text-white border-b-2 border-orange-500' : 'text-gray-500 hover:text-gray-300'" class="pb-4 transition-all flex items-center gap-2">
+                    Asistencia QR <span class="text-[9px] bg-orange-500/20 text-orange-500 px-2 py-0.5 rounded-full uppercase tracking-tighter">Live</span>
+                </button>
                 <a href="#" class="pb-4 text-gray-500 hover:text-gray-300 transition-colors opacity-50 cursor-not-allowed">
                     Informes
                 </a>
             </div>
 
-            <div class="bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-2xl p-8 shadow-2xl transition-all duration-300" :class="showMemberPanel ? 'mr-[400px]' : ''">
-                <div class="flex justify-between items-center mb-10">
+            <div x-show="tab === 'team'" class="bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-2xl p-4 md:p-8 shadow-2xl transition-all duration-300" :class="showMemberPanel ? 'md:mr-[400px]' : ''">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
                     <div>
                         <h3 class="text-xl font-light text-white tracking-wide">Colaboradores Activos</h3>
                     </div>
                     
                     <!-- Botón para abrir modal (usando AlpineJS simple) -->
-                    <div x-data="{ open: false }">
-                        <button @click="open = true" class="bg-[#1a1a1a] hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-full shadow-lg transition flex items-center gap-2 text-sm uppercase tracking-widest border border-white/10">
+                    <div x-data="{ open: false }" class="w-full md:w-auto">
+                        <button @click="open = true" class="w-full md:w-auto bg-[#1a1a1a] hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-full shadow-lg transition flex items-center justify-center gap-2 text-xs md:text-sm uppercase tracking-widest border border-white/10">
                             <i class="fas fa-user-plus"></i> Nuevo Colaborador
                         </button>
 
@@ -121,15 +124,15 @@
                 </div>
 
                 <!-- TABLA DE COLABORADORES -->
-                <div class="overflow-x-auto">
+                <div class="overflow-x-auto -mx-4 md:mx-0">
                     <table class="min-w-full">
                         <thead>
                             <tr class="border-b border-white/5">
-                                <th scope="col" class="px-6 py-4 text-left text-[10px] font-bold text-gray-500 uppercase tracking-widest">Colaborador</th>
-                                <th scope="col" class="px-6 py-4 text-left text-[10px] font-bold text-gray-500 uppercase tracking-widest">Cargo</th>
-                                <th scope="col" class="px-6 py-4 text-left text-[10px] font-bold text-gray-500 uppercase tracking-widest">Contacto</th>
-                                <th scope="col" class="px-6 py-4 text-left text-[10px] font-bold text-gray-500 uppercase tracking-widest">Correo</th>
-                                <th scope="col" class="px-6 py-4 text-right text-[10px] font-bold text-gray-500 uppercase tracking-widest">Estado</th>
+                                <th scope="col" class="px-4 md:px-6 py-4 text-left text-[10px] font-bold text-gray-500 uppercase tracking-widest">Colaborador</th>
+                                <th scope="col" class="hidden md:table-cell px-6 py-4 text-left text-[10px] font-bold text-gray-500 uppercase tracking-widest">Cargo</th>
+                                <th scope="col" class="hidden lg:table-cell px-6 py-4 text-left text-[10px] font-bold text-gray-500 uppercase tracking-widest">Contacto</th>
+                                <th scope="col" class="hidden sm:table-cell px-6 py-4 text-left text-[10px] font-bold text-gray-500 uppercase tracking-widest">Correo</th>
+                                <th scope="col" class="px-4 md:px-6 py-4 text-right text-[10px] font-bold text-gray-500 uppercase tracking-widest">Estado</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-white/5">
@@ -152,18 +155,18 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-6 whitespace-nowrap">
+                                    <td class="hidden md:table-cell px-6 py-6 whitespace-nowrap">
                                         <span class="px-3 py-1 inline-flex text-[10px] leading-5 font-bold rounded-full bg-white/5 border border-white/10 text-gray-400 uppercase tracking-widest group-hover:border-orange-500/30 transition-colors">
                                             {{ $member->position }}
                                         </span>
                                     </td>
-                                    <td class="px-6 py-6 whitespace-nowrap">
+                                    <td class="hidden lg:table-cell px-6 py-6 whitespace-nowrap">
                                         <div class="text-xs text-gray-400 font-medium"><i class="fas fa-phone text-gray-600 mr-2"></i> {{ $member->phone }}</div>
                                     </td>
-                                    <td class="px-6 py-6 whitespace-nowrap">
+                                    <td class="hidden sm:table-cell px-6 py-6 whitespace-nowrap">
                                         <div class="text-xs text-gray-500 italic">{{ $member->email ?? 'no-email@agency.com' }}</div>
                                     </td>
-                                    <td class="px-6 py-6 whitespace-nowrap text-right">
+                                    <td class="px-4 md:px-6 py-6 whitespace-nowrap text-right">
                                         <div class="flex items-center justify-end gap-2">
                                             <div class="w-1.5 h-1.5 rounded-full {{ $member->status == 'active' ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]' : 'bg-red-500' }}"></div>
                                             <span class="text-[10px] font-bold uppercase tracking-widest {{ $member->status == 'active' ? 'text-green-500' : 'text-red-500' }}">
@@ -181,6 +184,75 @@
                     </table>
                 </div>
             </div>
+
+            <!-- CONTENIDO DE ASISTENCIA (Integrado con AlpineJS) -->
+            <div x-show="tab === 'attendance'" style="display: none;" class="bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-2xl p-4 md:p-8 shadow-2xl">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
+                    <div>
+                        <h3 class="text-xl font-light text-white tracking-wide">Registro de Asistencia</h3>
+                        <p class="text-[10px] text-gray-500 uppercase tracking-widest mt-1">Control de entrada y salida mediante QR</p>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                        <a href="{{ route('attendance.scanner') }}" target="_blank" class="w-full sm:w-auto justify-center bg-white text-black font-bold py-3 px-6 rounded-xl shadow-lg transition flex items-center gap-2 text-xs uppercase tracking-widest hover:bg-gray-200">
+                            <i class="fas fa-qrcode"></i> Abrir Scanner
+                        </a>
+                        <a href="{{ route('attendance.index') }}" class="w-full sm:w-auto justify-center bg-white/5 border border-white/10 text-white font-bold py-3 px-6 rounded-xl transition flex items-center gap-2 text-xs uppercase tracking-widest hover:bg-white/10">
+                            <i class="fas fa-external-link-alt"></i> Ver Historial
+                        </a>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto -mx-4 md:mx-0">
+                    <table class="min-w-full">
+                        <thead>
+                            <tr class="border-b border-white/5">
+                                <th class="px-4 md:px-6 py-4 text-left text-[10px] font-bold text-gray-500 uppercase tracking-widest">Colaborador</th>
+                                <th class="px-4 md:px-6 py-4 text-left text-[10px] font-bold text-gray-500 uppercase tracking-widest">Entrada</th>
+                                <th class="hidden sm:table-cell px-6 py-4 text-left text-[10px] font-bold text-gray-500 uppercase tracking-widest">Salida</th>
+                                <th class="px-4 md:px-6 py-4 text-right text-[10px] font-bold text-gray-500 uppercase tracking-widest">Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/5">
+                            @php
+                                $todayAttendances = \App\Models\Attendance::with('teamMember')->whereDate('check_in', \Carbon\Carbon::today())->latest()->get();
+                            @endphp
+                            @forelse($todayAttendances as $record)
+                                <tr class="hover:bg-white/[0.02] transition-colors">
+                                    <td class="px-4 md:px-6 py-5 whitespace-nowrap">
+                                        <div class="flex items-center gap-3 md:gap-4">
+                                            <div class="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-500 font-bold text-[10px]">
+                                                {{ substr($record->teamMember->name, 0, 1) }}
+                                            </div>
+                                            <p class="text-xs md:text-sm font-medium text-white">{{ $record->teamMember->name }}</p>
+                                        </div>
+                                    </td>
+                                    <td class="px-4 md:px-6 py-5 whitespace-nowrap">
+                                        <span class="text-xs md:text-sm text-gray-300 font-mono">{{ $record->check_in->format('H:i:s') }}</span>
+                                    </td>
+                                    <td class="hidden sm:table-cell px-6 py-5 whitespace-nowrap">
+                                        @if($record->check_out)
+                                            <span class="text-sm text-gray-300 font-mono">{{ $record->check_out->format('H:i:s') }}</span>
+                                        @else
+                                            <span class="text-[10px] font-bold text-green-500/50 uppercase tracking-widest italic animate-pulse">Presente</span>
+                                        @endif
+                                    </td>
+                                    <td class="px-4 md:px-6 py-5 whitespace-nowrap text-right">
+                                        @if($record->status == 'late')
+                                            <span class="px-2 py-0.5 rounded bg-red-500/10 text-red-500 text-[9px] font-black uppercase tracking-widest border border-red-500/20">Tardanza</span>
+                                        @else
+                                            <span class="px-2 py-0.5 rounded bg-green-500/10 text-green-500 text-[9px] font-black uppercase tracking-widest border border-green-500/20">A tiempo</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="px-6 py-10 text-center text-gray-500 italic text-sm">No hay registros de asistencia para hoy.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -192,7 +264,7 @@
          x-transition:leave="transform transition ease-in-out duration-300"
          x-transition:leave-start="translate-x-0"
          x-transition:leave-end="translate-x-full"
-         class="fixed inset-y-0 right-0 w-[400px] bg-[#1a1a1a]/95 backdrop-blur-xl border-l border-white/10 shadow-2xl z-50 flex flex-col"
+         class="fixed inset-y-0 right-0 w-full md:w-[400px] bg-[#1a1a1a]/95 backdrop-blur-xl border-l border-white/10 shadow-2xl z-[60] flex flex-col"
          style="display: none;">
         
         <!-- Header Panel -->

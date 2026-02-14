@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AttendanceController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TaskController;
@@ -24,6 +25,11 @@ Route::get('/dashboard', [ProjectController::class, 'index'])
     ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+    // 0. Sistema de Asistencia QR
+    Route::get('/attendance/scanner', [AttendanceController::class, 'scanner'])->name('attendance.scanner');
+    Route::post('/attendance/scan', [AttendanceController::class, 'scan'])->name('attendance.scan');
+    Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
+
     // 1. Perfil de Usuario
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

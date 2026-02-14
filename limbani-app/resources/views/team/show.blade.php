@@ -165,13 +165,18 @@
                         </div>
 
                         <!-- Info Colaborador -->
-                        <div class="relative z-10 mb-8">
+                        <div class="relative z-10 mb-4">
                             <h2 class="text-xl font-medium text-white mb-1 uppercase tracking-tight">{{ $teamMember->name }}</h2>
                             <p class="text-orange-500 text-[10px] font-bold uppercase tracking-[0.2em]">{{ $teamMember->position }}</p>
                         </div>
 
+                        <!-- Datos Adicionales -->
+                        <div class="relative z-10 mb-6">
+                            <p class="text-[10px] font-medium text-gray-400 uppercase tracking-[0.2em]">Cédula: <span class="text-white">{{ $teamMember->cedula }}</span></p>
+                        </div>
+
                         <!-- Separador -->
-                        <div class="w-12 h-1 bg-white/5 rounded-full mb-8 relative z-10"></div>
+                        <div class="w-12 h-0.5 bg-orange-500/20 rounded-full mb-6 relative z-10"></div>
 
                         <!-- QR Code (JS QR Generator para asegurar visualización offline/local) -->
                         <div class="bg-white p-3 rounded-2xl shadow-xl relative z-10 mb-6">
@@ -180,10 +185,10 @@
 
                         <!-- Footer Carnet -->
                         <div class="mt-auto relative z-10">
-                            <p class="text-[8px] font-medium text-gray-500 uppercase tracking-widest mb-1">Cédula: {{ $teamMember->cedula }}</p>
-                            <div class="px-4 py-1.5 rounded-full bg-white/5 border border-white/5 text-[8px] font-bold text-green-500 uppercase tracking-widest">
+                            <div class="px-4 py-2 rounded-full bg-orange-500/10 border border-orange-500/20 text-[9px] font-bold text-orange-500 uppercase tracking-[0.2em]">
                                 Colaborador Autorizado
                             </div>
+                            <p class="text-[7px] font-medium text-gray-600 uppercase tracking-widest mt-4">Válido para el año 2026</p>
                         </div>
                     </div>
                 </div>
@@ -241,15 +246,15 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Generar QR
-        const qrData = "Nombre: {{ $teamMember->name }}\nCargo: {{ $teamMember->position }}\nID: {{ $teamMember->cedula }}\nAgencia: INJOE";
+        // Generar QR simplificado para mejorar lectura
+        const qrData = "{{ $teamMember->cedula }}";
         new QRCode(document.getElementById("qrcode-container"), {
             text: qrData,
-            width: 96,
-            height: 96,
+            width: 120, // Aumentado para mejor definición
+            height: 120,
             colorDark : "#000000",
             colorLight : "#ffffff",
-            correctLevel : QRCode.CorrectLevel.H
+            correctLevel : QRCode.CorrectLevel.M // Nivel medio es más fácil de leer que el alto (H)
         });
 
         // Lógica de Descarga PDF
