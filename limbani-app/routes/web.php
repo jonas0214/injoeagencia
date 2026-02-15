@@ -8,6 +8,7 @@ use App\Http\Controllers\TaskController;
 use App\Http\Controllers\SubtaskController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\TeamMemberController;
+use App\Http\Controllers\AttachmentController;
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/team', [TeamMemberController::class, 'index'])->name('team.index');
@@ -57,6 +58,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/subtasks/{subtask}/subtasks', [SubtaskController::class, 'storeChild'])->name('subtasks.children.store');
 
     Route::post('/subtasks/{subtask}/comments', [CommentController::class, 'store'])->name('subtasks.comments.store');
+    
+    // Archivos Adjuntos
+    Route::post('/subtasks/{subtask}/attachments', [AttachmentController::class, 'store'])->name('subtasks.attachments.store');
+    Route::delete('/attachments/{attachment}', [AttachmentController::class, 'destroy'])->name('subtasks.attachments.destroy');
 
     Route::get('/team', [TeamMemberController::class, 'index'])->name('team.index');
     Route::post('/team', [TeamMemberController::class, 'store'])->name('team.store');

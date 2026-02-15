@@ -15,7 +15,7 @@ class SubtaskController extends Controller
 
         $task->subtasks()->create([
             'title' => $request->title,
-            'due_date' => now(),
+            'due_date' => null,
             'is_completed' => false,
         ]);
 
@@ -25,21 +25,46 @@ class SubtaskController extends Controller
     // Modificar subtarea existente
     public function update(Request $request, Subtask $subtask)
     {
-        $request->validate(['title' => 'sometimes|required|string|max:255']);
-        
-        $subtask->update($request->all());
+        $request->validate([
+            'title' => 'sometimes|required|string|max:255',
+            'team_member_id' => 'nullable',
+            'due_date' => 'nullable',
+            'description' => 'nullable|string',
+            'is_completed' => 'nullable'
+        ]);
+
+        $data = $request->only(['title', 'description', 'due_date', 'team_member_id']);
+
+        if ($request->has('is_completed')) {
+            $data['is_completed'] = filter_var($request->is_completed, FILTER_VALIDATE_BOOLEAN);
+        }
+
+        if ($request->has('team_member_id')) {
+            $data['team_member_id'] = empty($request->team_member_id) ? null : $request->team_member_id;
+        }
+
+        $subtask->update($data);
 
         if ($request->wantsJson()) {
-            return response()->json(['message' => 'Guardado correctamente', 'subtask' => $subtask]);
+            return response()->json([
+                'message' => 'Guardado correctamente',
+                'subtask' => $subtask->load('teamMember')
+            ]);
         }
 
         return back()->with('success', 'Acción actualizada.');
     }
 
     // Eliminar subtarea
-    public function destroy(Subtask $subtask)
+    public function destroy(Request $request, Subtask $subtask)
     {
+        \Log::info("Eliminando Subtask ID: " . $subtask->id);
         $subtask->delete();
+
+        if ($request->wantsJson()) {
+            return response()->json(['success' => true]);
+        }
+
         return back()->with('success', 'Acción eliminada.');
     }
 
@@ -61,7 +86,7 @@ class SubtaskController extends Controller
         $child = $subtask->children()->create([
             'title' => $request->title,
             'task_id' => $subtask->task_id, // Hereda la tarea principal
-            'due_date' => now(),
+            'due_date' => null,
             'is_completed' => false,
         ]);
 

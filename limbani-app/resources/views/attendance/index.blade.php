@@ -35,6 +35,7 @@
                     <th class="px-8 py-6 text-[10px] font-black text-gray-500 uppercase tracking-widest">Colaborador</th>
                     <th class="px-8 py-6 text-[10px] font-black text-gray-500 uppercase tracking-widest">Entrada</th>
                     <th class="px-8 py-6 text-[10px] font-black text-gray-500 uppercase tracking-widest">Salida</th>
+                    <th class="px-8 py-6 text-[10px] font-black text-gray-500 uppercase tracking-widest">Tiempo</th>
                     <th class="px-8 py-6 text-[10px] font-black text-gray-500 uppercase tracking-widest">Estado</th>
                 </tr>
             </thead>
@@ -60,7 +61,16 @@
                         @if($record->check_out)
                             <span class="text-sm font-medium text-gray-300">{{ $record->check_out->format('H:i:s') }}</span>
                         @else
-                            <span class="text-xs font-bold text-gray-600 uppercase tracking-widest italic">En oficina</span>
+                            <span class="text-xs font-bold text-green-500/50 uppercase tracking-widest italic animate-pulse">En oficina</span>
+                        @endif
+                    </td>
+                    <td class="px-8 py-6">
+                        @if($record->check_out)
+                            <span class="text-sm font-bold text-orange-500 font-mono">
+                                {{ $record->check_in->diff($record->check_out)->format('%Hh %Im') }}
+                            </span>
+                        @else
+                            <span class="text-[10px] text-gray-600 uppercase">Calculando...</span>
                         @endif
                     </td>
                     <td class="px-8 py-6">

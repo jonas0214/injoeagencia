@@ -9,7 +9,7 @@ class Comment extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['subtask_id', 'user_id', 'content'];
+    protected $fillable = ['subtask_id', 'user_id', 'content', 'image_path'];
 
     // Relación con el usuario (si tienes modelo User)
     public function user()

@@ -209,12 +209,21 @@
                                 <th class="px-4 md:px-6 py-4 text-left text-[10px] font-bold text-gray-500 uppercase tracking-widest">Colaborador</th>
                                 <th class="px-4 md:px-6 py-4 text-left text-[10px] font-bold text-gray-500 uppercase tracking-widest">Entrada</th>
                                 <th class="hidden sm:table-cell px-6 py-4 text-left text-[10px] font-bold text-gray-500 uppercase tracking-widest">Salida</th>
+                                <th class="px-4 md:px-6 py-4 text-left text-[10px] font-bold text-gray-500 uppercase tracking-widest">Total Hoy</th>
                                 <th class="px-4 md:px-6 py-4 text-right text-[10px] font-bold text-gray-500 uppercase tracking-widest">Estado</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-white/5">
                             @php
                                 $todayAttendances = \App\Models\Attendance::with('teamMember')->whereDate('check_in', \Carbon\Carbon::today())->latest()->get();
+                                // Agrupar para sumar tiempos por persona hoy
+                                $dailyTotals = [];
+                                foreach($todayAttendances as $att) {
+                                    if($att->check_out) {
+                                        $mins = $att->check_in->diffInMinutes($att->check_out);
+                                        $dailyTotals[$att->team_member_id] = ($dailyTotals[$att->team_member_id] ?? 0) + $mins;
+                                    }
+                                }
                             @endphp
                             @forelse($todayAttendances as $record)
                                 <tr class="hover:bg-white/[0.02] transition-colors">
@@ -235,6 +244,14 @@
                                         @else
                                             <span class="text-[10px] font-bold text-green-500/50 uppercase tracking-widest italic animate-pulse">Presente</span>
                                         @endif
+                                    </td>
+                                    <td class="px-4 md:px-6 py-5 whitespace-nowrap">
+                                        @php
+                                            $totalMins = $dailyTotals[$record->team_member_id] ?? 0;
+                                            $hours = floor($totalMins / 60);
+                                            $mins = $totalMins % 60;
+                                        @endphp
+                                        <span class="text-xs font-black text-orange-500">{{ $hours }}h {{ $mins }}m</span>
                                     </td>
                                     <td class="px-4 md:px-6 py-5 whitespace-nowrap text-right">
                                         @if($record->status == 'late')

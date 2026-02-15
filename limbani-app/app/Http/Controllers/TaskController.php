@@ -10,20 +10,26 @@ class TaskController extends Controller
 {
     public function store(Request $request, Project $project)
     {
-        // Validamos los datos de la tarea
+        \Log::info("Creando Nueva Sección para Proyecto ID: " . $project->id . " Titulo: " . $request->title);
+        
+        // Validamos los datos de la tarea (Sección)
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
         ]);
 
         // Creamos la tarea vinculada a este proyecto
-        $project->tasks()->create([
+        $section = $project->tasks()->create([
             'title' => $request->title,
             'description' => $request->description,
-            'status' => 'pendiente', // Estado inicial por defecto
+            'status' => 'pendiente',
         ]);
 
-        return redirect()->route('projects.show', $project)->with('success', 'Tarea añadida correctamente.');
+        if ($request->wantsJson()) {
+            return response()->json($section);
+        }
+
+        return redirect()->route('projects.show', $project)->with('success', 'Sección añadida correctamente.');
     }
 
     // Actualizar nombre de la lista
@@ -35,10 +41,16 @@ class TaskController extends Controller
         return back()->with('success', 'Lista actualizada.');
     }
 
-    // Eliminar lista completa
-    public function destroy(Task $task)
+    // Eliminar lista completa (Sección)
+    public function destroy(Request $request, Task $task)
     {
+        \Log::info("Eliminando Task (Sección) ID: " . $task->id);
         $task->delete();
+
+        if ($request->wantsJson()) {
+            return response()->json(['success' => true]);
+        }
+
         return back()->with('success', 'Lista eliminada.');
     }
 

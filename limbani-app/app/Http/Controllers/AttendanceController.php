@@ -14,6 +14,15 @@ class AttendanceController extends Controller
         $attendances = Attendance::with('teamMember')
             ->orderBy('check_in', 'desc')
             ->paginate(20);
+
+        // Calcular duración para cada registro
+        foreach ($attendances->items() as $attendance) {
+            if ($attendance->check_in && $attendance->check_out) {
+                $attendance->duration = $attendance->check_in->diffAsCarbonInterval($attendance->check_out);
+            } else {
+                $attendance->duration = null;
+            }
+        }
             
         return view('attendance.index', compact('attendances'));
     }

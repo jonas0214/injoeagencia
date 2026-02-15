@@ -10,12 +10,13 @@ class Subtask extends Model
 {
     // Campos que permitimos guardar masivamente
     protected $fillable = [
-        'title', 
+        'title',
         'description',
-        'due_date', 
-        'is_completed', 
+        'due_date',
+        'is_completed',
         'task_id',
         'parent_id',
+        'team_member_id',
         'ai_suggestion'
     ];
 
@@ -58,5 +59,15 @@ class Subtask extends Model
     public function comments(): HasMany
     {
         return $this->hasMany(Comment::class)->latest();
+    }
+
+    public function teamMember(): BelongsTo
+    {
+        return $this->belongsTo(TeamMember::class);
+    }
+
+    public function attachments(): HasMany
+    {
+        return $this->hasMany(Attachment::class);
     }
 }
