@@ -87,9 +87,15 @@
 
         <div class="flex-1 overflow-y-auto custom-scroll p-4 md:p-8 space-y-4">
             @foreach($project->tasks as $section)
-                <div x-data="{ expanded: true }" class="mb-10">
+                <div x-data="{
+                    expanded: localStorage.getItem('section_{{ $section->id }}') === 'false' ? false : true,
+                    toggle() {
+                        this.expanded = !this.expanded;
+                        localStorage.setItem('section_{{ $section->id }}', this.expanded);
+                    }
+                }" class="mb-10">
                     <div class="flex items-center gap-3 mb-4 group/sec relative">
-                        <div @click="expanded = !expanded" class="flex items-center gap-3 cursor-pointer flex-1">
+                        <div @click="toggle()" class="flex items-center gap-3 cursor-pointer flex-1">
                             <i class="fas fa-caret-down text-gray-500 transition-transform" :class="{ '-rotate-90': !expanded }"></i>
                             <h3 class="text-[11px] font-bold text-gray-500 uppercase tracking-[0.2em] group-hover/sec:text-orange-500 transition-colors">{{ $section->title }}</h3>
                             <div class="h-[1px] flex-1 bg-white/5 ml-4"></div>
@@ -99,11 +105,17 @@
 
                     <div x-show="expanded" x-collapse class="space-y-[1px]">
                         @foreach($section->subtasks->whereNull('parent_id') as $task)
-                            <div x-data="{ showChildren: false }" class="border-b border-white/[0.03]">
+                            <div x-data="{
+                                showChildren: localStorage.getItem('task_children_{{ $task->id }}') === 'true' ? true : false,
+                                toggleChildren() {
+                                    this.showChildren = !this.showChildren;
+                                    localStorage.setItem('task_children_{{ $task->id }}', this.showChildren);
+                                }
+                            }" class="border-b border-white/[0.03]">
                                 <div @click="openTaskPanel({{ $task->load(['children', 'teamMember', 'attachments', 'comments.user']) }}, '{{ $section->title }}')" class="group grid grid-cols-12 gap-4 py-2 px-4 hover:bg-white/[0.03] transition-all cursor-pointer items-center">
                                     <div class="col-span-7 flex items-center gap-3">
                                         @if($task->children->count() > 0)
-                                            <button @click.stop="showChildren = !showChildren" class="w-4 h-4 flex items-center justify-center text-gray-600 hover:text-white transition-colors">
+                                            <button @click.stop="toggleChildren()" class="w-4 h-4 flex items-center justify-center text-gray-600 hover:text-white transition-colors">
                                                 <i class="fas fa-caret-right text-[10px] transition-transform" :class="showChildren ? 'rotate-90' : ''"></i>
                                             </button>
                                         @else <div class="w-4"></div> @endif
@@ -141,12 +153,12 @@
                                                         const hours = Math.floor((absDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                                                         const minutes = Math.floor((absDiff % (1000 * 60 * 60)) / (1000 * 60));
                                                         const timeStr = (days > 0 ? days + 'd ' : '') + hours + 'h ' + minutes + 'm';
-                                                        return diff < 0 ? 'VENCIDA HACE ' + timeStr : 'VENCE EN ' + timeStr;
+                                                        return diff < 0 ? 'VENCIDA HACE ' + timeStr : 'FALTAN ' + timeStr;
                                                     }
                                                 }"
                                                 x-init="setInterval(() => { $el.innerText = getTimeRemaining() }, 60000)"
                                                 x-text="getTimeRemaining()"
-                                                class="text-[9px] font-bold uppercase tracking-tight {{ \Carbon\Carbon::parse($task->due_date)->isPast() ? 'text-red-500' : 'text-orange-500/70' }}">
+                                                class="text-[9px] font-bold uppercase tracking-tight {{ \Carbon\Carbon::parse($task->due_date)->isPast() ? 'text-red-500' : 'text-green-500' }}">
                                                 </span>
                                             @endif
                                         </div>
@@ -202,11 +214,11 @@
                 <div class="flex items-center gap-12">
                     <label class="w-32 text-xs font-medium text-gray-500 uppercase tracking-wider">Responsable</label>
                     <div class="flex-1">
-                        <form @submit.prevent="updateTask().then(() => window.location.reload())">
+                        <form @submit.prevent="updateTask()">
                             <select
                                 name="team_member_id"
                                 x-model="currentTask.team_member_id"
-                                @change="updateTask().then(() => window.location.reload())"
+                                @change="updateTask()"
                                 class="w-full bg-[#1a1a1a] border border-white/10 rounded-lg text-sm text-gray-300 focus:ring-1 focus:ring-orange-500 outline-none p-2"
                             >
                                 <option value="">Sin asignar</option>
@@ -226,7 +238,7 @@
                             <input type="date" x-model="currentTask.due_date" class="bg-transparent border-none pl-8 text-sm text-gray-300 focus:ring-0 p-0 cursor-pointer hover:text-white transition-colors">
                         </div>
                         <template x-if="currentTask.due_date">
-                            <p class="text-[10px] font-bold uppercase tracking-wider" :class="new Date(currentTask.due_date) < new Date() ? 'text-red-500' : 'text-orange-500/60'"><i class="fas fa-clock mr-1"></i> <span x-text="getRemainingTime(currentTask.due_date)"></span></p>
+                            <p class="text-[10px] font-bold uppercase tracking-wider" :class="new Date(currentTask.due_date) < new Date() ? 'text-red-500' : 'text-green-500'"><i class="fas fa-clock mr-1"></i> <span x-text="getRemainingTime(currentTask.due_date)"></span></p>
                         </template>
                     </div>
                 </div>
@@ -400,7 +412,7 @@
                 const minutes = Math.floor((absDiff % (1000 * 60 * 60)) / (1000 * 60));
                 
                 const timeStr = (days > 0 ? days + 'd ' : '') + hours + 'h ' + minutes + 'm';
-                return diff < 0 ? 'VENCIDA HACE ' + timeStr : 'VENCE EN ' + timeStr;
+                return diff < 0 ? 'VENCIDA HACE ' + timeStr : 'FALTAN ' + timeStr;
             },
             async updateTask() {
                 if(!this.currentTask.id) return;
