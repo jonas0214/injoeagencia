@@ -292,7 +292,7 @@
                     <template x-for="file in (currentTask.attachments || [])" :key="file.id">
                         <div class="group relative w-24 h-24 rounded-xl border border-white/10 bg-white/5 overflow-hidden">
                             <template x-if="file.file_type === 'image'">
-                                <img :src="'/storage/' + file.file_path" class="w-full h-full object-cover">
+                                <img :src="'{{ asset('storage') }}/' + file.file_path" class="w-full h-full object-cover">
                             </template>
                             <template x-if="file.file_type !== 'image'">
                                 <div class="w-full h-full flex flex-col items-center justify-center p-2 text-center">
@@ -301,7 +301,7 @@
                                 </div>
                             </template>
                             <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                                <a :href="'/storage/' + file.file_path" target="_blank" class="text-white hover:text-orange-500"><i class="fas fa-external-link-alt text-xs"></i></a>
+                                <a :href="'{{ asset('storage') }}/' + file.file_path" target="_blank" class="text-white hover:text-orange-500"><i class="fas fa-external-link-alt text-xs"></i></a>
                                 <button @click="deleteFile(file.id)" class="text-white hover:text-red-500"><i class="fas fa-trash-alt text-xs"></i></button>
                             </div>
                         </div>
@@ -330,7 +330,7 @@
                                 <p class="text-[14px] text-gray-300 leading-[1.6] mb-3" x-text="comment.content"></p>
                                 <template x-if="comment.image_path">
                                     <div class="rounded-lg overflow-hidden border border-white/5 bg-black/20">
-                                        <img :src="'/storage/' + comment.image_path" class="max-w-full h-auto cursor-zoom-in" @click="window.open('/storage/' + comment.image_path, '_blank')">
+                                        <img :src="'{{ asset('storage') }}/' + comment.image_path" class="max-w-full h-auto cursor-zoom-in" @click="window.open('{{ asset('storage') }}/' + comment.image_path, '_blank')">
                                     </div>
                                 </template>
                             </div>
