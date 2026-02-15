@@ -137,11 +137,9 @@
                                                         const due = new Date('{{ $task->due_date }}');
                                                         const diff = due - now;
                                                         const absDiff = Math.abs(diff);
-                                                        
                                                         const days = Math.floor(absDiff / (1000 * 60 * 60 * 24));
                                                         const hours = Math.floor((absDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                                                         const minutes = Math.floor((absDiff % (1000 * 60 * 60)) / (1000 * 60));
-                                                        
                                                         const timeStr = (days > 0 ? days + 'd ' : '') + hours + 'h ' + minutes + 'm';
                                                         return diff < 0 ? 'VENCIDA HACE ' + timeStr : 'VENCE EN ' + timeStr;
                                                     }
@@ -189,7 +187,7 @@
                 <div class="text-[11px] font-semibold text-gray-500 uppercase tracking-wider"><span class="text-orange-500 truncate max-w-[100px]">{{ $project->name }}</span> <i class="fas fa-chevron-right text-[9px] opacity-30 mx-1"></i> <span x-text="currentTask.section_title" class="truncate max-w-[100px]"></span></div>
             </div>
             <div class="flex items-center gap-2">
-                <button @click="updateTask().then(() => window.location.reload())" class="bg-orange-500 text-black px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-orange-600 transition-colors">
+                <button @click="await updateTask(); window.location.reload();" class="bg-orange-500 text-black px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-orange-600 transition-colors">
                     <i class="fas fa-save mr-2"></i> Guardar Cambios
                 </button>
                 <button @click="if(confirm('¿Eliminar?')) fetch('/subtasks/'+currentTask.id, { method: 'DELETE', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' } }).then(() => window.location.reload())" class="w-10 h-10 flex items-center justify-center text-gray-600 hover:text-red-500"><i class="fas fa-trash-alt text-sm"></i></button>
