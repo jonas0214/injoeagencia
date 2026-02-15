@@ -100,7 +100,7 @@
                             <h3 class="text-[11px] font-bold text-gray-500 uppercase tracking-[0.2em] group-hover/sec:text-orange-500 transition-colors">{{ $section->title }}</h3>
                             <div class="h-[1px] flex-1 bg-white/5 ml-4"></div>
                         </div>
-                        <button @click="if(confirm('¿Borrar sección?')) fetch('/tasks/{{ $section->id }}', { method: 'DELETE', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' } }).then(() => window.location.reload())" class="opacity-0 group-hover/sec:opacity-100 text-gray-600 hover:text-red-500 p-1 transition-opacity"><i class="fas fa-trash-alt text-[10px]"></i></button>
+                        <button type="button" @click.stop="if(confirm('¿Borrar sección?')) fetch('{{ url('/tasks') }}/{{ $section->id }}', { method: 'DELETE', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' } }).then(() => window.location.reload())" class="opacity-0 group-hover/sec:opacity-100 text-gray-600 hover:text-red-500 p-1 transition-opacity"><i class="fas fa-trash-alt text-[10px]"></i></button>
                     </div>
 
                     <div x-show="expanded" x-collapse class="space-y-[1px]">
@@ -119,8 +119,8 @@
                                                 <i class="fas fa-caret-right text-[10px] transition-transform" :class="showChildren ? 'rotate-90' : ''"></i>
                                             </button>
                                         @else <div class="w-4"></div> @endif
-                                        <input type="checkbox" :checked="{{ $task->is_completed ? 'true' : 'false' }}" @change="fetch('/subtasks/{{ $task->id }}', { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: JSON.stringify({ is_completed: $event.target.checked }) })" class="w-4 h-4 border-gray-600 rounded-sm bg-transparent checked:bg-green-500">
-                                        <input type="text" value="{{ $task->title }}" @click.stop @change="fetch('/subtasks/{{ $task->id }}', { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: JSON.stringify({ title: $event.target.value }) })" class="bg-transparent border-none text-[15px] font-medium text-gray-200 focus:ring-0 p-0 w-full {{ $task->is_completed ? 'line-through opacity-40' : '' }}">
+                                        <input type="checkbox" :checked="{{ $task->is_completed ? 'true' : 'false' }}" @change="fetch('{{ url('/subtasks') }}/{{ $task->id }}', { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: JSON.stringify({ is_completed: $event.target.checked }) })" class="w-4 h-4 border-gray-600 rounded-sm bg-transparent checked:bg-green-500">
+                                        <input type="text" value="{{ $task->title }}" @click.stop @change="fetch('{{ url('/subtasks') }}/{{ $task->id }}', { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: JSON.stringify({ title: $event.target.value }) })" class="bg-transparent border-none text-[15px] font-medium text-gray-200 focus:ring-0 p-0 w-full {{ $task->is_completed ? 'line-through opacity-40' : '' }}">
                                     </div>
                                     <div class="col-span-3">
                                         @if($task->team_member_id)
@@ -176,7 +176,7 @@
                                                     <div class="flex items-center gap-2"><div class="w-5 h-5 rounded-full bg-orange-500/10 flex items-center justify-center text-[8px] text-orange-500 font-bold">{{ substr($child->teamMember->name ?? '?', 0, 1) }}</div><span class="text-[9px] text-gray-600 truncate">{{ $child->teamMember->name ?? '' }}</span></div>
                                                 @endif
                                             </div>
-                                            <div class="col-span-2 text-right opacity-0 group-hover:opacity-100"><button @click.stop="if(confirm('¿Borrar?')) fetch('/subtasks/{{ $child->id }}', { method: 'DELETE', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' } }).then(() => window.location.reload())" class="text-gray-600 hover:text-red-500 p-1"><i class="fas fa-trash-alt text-[10px]"></i></button></div>
+                                            <div class="col-span-2 text-right opacity-0 group-hover:opacity-100"><button type="button" @click.stop="if(confirm('¿Borrar?')) fetch('{{ url('/subtasks') }}/{{ $child->id }}', { method: 'DELETE', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' } }).then(() => window.location.reload())" class="text-gray-600 hover:text-red-500 p-1"><i class="fas fa-trash-alt text-[10px]"></i></button></div>
                                         </div>
                                     @endforeach
                                 </div>
@@ -202,7 +202,7 @@
                 <button @click="await updateTask(); window.location.reload();" class="bg-orange-500 text-black px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-orange-600 transition-colors">
                     <i class="fas fa-save mr-2"></i> Guardar Cambios
                 </button>
-                <button @click="if(confirm('¿Eliminar?')) fetch('/subtasks/'+currentTask.id, { method: 'DELETE', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' } }).then(() => window.location.reload())" class="w-10 h-10 flex items-center justify-center text-gray-600 hover:text-red-500"><i class="fas fa-trash-alt text-sm"></i></button>
+                <button type="button" @click="if(confirm('¿Eliminar?')) fetch('{{ url('/subtasks') }}/'+currentTask.id, { method: 'DELETE', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' } }).then(() => window.location.reload())" class="w-10 h-10 flex items-center justify-center text-gray-600 hover:text-red-500"><i class="fas fa-trash-alt text-sm"></i></button>
                 <button @click="openPanel = false" class="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-white"><i class="fas fa-times text-lg"></i></button>
             </div>
         </div>
@@ -255,16 +255,16 @@
                 <div class="space-y-2">
                     <template x-for="child in (currentTask.children || [])" :key="child.id">
                         <div class="group flex items-center gap-3 p-2 rounded-lg bg-white/[0.02] border border-white/5 hover:border-white/10 transition-all">
-                            <input type="checkbox" :checked="child.is_completed" @change="fetch('/subtasks/'+child.id, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: JSON.stringify({ is_completed: $event.target.checked }) })" class="w-4 h-4 border-gray-600 rounded bg-transparent checked:bg-green-500">
+                            <input type="checkbox" :checked="child.is_completed" @change="fetch('{{ url('/subtasks') }}/'+child.id, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: JSON.stringify({ is_completed: $event.target.checked }) })" class="w-4 h-4 border-gray-600 rounded bg-transparent checked:bg-green-500">
                             
                             <div class="flex-1 flex flex-col min-w-0">
-                                <input type="text" :value="child.title" @change="fetch('/subtasks/'+child.id, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: JSON.stringify({ title: $event.target.value }) })" class="bg-transparent border-none text-sm text-gray-300 focus:ring-0 p-0 w-full" :class="child.is_completed ? 'line-through opacity-40' : ''">
+                                <input type="text" :value="child.title" @change="fetch('{{ url('/subtasks') }}/'+child.id, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: JSON.stringify({ title: $event.target.value }) })" class="bg-transparent border-none text-sm text-gray-300 focus:ring-0 p-0 w-full" :class="child.is_completed ? 'line-through opacity-40' : ''">
                                 
                                 <div class="flex items-center gap-4 mt-1">
                                     <div class="flex items-center gap-1.5">
                                         <i class="fas fa-user text-[8px] text-gray-600"></i>
                                         <select
-                                            @change="fetch('/subtasks/'+child.id, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: JSON.stringify({ team_member_id: $event.target.value }) }).then(() => window.location.reload())"
+                                            @change="fetch('{{ url('/subtasks') }}/'+child.id, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: JSON.stringify({ team_member_id: $event.target.value }) }).then(() => window.location.reload())"
                                             class="bg-transparent border-none text-[10px] text-gray-500 focus:ring-0 p-0 cursor-pointer hover:text-orange-500 transition-colors outline-none"
                                         >
                                             <option value="">Sin asignar</option>
@@ -275,12 +275,12 @@
                                     </div>
                                     <div class="flex items-center gap-1.5">
                                         <i class="far fa-calendar text-[8px] text-gray-600"></i>
-                                        <input type="date" :value="child.due_date ? child.due_date.substring(0, 10) : ''" @change="fetch('/subtasks/'+child.id, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: JSON.stringify({ due_date: $event.target.value }) }).then(() => window.location.reload())" class="bg-transparent border-none text-[10px] text-gray-500 focus:ring-0 p-0 cursor-pointer hover:text-orange-500 transition-colors">
+                                        <input type="date" :value="child.due_date ? child.due_date.substring(0, 10) : ''" @change="fetch('{{ url('/subtasks') }}/'+child.id, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: JSON.stringify({ due_date: $event.target.value }) }).then(() => window.location.reload())" class="bg-transparent border-none text-[10px] text-gray-500 focus:ring-0 p-0 cursor-pointer hover:text-orange-500 transition-colors">
                                     </div>
                                 </div>
                             </div>
                             
-                            <button @click="if(confirm('¿Eliminar subtarea?')) fetch('/subtasks/'+child.id, { method: 'DELETE', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' } }).then(() => window.location.reload())" class="opacity-0 group-hover:opacity-100 p-2 text-gray-600 hover:text-red-500 transition-all"><i class="fas fa-trash-alt text-[10px]"></i></button>
+                            <button type="button" @click="if(confirm('¿Eliminar subtarea?')) fetch('{{ url('/subtasks') }}/'+child.id, { method: 'DELETE', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' } }).then(() => window.location.reload())" class="opacity-0 group-hover:opacity-100 p-2 text-gray-600 hover:text-red-500 transition-all"><i class="fas fa-trash-alt text-[10px]"></i></button>
                         </div>
                     </template>
                     <div class="pt-2 flex items-center gap-3 p-3 rounded-xl border border-dashed border-white/10 group focus-within:border-orange-500/50 transition-all">
