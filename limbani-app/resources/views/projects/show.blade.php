@@ -412,7 +412,7 @@
                     is_completed: !!this.currentTask.is_completed
                 };
                 
-                return fetch(`/subtasks/${this.currentTask.id}`, {
+                return fetch(`{{ url('/subtasks') }}/${this.currentTask.id}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -421,14 +421,19 @@
                     },
                     body: JSON.stringify(body)
                 }).then(res => {
-                    if (!res.ok) throw new Error('Error en el servidor');
+                    if (!res.ok) {
+                        return res.text().then(text => {
+                            console.error('Error response:', text);
+                            throw new Error('Error en el servidor: ' + res.status);
+                        });
+                    }
                     return res.json();
                 });
             },
             async createChildSubtask() {
                 if(!this.newSubtaskTitle || !this.currentTask.id) return;
                 try {
-                    const res = await fetch(`/subtasks/${this.currentTask.id}/subtasks`, {
+                    const res = await fetch(`{{ url('/subtasks') }}/${this.currentTask.id}/subtasks`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -454,7 +459,7 @@
                 formData.append('file', file);
                 
                 try {
-                    const res = await fetch(`/subtasks/${this.currentTask.id}/attachments`, {
+                    const res = await fetch(`{{ url('/subtasks') }}/${this.currentTask.id}/attachments`, {
                         method: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': '{{ csrf_token() }}',
@@ -481,7 +486,7 @@
             },
             async deleteFile(id) {
                 if (!confirm('¿Borrar archivo?')) return;
-                await fetch(`/attachments/${id}`, {
+                await fetch(`{{ url('/attachments') }}/${id}`, {
                     method: 'DELETE',
                     headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
                 });
@@ -569,7 +574,7 @@
             async sendComment() {
                 if (!this.newComment && !this.pastedImage) return;
                 try {
-                    const res = await fetch(`/subtasks/${this.currentTask.id}/comments`, {
+                    const res = await fetch(`{{ url('/subtasks') }}/${this.currentTask.id}/comments`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
