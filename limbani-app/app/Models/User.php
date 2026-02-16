@@ -21,7 +21,31 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
+
+    // Constantes para Roles
+    const ROLE_ADMIN = 'admin';
+    const ROLE_CEO = 'ceo';
+    const ROLE_COLABORADOR = 'colaborador';
+    const ROLE_RRHH = 'rrhh';
+    const ROLE_CONTABILIDAD = 'contabilidad';
+
+    /**
+     * Verificar si el usuario tiene un rol específico.
+     */
+    public function hasRole($role): bool
+    {
+        return $this->role === $role;
+    }
+
+    /**
+     * Verificar si el usuario es administrador.
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role === self::ROLE_ADMIN;
+    }
 
     /**
      * The attributes that should be hidden for serialization.
@@ -44,5 +68,10 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function teamMember()
+    {
+        return $this->hasOne(TeamMember::class);
     }
 }

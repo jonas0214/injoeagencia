@@ -14,4 +14,9 @@ class TeamMember extends Model
         'birth_date' => 'date',
         'salary' => 'decimal:2',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

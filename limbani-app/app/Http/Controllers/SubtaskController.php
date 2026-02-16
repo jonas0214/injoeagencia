@@ -30,13 +30,23 @@ class SubtaskController extends Controller
             'team_member_id' => 'nullable',
             'due_date' => 'nullable',
             'description' => 'nullable|string',
-            'is_completed' => 'nullable'
+            'is_completed' => 'nullable',
+            'is_approved' => 'nullable'
         ]);
 
         $data = $request->only(['title', 'description', 'due_date', 'team_member_id']);
 
         if ($request->has('is_completed')) {
             $data['is_completed'] = filter_var($request->is_completed, FILTER_VALIDATE_BOOLEAN);
+        }
+
+        // Solo administradores pueden aprobar
+        if ($request->has('is_approved') && in_array(auth()->user()->role, ['admin', 'ceo'])) {
+            $data['is_approved'] = filter_var($request->is_approved, FILTER_VALIDATE_BOOLEAN);
+            if ($data['is_approved'] && !$subtask->is_approved) {
+                $data['approved_at'] = now();
+                $data['approved_by'] = auth()->id();
+            }
         }
 
         if ($request->has('team_member_id')) {

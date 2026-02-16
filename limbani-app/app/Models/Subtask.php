@@ -17,7 +17,10 @@ class Subtask extends Model
         'task_id',
         'parent_id',
         'team_member_id',
-        'ai_suggestion'
+        'ai_suggestion',
+        'is_approved',
+        'approved_at',
+        'approved_by'
     ];
 
     /**
@@ -26,6 +29,8 @@ class Subtask extends Model
     protected $casts = [
         'due_date' => 'datetime',
         'is_completed' => 'boolean',
+        'is_approved' => 'boolean',
+        'approved_at' => 'datetime'
     ];
 
     /**

@@ -12,14 +12,36 @@ class ProjectController extends Controller
     // 1. Vista principal del Dashboard
     public function index()
     {
-        $userId = Auth::id();
-        // Cargamos proyectos y sus tareas con subtasks
-        $projects = Project::where('user_id', $userId)->with('tasks.subtasks')->latest()->get();
+        $user = Auth::user();
         
-        // Obtenemos el equipo real de la tabla team_members
-        $team = \App\Models\TeamMember::all();
+        if ($user->role === 'colaborador') {
+            $teamMember = $user->teamMember;
+            $teamMemberId = $teamMember ? $teamMember->id : null;
 
-        // Retornamos la nueva vista estilo Asana
+            // Un colaborador solo ve los proyectos donde tiene subtareas asignadas
+            $projects = Project::whereHas('tasks.subtasks', function($query) use ($teamMemberId) {
+                $query->where('team_member_id', $teamMemberId);
+            })->with(['tasks.subtasks' => function($query) use ($teamMemberId) {
+                $query->where('team_member_id', $teamMemberId)
+                      ->with(['children', 'teamMember', 'attachments', 'comments.user', 'task', 'parent', 'task.project']);
+            }])->latest()->get();
+            
+            // Solo ve a sus compañeros de equipo de los proyectos en los que participa
+            $team = \App\Models\TeamMember::whereIn('id', function($query) use ($projects) {
+                $query->select('team_member_id')
+                    ->from('subtasks')
+                    ->whereIn('task_id', function($q) use ($projects) {
+                        $q->select('id')->from('tasks')->whereIn('project_id', $projects->pluck('id'));
+                    });
+            })->get();
+        } else {
+            // Administradores y otros roles ven todo
+            $projects = Project::with(['tasks.subtasks' => function($q) {
+                $q->with(['children', 'teamMember', 'attachments', 'comments.user', 'task', 'parent', 'task.project']);
+            }])->latest()->get();
+            $team = \App\Models\TeamMember::all();
+        }
+
         return view('dashboard_asana', compact('projects', 'team'));
     }
 
@@ -48,9 +70,27 @@ class ProjectController extends Controller
 
     public function show(Project $project)
     {
-        // Cargamos las tareas de esta campaña publicitaria
-        // Eager loading profundo para soportar: Sección -> Tarea -> Subtarea
-        $project->load('tasks.subtasks.children');
+        $user = Auth::user();
+        
+        if ($user->role === 'colaborador') {
+            $teamMemberId = $user->teamMember ? $user->teamMember->id : null;
+            
+            // Cargar solo las secciones que tienen tareas asignadas al colaborador, 
+            // y dentro de esas secciones solo sus tareas.
+            $project->load(['tasks' => function($query) use ($teamMemberId) {
+                $query->whereHas('subtasks', function($q) use ($teamMemberId) {
+                    $q->where('team_member_id', $teamMemberId);
+                })->with(['subtasks' => function($q) use ($teamMemberId) {
+                    $q->where('team_member_id', $teamMemberId)
+                      ->with(['children', 'teamMember', 'attachments', 'comments.user', 'task', 'parent', 'task.project']);
+                }]);
+            }]);
+        } else {
+            $project->load(['tasks.subtasks' => function($q) {
+                $q->with(['children', 'teamMember', 'attachments', 'comments.user', 'task', 'parent', 'task.project']);
+            }]);
+        }
+
         return view('projects.show', compact('project'));
     }
 
@@ -78,4 +118,4 @@ class ProjectController extends Controller
         $project->delete();
         return redirect()->route('dashboard')->with('success', 'Proyecto eliminado correctamente.');
     }
-} // <--- ESTA LLAVE DEBE SER LA ÚLTIMA
+}

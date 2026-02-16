@@ -10,13 +10,6 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\TeamMemberController;
 use App\Http\Controllers\AttachmentController;
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/team', [TeamMemberController::class, 'index'])->name('team.index');
-    Route::post('/team', [TeamMemberController::class, 'store'])->name('team.store');
-    Route::resource('projects', ProjectController::class);
-});
-
-
 Route::get('/', function () {
     return view('welcome');
 });
@@ -37,9 +30,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // 2. Rutas de la Agencia (Proyectos)
-    Route::get('/projects/create', [ProjectController::class, 'create'])->name('projects.create');
-    Route::post('/projects', [ProjectController::class, 'store'])->name('projects.store');
-    Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('projects.show');
+    Route::resource('projects', ProjectController::class);
     
     // 3. Rutas de Tareas
     Route::post('/projects/{project}/tasks', [TaskController::class, 'store'])->name('tasks.store');
@@ -47,34 +38,39 @@ Route::middleware('auth')->group(function () {
     Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
     Route::post('/tasks/{task}/duplicate', [TaskController::class, 'duplicate'])->name('tasks.duplicate');
 
-    // 4. Rutas de Subtareas (NUEVAS)
-    // Crear una subtarea dentro de una tarea padre
+    // 4. Rutas de Subtareas
     Route::post('/tasks/{task}/subtasks', [SubtaskController::class, 'store'])->name('subtasks.store');
-    
-    // Acciones sobre una subtarea específica (Actualizar, Eliminar, Duplicar)
     Route::put('/subtasks/{subtask}', [SubtaskController::class, 'update'])->name('subtasks.update');
     Route::delete('/subtasks/{subtask}', [SubtaskController::class, 'destroy'])->name('subtasks.destroy');
     Route::post('/subtasks/{subtask}/duplicate', [SubtaskController::class, 'duplicate'])->name('subtasks.duplicate');
     Route::post('/subtasks/{subtask}/subtasks', [SubtaskController::class, 'storeChild'])->name('subtasks.children.store');
 
     Route::post('/subtasks/{subtask}/comments', [CommentController::class, 'store'])->name('subtasks.comments.store');
+    Route::get('/subtasks-detail/{subtask}', function(\App\Models\Subtask $subtask) {
+        return $subtask->load(['children', 'teamMember', 'attachments', 'comments.user', 'task', 'parent', 'task.project']);
+    });
     
     // Archivos Adjuntos
     Route::post('/subtasks/{subtask}/attachments', [AttachmentController::class, 'store'])->name('subtasks.attachments.store');
     Route::delete('/attachments/{attachment}', [AttachmentController::class, 'destroy'])->name('subtasks.attachments.destroy');
 
+    // 5. Rutas de Equipo (Protegidas)
     Route::get('/team', [TeamMemberController::class, 'index'])->name('team.index');
-    Route::post('/team', [TeamMemberController::class, 'store'])->name('team.store');
     
-
-
-    
-
-
+    Route::middleware([\App\Http\Middleware\CheckRole::class.':admin,ceo,rrhh,contabilidad'])->group(function () {
+        Route::post('/team', [TeamMemberController::class, 'store'])->name('team.store');
         Route::get('/team/{teamMember}', [TeamMemberController::class, 'show'])->name('team.show');
         Route::get('/team/{teamMember}/edit', [TeamMemberController::class, 'edit'])->name('team.edit');
         Route::put('/team/{teamMember}', [TeamMemberController::class, 'update'])->name('team.update');
         Route::delete('/team/{teamMember}', [TeamMemberController::class, 'destroy'])->name('team.destroy');
+        
+        Route::patch('/billing/{billing}/status', [\App\Http\Controllers\BillingController::class, 'updateStatus'])->name('billing.status');
     });
+
+    // Rutas de Cuentas de Cobro
+    Route::get('/billing', [\App\Http\Controllers\BillingController::class, 'index'])->name('billing.index');
+    Route::post('/billing', [\App\Http\Controllers\BillingController::class, 'store'])->name('billing.store');
+    Route::delete('/billing/{billing}', [\App\Http\Controllers\BillingController::class, 'destroy'])->name('billing.destroy');
+});
 
 require __DIR__.'/auth.php';

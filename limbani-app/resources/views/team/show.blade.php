@@ -105,6 +105,12 @@
                         <p class="text-sm text-gray-200">{{ $teamMember->position }}</p>
                     </div>
                     <div class="data-box p-5 rounded-2xl">
+                        <p class="text-[10px] text-gray-600 font-bold uppercase tracking-widest mb-1">Rol de Sistema</p>
+                        <p class="text-sm text-orange-500 font-black uppercase tracking-tighter">
+                            <i class="fas fa-shield-alt mr-1"></i> {{ $teamMember->user->role ?? 'Sin usuario vinculado' }}
+                        </p>
+                    </div>
+                    <div class="data-box p-5 rounded-2xl">
                         <p class="text-[10px] text-gray-600 font-bold uppercase tracking-widest mb-1">Fecha de Nacimiento</p>
                         <p class="text-sm text-gray-200">{{ $teamMember->birth_date ? $teamMember->birth_date->format('d/m/Y') : 'No registrada' }}</p>
                     </div>

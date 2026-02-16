@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\TeamMember;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 
 class TeamMemberController extends Controller
 {
     public function index()
     {
-        $team = TeamMember::orderBy('name')->get();
+        $team = TeamMember::with('user')->orderBy('name')->get();
         return view('team.index', compact('team'));
     }
 
@@ -23,10 +25,10 @@ class TeamMemberController extends Controller
             'salary' => 'required|numeric',
             'phone' => 'nullable|string',
             'bank_details' => 'nullable|string',
-            'email' => 'nullable|email',
+            'email' => 'required|email|unique:users,email',
             'birth_date' => 'nullable|date',
             'address' => 'nullable|string|max:255',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         if ($request->hasFile('photo')) {
@@ -34,7 +36,16 @@ class TeamMemberController extends Controller
             $data['photo'] = $path;
         }
 
-        TeamMember::create($data);
+        // Crear el usuario primero
+        $user = User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['cedula']), // Password por defecto es su cédula
+            'role' => $request->input('role', 'colaborador'),
+        ]);
+
+        $data['user_id'] = $user->id;
+        $teamMember = TeamMember::create($data);
 
         return redirect()->back()->with('success', 'Colaborador agregado correctamente.');
     }
@@ -61,7 +72,7 @@ class TeamMemberController extends Controller
             'email' => 'nullable|email',
             'birth_date' => 'nullable|date',
             'address' => 'nullable|string|max:255',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         if ($request->hasFile('photo')) {
@@ -74,6 +85,34 @@ class TeamMemberController extends Controller
         }
 
         $teamMember->update($data);
+
+        // Actualizar o crear usuario
+        $role = $request->input('role', 'colaborador');
+        
+        if ($teamMember->user_id) {
+            // Actualizar usuario existente
+            $teamMember->user->update([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'role' => $role
+            ]);
+        } else if ($teamMember->email) {
+            // Intentar vincular por email o crear uno nuevo
+            $user = User::where('email', $teamMember->email)->first();
+            
+            if (!$user) {
+                $user = User::create([
+                    'name' => $teamMember->name,
+                    'email' => $teamMember->email,
+                    'password' => Hash::make($teamMember->cedula),
+                    'role' => $role,
+                ]);
+            } else {
+                $user->update(['role' => $role]);
+            }
+            
+            $teamMember->update(['user_id' => $user->id]);
+        }
 
         return redirect()->route('team.show', $teamMember)->with('success', 'Información actualizada correctamente.');
     }

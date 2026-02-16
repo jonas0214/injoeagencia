@@ -109,8 +109,20 @@
             <!-- Salario -->
             <div class="space-y-2">
                 <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Asignación Salarial ($)</label>
-                <input type="number" step="0.01" name="salary" value="{{ old('salary', $teamMember->salary) }}" required 
+                <input type="number" step="0.01" name="salary" value="{{ old('salary', $teamMember->salary) }}" required
                        class="w-full input-field rounded-xl p-4 text-sm focus:outline-none focus:ring-1 focus:ring-orange-500">
+            </div>
+
+            <!-- Rol -->
+            <div class="space-y-2">
+                <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Rol del Sistema</label>
+                <select name="role" required class="w-full input-field rounded-xl p-4 text-sm focus:outline-none focus:ring-1 focus:ring-orange-500">
+                    <option value="colaborador" {{ (old('role', $teamMember->user->role ?? '') == 'colaborador') ? 'selected' : '' }}>Colaborador</option>
+                    <option value="ceo" {{ (old('role', $teamMember->user->role ?? '') == 'ceo') ? 'selected' : '' }}>CEO</option>
+                    <option value="rrhh" {{ (old('role', $teamMember->user->role ?? '') == 'rrhh') ? 'selected' : '' }}>Recursos Humanos</option>
+                    <option value="contabilidad" {{ (old('role', $teamMember->user->role ?? '') == 'contabilidad') ? 'selected' : '' }}>Contabilidad</option>
+                    <option value="admin" {{ (old('role', $teamMember->user->role ?? '') == 'admin') ? 'selected' : '' }}>Administrador (Soporte)</option>
+                </select>
             </div>
 
             <!-- Detalles Bancarios -->

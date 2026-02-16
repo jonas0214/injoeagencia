@@ -35,12 +35,14 @@
                 <a href="{{ route('dashboard') }}" class="pb-4 text-gray-500 hover:text-gray-300 transition-colors">
                     Proyectos
                 </a>
+                @if(in_array(Auth::user()->role, ['admin', 'ceo', 'rrhh', 'contabilidad']))
                 <button @click="tab = 'team'" :class="tab === 'team' ? 'text-white border-b-2 border-orange-500' : 'text-gray-500 hover:text-gray-300'" class="pb-4 transition-all">
                     Equipo & Nómina
                 </button>
                 <button @click="tab = 'attendance'" :class="tab === 'attendance' ? 'text-white border-b-2 border-orange-500' : 'text-gray-500 hover:text-gray-300'" class="pb-4 transition-all flex items-center gap-2">
                     Asistencia QR <span class="text-[9px] bg-orange-500/20 text-orange-500 px-2 py-0.5 rounded-full uppercase tracking-tighter">Live</span>
                 </button>
+                @endif
                 <a href="#" class="pb-4 text-gray-500 hover:text-gray-300 transition-colors opacity-50 cursor-not-allowed">
                     Informes
                 </a>
@@ -91,8 +93,8 @@
                                                 <input type="date" name="birth_date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
                                             </div>
                                             <div>
-                                                <label class="block text-sm font-medium text-gray-700">Correo Electrónico</label>
-                                                <input type="email" name="email" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
+                                                <label class="block text-sm font-medium text-gray-700">Correo Electrónico (Acceso)</label>
+                                                <input type="email" name="email" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
                                             </div>
                                             <div class="col-span-2">
                                                 <label class="block text-sm font-medium text-gray-700">Dirección de Residencia</label>
@@ -105,6 +107,17 @@
                                             <div>
                                                 <label class="block text-sm font-medium text-gray-700">Salario Mensual</label>
                                                 <input type="number" step="0.01" name="salary" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
+                                            </div>
+                                            <div class="col-span-2">
+                                                <label class="block text-sm font-medium text-gray-700">Rol del Sistema</label>
+                                                <select name="role" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
+                                                    <option value="colaborador">Colaborador</option>
+                                                    <option value="ceo">CEO</option>
+                                                    <option value="rrhh">Recursos Humanos</option>
+                                                    <option value="contabilidad">Contabilidad</option>
+                                                    <option value="admin">Administrador (Soporte)</option>
+                                                </select>
+                                                <p class="text-[9px] text-gray-500 mt-1 uppercase tracking-tighter">* El rol se aplicará al usuario vinculado por correo electrónico.</p>
                                             </div>
                                             <div class="col-span-2">
                                                 <label class="block text-sm font-medium text-gray-700">Información Bancaria</label>
@@ -129,7 +142,7 @@
                         <thead>
                             <tr class="border-b border-white/5">
                                 <th scope="col" class="px-4 md:px-6 py-4 text-left text-[10px] font-bold text-gray-500 uppercase tracking-widest">Colaborador</th>
-                                <th scope="col" class="hidden md:table-cell px-6 py-4 text-left text-[10px] font-bold text-gray-500 uppercase tracking-widest">Cargo</th>
+                                <th scope="col" class="hidden md:table-cell px-6 py-4 text-left text-[10px] font-bold text-gray-500 uppercase tracking-widest">Cargo / Rol</th>
                                 <th scope="col" class="hidden lg:table-cell px-6 py-4 text-left text-[10px] font-bold text-gray-500 uppercase tracking-widest">Contacto</th>
                                 <th scope="col" class="hidden sm:table-cell px-6 py-4 text-left text-[10px] font-bold text-gray-500 uppercase tracking-widest">Correo</th>
                                 <th scope="col" class="px-4 md:px-6 py-4 text-right text-[10px] font-bold text-gray-500 uppercase tracking-widest">Estado</th>
@@ -156,9 +169,16 @@
                                         </div>
                                     </td>
                                     <td class="hidden md:table-cell px-6 py-6 whitespace-nowrap">
-                                        <span class="px-3 py-1 inline-flex text-[10px] leading-5 font-bold rounded-full bg-white/5 border border-white/10 text-gray-400 uppercase tracking-widest group-hover:border-orange-500/30 transition-colors">
-                                            {{ $member->position }}
-                                        </span>
+                                        <div class="flex flex-col gap-1">
+                                            <span class="px-3 py-1 inline-flex text-[10px] leading-5 font-bold rounded-full bg-white/5 border border-white/10 text-gray-400 uppercase tracking-widest group-hover:border-orange-500/30 transition-colors w-fit">
+                                                {{ $member->position }}
+                                            </span>
+                                            @if($member->user)
+                                                <span class="text-[9px] font-black text-orange-500 uppercase tracking-tighter ml-1">
+                                                    <i class="fas fa-shield-alt mr-1"></i> {{ strtoupper($member->user->role) }}
+                                                </span>
+                                            @endif
+                                        </div>
                                     </td>
                                     <td class="hidden lg:table-cell px-6 py-6 whitespace-nowrap">
                                         <div class="text-xs text-gray-400 font-medium"><i class="fas fa-phone text-gray-600 mr-2"></i> {{ $member->phone }}</div>

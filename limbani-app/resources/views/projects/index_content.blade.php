@@ -3,12 +3,14 @@
     <a href="{{ route('dashboard') }}" class="pb-4 text-white border-b-2 border-orange-500">
         Proyectos
     </a>
+    @if(in_array(Auth::user()->role, ['admin', 'ceo', 'rrhh', 'contabilidad']))
     <a href="{{ route('team.index') }}" class="pb-4 text-gray-500 hover:text-gray-300 transition-colors">
         Equipo & Nómina
     </a>
     <a href="#" class="pb-4 text-gray-500 hover:text-gray-300 transition-colors opacity-50 cursor-not-allowed">
         Informes
     </a>
+    @endif
 </div>
 
 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-4">

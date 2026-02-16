@@ -20,10 +20,176 @@
         body { font-family: 'Outfit', sans-serif; }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+        .custom-scroll::-webkit-scrollbar-thumb:hover { background: #ffaa00; }
+        #drawingCanvas { cursor: crosshair; touch-action: none; background-color: #000; }
     </style>
 </head>
-<body class="bg-[#0f1012] text-gray-300 antialiased selection:bg-orange-500 selection:text-white overflow-x-hidden md:overflow-hidden" x-data="{ mobileMenu: false }">
+<body class="bg-[#0f1012] text-gray-300 antialiased selection:bg-orange-500 selection:text-white overflow-x-hidden md:overflow-hidden" 
+      x-data="{ mobileMenu: false, openPanel: false, currentTask: {}, newSubtaskTitle: '', newComment: '', isUploading: false, pastedImage: null, showDrawingModal: false, canvas: null, ctx: null, isDrawing: false, canvasColor: '#ff0000',
+      async openTaskPanel(task, sectionTitle = '', parentTitle = '') {
+                this._fillTaskData(task, sectionTitle, parentTitle);
+                this.openPanel = true;
+                try {
+                    const res = await fetch(`{{ url('/subtasks-detail') }}/${task.id}`, { headers: { 'Accept': 'application/json' } });
+                    if (res.ok) {
+                        const freshTask = await res.json();
+                        this._fillTaskData(freshTask, sectionTitle, parentTitle);
+                    }
+                } catch (e) { console.error('Error refreshing task data:', e); }
+            },
+            _fillTaskData(task, sectionTitle, parentTitle) {
+                let projectName = '';
+                if (task.task && task.task.project) projectName = task.task.project.name;
+                else if (task.project) projectName = task.project.name;
+                else projectName = '{{ $project->name ?? '' }}';
+
+                this.currentTask = {
+                    ...task,
+                    project_name: projectName,
+                    section_title: sectionTitle || (task.task ? task.task.title : 'General'),
+                    parent_title: parentTitle || (task.parent ? task.parent.title : ''),
+                    team_member_id: task.team_member_id || '',
+                    team_member_name: task.team_member ? task.team_member.name : null,
+                    due_date: task.due_date ? task.due_date.substring(0, 10) : '',
+                    description: task.description || '',
+                    attachments: task.attachments || [],
+                    comments: (task.comments || []).sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+                };
+                this.newSubtaskTitle = ''; this.newComment = '';
+                this.$nextTick(() => { const dateInput = document.querySelector('input[type=date]'); if (dateInput) dateInput.value = this.currentTask.due_date; });
+            },
+            getRemainingTime(date) {
+                const now = new Date();
+                const due = new Date(date);
+                const diff = due - now;
+                const absDiff = Math.abs(diff);
+                const days = Math.floor(absDiff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((absDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((absDiff % (1000 * 60 * 60)) / (1000 * 60));
+                const timeStr = (days > 0 ? days + 'd ' : '') + hours + 'h ' + minutes + 'm';
+                return diff < 0 ? 'VENCIDA HACE ' + timeStr : 'FALTAN ' + timeStr;
+            },
+            async updateTask() {
+                if(!this.currentTask.id) return;
+                const body = {
+                    title: this.currentTask.title,
+                    description: this.currentTask.description,
+                    due_date: this.currentTask.due_date,
+                    team_member_id: this.currentTask.team_member_id || null,
+                    is_completed: !!this.currentTask.is_completed
+                };
+                return fetch(`{{ url('/subtasks') }}/${this.currentTask.id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    body: JSON.stringify(body)
+                }).then(res => res.json());
+            },
+            async createChildSubtask() {
+                if(!this.newSubtaskTitle || !this.currentTask.id) return;
+                const res = await fetch(`{{ url('/subtasks') }}/${this.currentTask.id}/subtasks`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    body: JSON.stringify({ title: this.newSubtaskTitle })
+                });
+                const data = await res.json();
+                if (!this.currentTask.children) this.currentTask.children = [];
+                this.currentTask.children.push(data);
+                this.newSubtaskTitle = '';
+            },
+            async uploadFile(e) {
+                const file = e.target.files[0];
+                if (!file || !this.currentTask.id) return;
+                this.isUploading = true;
+                const formData = new FormData();
+                formData.append('file', file);
+                try {
+                    const res = await fetch(`{{ url('/subtasks') }}/${this.currentTask.id}/attachments`, {
+                        method: 'POST',
+                        headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+                        body: formData
+                    });
+                    const data = await res.json();
+                    if (!this.currentTask.attachments) this.currentTask.attachments = [];
+                    this.currentTask.attachments.push(data);
+                } catch (e) { console.error(e); } finally { this.isUploading = false; e.target.value = ''; }
+            },
+            async deleteFile(id) {
+                if (!confirm('¿Borrar archivo?')) return;
+                await fetch(`{{ url('/attachments') }}/${id}`, { method: 'DELETE', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' } });
+                this.currentTask.attachments = this.currentTask.attachments.filter(a => a.id !== id);
+            },
+            handlePaste(e) {
+                const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+                for (let index in items) {
+                    const item = items[index];
+                    if (item.kind === 'file' && item.type.includes('image')) {
+                        const blob = item.getAsFile();
+                        const reader = new FileReader();
+                        reader.onload = (event) => { this.pastedImage = event.target.result; this.initCanvas(); };
+                        reader.readAsDataURL(blob);
+                    }
+                }
+            },
+            initCanvas() {
+                this.showDrawingModal = true;
+                this.$nextTick(() => {
+                    this.canvas = document.getElementById('drawingCanvas');
+                    this.ctx = this.canvas.getContext('2d');
+                    const img = new Image();
+                    img.onload = () => {
+                        const maxWidth = window.innerWidth * 0.8;
+                        const maxHeight = window.innerHeight * 0.7;
+                        let width = img.width, height = img.height;
+                        if (width > maxWidth) { height *= maxWidth / width; width = maxWidth; }
+                        if (height > maxHeight) { width *= maxHeight / height; height = maxHeight; }
+                        this.canvas.width = width; this.canvas.height = height;
+                        this.ctx.drawImage(img, 0, 0, width, height);
+                        this.ctx.lineJoin = 'round'; this.ctx.lineCap = 'round'; this.ctx.lineWidth = 4;
+                    };
+                    img.src = this.pastedImage;
+                });
+            },
+            startDrawing(e) {
+                this.isDrawing = true;
+                const pos = this.getMousePos(e);
+                this.ctx.beginPath(); this.ctx.moveTo(pos.x, pos.y);
+            },
+            draw(e) {
+                if (!this.isDrawing) return;
+                const pos = this.getMousePos(e);
+                this.ctx.strokeStyle = this.canvasColor; this.ctx.lineTo(pos.x, pos.y); this.ctx.stroke();
+            },
+            stopDrawing() { this.isDrawing = false; },
+            getMousePos(e) {
+                if (!this.canvas) return {x:0, y:0};
+                const rect = this.canvas.getBoundingClientRect();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                return { x: clientX - rect.left, y: clientY - rect.top };
+            },
+            clearCanvas() { this.initCanvas(); },
+            saveAnnotatedImage() { this.pastedImage = this.canvas.toDataURL('image/png'); this.showDrawingModal = false; },
+            async sendComment() {
+                if (!this.newComment && !this.pastedImage) return;
+                try {
+                    const res = await fetch(`{{ url('/subtasks') }}/${this.currentTask.id}/comments`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                        body: JSON.stringify({ content: this.newComment, image: this.pastedImage })
+                    });
+                    const data = await res.json();
+                    if (!this.currentTask.comments) this.currentTask.comments = [];
+                    this.currentTask.comments.push(data);
+                    this.newComment = ''; this.pastedImage = null;
+                } catch (e) { console.error(e); }
+            }
+      }"
+      @open-task.window="openTaskPanel($event.detail.task, $event.detail.sectionTitle, $event.detail.parentTitle)">
     
+    @stack('scripts')
     <div class="flex h-screen overflow-hidden relative">
         
         <!-- Sidebar -->
@@ -44,7 +210,16 @@
                     <h3 class="px-3 text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-4">Proyectos</h3>
                     <div class="space-y-1">
                         @if(isset($projects))
-                            @foreach($projects as $proj)
+                            @php
+                                $sidebarProjects = $projects;
+                                if(Auth::user()->role === 'colaborador') {
+                                    $teamMemberId = Auth::user()->teamMember ? Auth::user()->teamMember->id : null;
+                                    $sidebarProjects = $projects->filter(function($p) use ($teamMemberId) {
+                                        return $p->tasks->flatMap->subtasks->where('team_member_id', $teamMemberId)->count() > 0;
+                                    });
+                                }
+                            @endphp
+                            @foreach($sidebarProjects as $proj)
                             <a href="{{ route('projects.show', $proj) }}" class="group flex items-center px-3 py-2 text-sm font-medium rounded-xl hover:bg-white/5 transition-all text-gray-400 hover:text-white">
                                 <span class="w-2 h-2 rounded-full bg-orange-500 mr-3 shadow-[0_0_8px_rgba(249,115,22,0.6)]"></span>
                                 {{ $proj->name }}
@@ -52,10 +227,12 @@
                             @endforeach
                         @endif
                         
+                        @if(in_array(Auth::user()->role, ['admin', 'ceo']))
                         <a href="{{ route('projects.create') }}" class="group flex items-center px-3 py-2 text-sm font-bold text-orange-500 hover:text-orange-400 transition-colors mt-4">
                             <i class="fas fa-plus w-6 text-center mr-2 bg-orange-500/10 rounded-lg p-1"></i>
                             Nuevo Proyecto
                         </a>
+                        @endif
                     </div>
                 </div>
 
@@ -77,14 +254,23 @@
             </nav>
 
             <div class="border-t border-white/5 p-4 bg-white/[0.02]">
-                <div class="flex items-center gap-3">
-                    <div class="h-10 w-10 rounded-full bg-gradient-to-br from-orange-500 to-orange-700 flex items-center justify-center text-white font-bold shadow-lg shadow-orange-900/50">
-                        {{ substr(Auth::user()->name ?? 'U', 0, 1) }}
+                <div class="flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                        <div class="h-10 w-10 rounded-full bg-gradient-to-br from-orange-500 to-orange-700 flex items-center justify-center text-white font-bold shadow-lg shadow-orange-900/50">
+                            {{ substr(Auth::user()->name ?? 'U', 0, 1) }}
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-white tracking-tight leading-none">{{ Auth::user()->name ?? 'Usuario' }}</p>
+                            <p class="text-[10px] text-gray-500 mt-1 uppercase tracking-wider">{{ strtoupper(Auth::user()->role ?? 'Invitado') }}</p>
+                        </div>
                     </div>
-                    <div>
-                        <p class="text-sm font-bold text-white tracking-tight leading-none">{{ Auth::user()->name ?? 'Usuario' }}</p>
-                        <p class="text-[10px] text-gray-500 mt-1 uppercase tracking-wider">Admin</p>
-                    </div>
+                    
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="text-gray-500 hover:text-red-500 transition-colors p-2" title="Cerrar Sesión">
+                            <i class="fas fa-power-off"></i>
+                        </button>
+                    </form>
                 </div>
             </div>
         </aside>
@@ -119,5 +305,7 @@
             </div>
         </main>
     </div>
+
+    @include('components.task-panel-content')
 </body>
 </html>
