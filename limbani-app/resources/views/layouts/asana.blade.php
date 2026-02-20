@@ -220,6 +220,8 @@
                         parent_title: parentTitle || (task.parent ? task.parent.title : ''),
                         team_member_id: task.team_member_id || '',
                         team_member_name: task.team_member ? task.team_member.name : null,
+                        team_member_photo: task.team_member ? task.team_member.photo : null,
+                        ai_suggestion: task.ai_suggestion || null,
                         due_date: task.due_date ? task.due_date.substring(0, 16).replace(' ', 'T') : '',
                         description: task.description || '',
                         attachments: task.attachments || [],

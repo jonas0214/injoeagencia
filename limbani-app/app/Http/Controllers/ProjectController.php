@@ -186,4 +186,37 @@ class ProjectController extends Controller
         $project->delete();
         return redirect()->route('dashboard')->with('success', 'Proyecto eliminado correctamente.');
     }
+
+    public function generateMetaStrategy(Project $project)
+    {
+        $metaSection = $project->tasks()->firstOrCreate(['title' => 'PROGRAMACIÓN META ADS'], ['position' => 0]);
+
+        // Simular o llamar a n8n para obtener una estrategia ganadora
+        $strategies = [
+            ['title' => 'REEL: El secreto detrás de ' . $project->name, 'desc' => 'Estrategia de curiosidad. Gancho: 3 segundos. Valor: Beneficio oculto.'],
+            ['title' => 'ESTÁTICO: Testimonios de clientes satisfechos', 'desc' => 'Prueba social. Usar carrusel de capturas de pantalla de WhatsApp.'],
+            ['title' => 'VIDEO: ¿Por qué elegirnos sobre la competencia?', 'desc' => 'Diferenciación competitiva. Mostrar procesos internos.'],
+            ['title' => 'AD: Oferta Irresistible - Solo por tiempo limitado', 'desc' => 'Conversión directa. Escasez y urgencia.'],
+        ];
+
+        foreach ($strategies as $index => $strat) {
+            $metaSection->subtasks()->create([
+                'title' => $strat['title'],
+                'description' => $strat['desc'],
+                'due_date' => now()->addDays($index * 2 + 1)->setHour(9)->setMinute(0),
+                'position' => $index + 10,
+                'ai_suggestion' => 'Sugerencia de IA: Este contenido tiene un potencial de alcance proyectado de +40% para el sector de ' . $project->name . '.'
+            ]);
+        }
+
+        // Señal a n8n
+        try {
+            \Illuminate\Support\Facades\Http::post('https://n8n.srv1317921.hstgr.cloud/webhook-test/generar-estrategia-meta', [
+                'project_id' => $project->id,
+                'project_name' => $project->name,
+            ]);
+        } catch (\Exception $e) {}
+
+        return response()->json(['success' => true]);
+    }
 }

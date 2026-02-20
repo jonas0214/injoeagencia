@@ -31,7 +31,8 @@ Route::middleware('auth')->group(function () {
 
     // 2. Rutas de la Agencia (Proyectos)
     Route::resource('projects', ProjectController::class);
-    
+    Route::post('/projects/{project}/generate-meta-strategy', [ProjectController::class, 'generateMetaStrategy'])->name('projects.generate-meta-strategy');
+
     // 3. Rutas de Tareas
     Route::post('/projects/{project}/tasks', [TaskController::class, 'store'])->name('tasks.store');
     Route::put('/tasks/{task}', [TaskController::class, 'update'])->name('tasks.update');

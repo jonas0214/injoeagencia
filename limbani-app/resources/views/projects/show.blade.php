@@ -172,66 +172,97 @@
 
         <!-- Nueva Sección Meta Ads -->
         <div x-show="currentTab === 'meta'" style="display: none;" class="flex-1 overflow-y-auto custom-scroll p-4 md:p-8">
-            <div class="max-w-6xl mx-auto space-y-8">
-                <div class="flex justify-between items-center bg-orange-500/5 border border-orange-500/10 p-6 rounded-3xl">
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-900 dark:text-white uppercase tracking-tight">Calendario de Contenidos Meta Ads</h3>
-                        <p class="text-xs text-gray-500 mt-1">Gestiona la programación mensual de Facebook e Instagram</p>
+            <div class="max-w-6xl mx-auto space-y-8" x-data="{ isGenerating: false }">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center bg-orange-500/5 border border-orange-500/10 p-8 rounded-[2.5rem] gap-6 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-orange-500/5 rounded-full blur-3xl -mr-20 -mt-20"></div>
+                    <div class="relative z-10">
+                        <h3 class="text-2xl font-black text-gray-900 dark:text-white uppercase tracking-tighter">Planificador Estratégico Meta Ads</h3>
+                        <p class="text-sm text-gray-500 mt-1">Optimiza tu pauta con inteligencia artificial y flujos automáticos</p>
                     </div>
-                    <div class="flex gap-2">
-                        <button class="bg-gray-900 dark:bg-white text-white dark:text-black px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest">
-                            <i class="fas fa-file-export mr-2"></i> Exportar
+                    <div class="flex flex-wrap gap-3 relative z-10">
+                        <button @click="isGenerating = true;
+                                       fetch('{{ url('/projects/'.$project->id.'/generate-meta-strategy') }}', {
+                                           method: 'POST',
+                                           headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' }
+                                       }).then(() => window.location.reload())"
+                                :disabled="isGenerating"
+                                class="bg-orange-500 hover:bg-orange-600 text-black px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all shadow-xl shadow-orange-500/20 disabled:opacity-50 flex items-center gap-2">
+                            <i class="fas" :class="isGenerating ? 'fa-spinner animate-spin' : 'fa-magic'"></i>
+                            <span x-text="isGenerating ? 'Generando...' : 'Generar Estrategia IA'"></span>
+                        </button>
+                        <button class="bg-gray-900 dark:bg-white text-white dark:text-black px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest shadow-lg">
+                            <i class="fas fa-rocket mr-2"></i> Lanzar Campaña
                         </button>
                     </div>
                 </div>
 
                 <!-- Tabla de Programación Meta -->
-                <div class="bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/5 rounded-[2.5rem] overflow-hidden shadow-sm">
-                    <table class="w-full text-left">
+                <div class="bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/5 rounded-[2.5rem] overflow-hidden shadow-sm transition-all">
+                    <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="border-b border-gray-100 dark:border-white/10 bg-gray-50 dark:bg-black/20 text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">
                                 <th class="px-6 py-4">Fecha Pub</th>
-                                <th class="px-6 py-4">Tipo / Formato</th>
-                                <th class="px-6 py-4">Pilar / Tema</th>
-                                <th class="px-6 py-4">Copywriting</th>
-                                <th class="px-6 py-4">Estado Arte</th>
-                                <th class="px-6 py-4 text-right">Inversión</th>
+                                <th class="px-6 py-4">Estrategia Meta</th>
+                                <th class="px-6 py-4">Copywriting / Descripción</th>
+                                <th class="px-6 py-4">Estado / Arte</th>
+                                <th class="px-6 py-4 text-right">Inversión Sugerida</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100 dark:divide-white/5">
                             @php
                                 $metaSection = $project->tasks->where('title', 'PROGRAMACIÓN META ADS')->first();
-                                $metaTasks = $metaSection ? $metaSection->subtasks : collect();
+                                $metaTasks = $metaSection ? $metaSection->subtasks->sortBy('due_date') : collect();
                             @endphp
                             @forelse($metaTasks as $task)
-                            <tr class="group hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors cursor-pointer" @click="openTaskPanel(@js($task), 'META ADS', '')">
-                                <td class="px-6 py-5">
+                            <tr class="group hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-all cursor-pointer border-l-4 border-transparent hover:border-orange-500" @click="openTaskPanel(@js($task), 'META ADS', '')">
+                                <td class="px-6 py-6">
                                     <div class="flex flex-col">
-                                        <span class="text-sm font-bold text-gray-800 dark:text-white">{{ $task->due_date ? $task->due_date->format('d M') : 'Sin fecha' }}</span>
-                                        <span class="text-[9px] text-gray-500 uppercase tracking-tighter">{{ $task->due_date ? $task->due_date->locale('es')->dayName : '--' }}</span>
+                                        <span class="text-sm font-black text-gray-800 dark:text-white">{{ $task->due_date ? $task->due_date->format('d M') : 'Pendiente' }}</span>
+                                        <span class="text-[9px] text-gray-400 dark:text-gray-500 uppercase font-bold">{{ $task->due_date ? $task->due_date->locale('es')->dayName : 'Sin programar' }}</span>
                                     </div>
                                 </td>
-                                <td class="px-6 py-5">
-                                    <span class="px-2.5 py-1 rounded-lg bg-blue-500/10 text-blue-500 text-[9px] font-black uppercase">
-                                        {{ str_contains(strtolower($task->title), 'video') || str_contains(strtolower($task->title), 'reel') ? 'VIDEO / REEL' : 'ESTÁTICO / CARROUSEL' }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-5">
-                                    <p class="text-xs font-medium text-gray-700 dark:text-gray-300">{{ $task->title }}</p>
-                                </td>
-                                <td class="px-6 py-5">
-                                    <p class="text-[10px] text-gray-500 dark:text-gray-400 italic line-clamp-2 truncate max-w-[200px]">{{ $task->description ?? 'Sin descripción de copy' }}</p>
-                                </td>
-                                <td class="px-6 py-5">
-                                    <div class="flex items-center gap-2">
-                                        <div class="w-1.5 h-1.5 rounded-full {{ $task->is_completed ? 'bg-green-500' : 'bg-yellow-500' }}"></div>
-                                        <span class="text-[10px] font-bold {{ $task->is_completed ? 'text-green-600' : 'text-yellow-600' }} uppercase">
-                                            {{ $task->is_completed ? 'Finalizado' : 'En Proceso' }}
+                                <td class="px-6 py-6">
+                                    <div class="space-y-2">
+                                        <span class="px-2 py-0.5 rounded bg-blue-500/10 text-blue-500 text-[8px] font-black uppercase tracking-tighter">
+                                            {{ str_contains(strtolower($task->title), 'video') || str_contains(strtolower($task->title), 'reel') ? 'VIDEO / REEL' : 'ESTÁTICO / CARROUSEL' }}
                                         </span>
+                                        <p class="text-sm font-bold text-gray-700 dark:text-gray-200 leading-tight">{{ $task->title }}</p>
                                     </div>
                                 </td>
-                                <td class="px-6 py-5 text-right font-mono text-xs text-orange-500 font-bold">
-                                    {{ $task->teamMember ? $task->teamMember->name : 'N/A' }}
+                                <td class="px-6 py-6 max-w-xs">
+                                    <div class="space-y-2">
+                                        <p class="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 leading-relaxed">{{ $task->description ?? 'Haz clic para añadir el copy del anuncio...' }}</p>
+                                        @if($task->ai_suggestion)
+                                            <div class="flex items-center gap-1.5 text-orange-500 text-[9px] font-black uppercase tracking-tighter">
+                                                <i class="fas fa-magic animate-pulse"></i> Sugerencia IA Activa
+                                            </div>
+                                        @endif
+                                    </div>
+                                </td>
+                                <td class="px-6 py-6">
+                                    <div class="flex flex-col gap-2">
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-1.5 h-1.5 rounded-full {{ $task->is_completed ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]' : 'bg-yellow-500 shadow-[0_0_8px_rgba(234,179,8,0.5)]' }}"></div>
+                                            <span class="text-[10px] font-black {{ $task->is_completed ? 'text-green-600 dark:text-green-500' : 'text-yellow-600 dark:text-yellow-500' }} uppercase tracking-widest">
+                                                {{ $task->is_completed ? 'Listo para publicar' : 'En producción' }}
+                                            </span>
+                                        </div>
+                                        @if($task->attachments->count() > 0)
+                                            <div class="flex -space-x-1">
+                                                @foreach($task->attachments->take(3) as $att)
+                                                    <div class="w-5 h-5 rounded border border-white/10 bg-gray-800 overflow-hidden">
+                                                        <i class="fas fa-image text-[8px] flex items-center justify-center h-full text-gray-500"></i>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        @endif
+                                    </div>
+                                </td>
+                                <td class="px-6 py-6 text-right font-mono">
+                                    <div class="flex flex-col items-end">
+                                        <span class="text-white bg-gray-900 dark:bg-orange-500/20 px-2 py-0.5 rounded text-[10px] font-black mb-1 leading-none tracking-tighter">${{ number_format($task->position * 5000 + 25000) }}</span>
+                                        <span class="text-[9px] text-gray-400 font-bold uppercase tracking-widest">Presupuesto Diario</span>
+                                    </div>
                                 </td>
                             </tr>
                             @empty

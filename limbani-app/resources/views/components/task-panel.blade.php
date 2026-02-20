@@ -100,6 +100,14 @@
             <textarea x-model="currentTask.description" rows="4" class="w-full bg-gray-50 dark:bg-white/[0.02] border border-gray-200 dark:border-white/5 rounded-xl p-4 text-sm text-gray-700 dark:text-gray-300 placeholder-gray-400 dark:placeholder-gray-600 focus:ring-1 focus:ring-orange-500 transition-all resize-none"></textarea>
         </div>
 
+        <template x-if="currentTask.ai_suggestion">
+            <div class="bg-orange-500/10 border border-orange-500/30 p-6 rounded-2xl relative overflow-hidden">
+                <div class="absolute -right-4 -top-4 text-orange-500/10 text-6xl rotate-12"><i class="fas fa-brain"></i></div>
+                <label class="text-[10px] font-black text-orange-500 uppercase tracking-widest block mb-2">Sugerencia Estratégica IA</label>
+                <p class="text-sm text-orange-100/80 leading-relaxed font-medium" x-text="currentTask.ai_suggestion"></p>
+            </div>
+        </template>
+
         <!-- SUBTAREAS -->
         <div class="space-y-4 pt-6 border-t border-white/5">
             <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Subtareas</label>
@@ -319,6 +327,7 @@
                     team_member_id: task.team_member_id || '',
                     team_member_name: task.team_member ? task.team_member.name : null,
                     team_member_photo: task.team_member ? task.team_member.photo : null,
+                    ai_suggestion: task.ai_suggestion || null,
                     due_date: task.due_date ? task.due_date.substring(0, 10) : '',
                     description: task.description || '',
                     attachments: task.attachments || [],
