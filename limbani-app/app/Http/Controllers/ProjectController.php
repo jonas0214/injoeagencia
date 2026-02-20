@@ -21,9 +21,13 @@ class ProjectController extends Controller
             // Un colaborador solo ve los proyectos donde tiene subtareas asignadas
             $projects = Project::whereHas('tasks.subtasks', function($query) use ($teamMemberId) {
                 $query->where('team_member_id', $teamMemberId);
-            })->with(['tasks.subtasks' => function($query) use ($teamMemberId) {
-                $query->where('team_member_id', $teamMemberId)
-                      ->with(['children', 'teamMember', 'attachments', 'comments.user', 'task', 'parent', 'task.project']);
+            })->with(['tasks' => function($query) use ($teamMemberId) {
+                $query->whereHas('subtasks', function($q) use ($teamMemberId) {
+                    $q->where('team_member_id', $teamMemberId);
+                })->with(['subtasks' => function($q) use ($teamMemberId) {
+                    $q->where('team_member_id', $teamMemberId)
+                      ->with(['children', 'teamMember', 'attachments', 'comments.user', 'task.project', 'parent']);
+                }]);
             }])->latest()->get();
             
             // Solo ve a sus compañeros de equipo de los proyectos en los que participa
@@ -36,8 +40,10 @@ class ProjectController extends Controller
             })->get();
         } else {
             // Administradores y otros roles ven todo
-            $projects = Project::with(['tasks.subtasks' => function($q) {
-                $q->with(['children', 'teamMember', 'attachments', 'comments.user', 'task', 'parent', 'task.project']);
+            $projects = Project::with(['tasks' => function($q) {
+                $q->with(['subtasks' => function($sq) {
+                    $sq->with(['children', 'teamMember', 'attachments', 'comments.user', 'task.project', 'parent']);
+                }]);
             }])->latest()->get();
             $team = \App\Models\TeamMember::all();
         }
@@ -86,8 +92,10 @@ class ProjectController extends Controller
                 }]);
             }]);
         } else {
-            $project->load(['tasks.subtasks' => function($q) {
-                $q->with(['children', 'teamMember', 'attachments', 'comments.user', 'task', 'parent', 'task.project']);
+            $project->load(['tasks' => function($q) {
+                $q->with(['subtasks' => function($sq) {
+                    $sq->with(['children', 'teamMember', 'attachments', 'comments.user', 'task.project', 'parent']);
+                }]);
             }]);
         }
 

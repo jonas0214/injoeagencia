@@ -3,9 +3,15 @@
 @section('content')
     <style>
         body {
-            background: #0f1012 !important;
             min-height: 100vh;
+        }
+        .dark body {
+            background: #0f1012 !important;
             color: white;
+        }
+        body:not(.dark) {
+            background: #f3f4f6 !important;
+            color: #1a1a1a;
         }
         .glass-card {
             background: rgba(255, 255, 255, 0.03);
@@ -19,10 +25,10 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             
             <!-- Header Minimalista -->
-            <div class="mb-8 md:mb-16 flex flex-col md:flex-row justify-between items-start md:items-end border-b border-white/5 pb-8 gap-4">
+            <div class="mb-8 md:mb-16 flex flex-col md:flex-row justify-between items-start md:items-end border-b border-gray-200 dark:border-white/5 pb-8 gap-4">
                 <div>
-                    <h1 class="text-2xl md:text-4xl font-light text-white tracking-wide mb-1">
-                        Gestión de <span class="font-medium text-white">Talento Humano</span>
+                    <h1 class="text-2xl md:text-4xl font-light text-gray-800 dark:text-white tracking-wide mb-1">
+                        Gestión de <span class="font-medium text-gray-900 dark:text-white">Talento Humano</span>
                     </h1>
                     <p class="text-gray-500 text-[10px] md:text-xs font-medium tracking-[0.15em] uppercase">
                         Administra la información de tus colaboradores, cargos y nómina
@@ -31,12 +37,12 @@
             </div>
 
             <!-- Pestañas de Navegación Estilo Asana -->
-            <div class="flex items-center gap-4 md:gap-8 border-b border-white/5 mb-10 text-xs md:text-sm font-medium overflow-x-auto scrollbar-hide whitespace-nowrap">
-                <a href="{{ route('dashboard') }}" class="pb-4 text-gray-500 hover:text-gray-300 transition-colors">
+            <div class="flex items-center gap-4 md:gap-8 border-b border-gray-200 dark:border-white/5 mb-10 text-xs md:text-sm font-medium overflow-x-auto scrollbar-hide whitespace-nowrap">
+                <a href="{{ route('dashboard') }}" class="pb-4 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
                     Proyectos
                 </a>
                 @if(in_array(Auth::user()->role, ['admin', 'ceo', 'rrhh', 'contabilidad']))
-                <button @click="tab = 'team'" :class="tab === 'team' ? 'text-white border-b-2 border-orange-500' : 'text-gray-500 hover:text-gray-300'" class="pb-4 transition-all">
+                <button @click="tab = 'team'" :class="tab === 'team' ? 'text-gray-900 dark:text-white border-b-2 border-orange-500' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'" class="pb-4 transition-all">
                     Equipo & Nómina
                 </button>
                 <button @click="tab = 'attendance'" :class="tab === 'attendance' ? 'text-white border-b-2 border-orange-500' : 'text-gray-500 hover:text-gray-300'" class="pb-4 transition-all flex items-center gap-2">
@@ -48,15 +54,15 @@
                 </a>
             </div>
 
-            <div x-show="tab === 'team'" class="bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-2xl p-4 md:p-8 shadow-2xl transition-all duration-300" :class="showMemberPanel ? 'md:mr-[400px]' : ''">
+            <div x-show="tab === 'team'" class="bg-white dark:bg-white/[0.03] backdrop-blur-md border border-gray-200 dark:border-white/10 rounded-2xl p-4 md:p-8 shadow-sm dark:shadow-2xl transition-all duration-300" :class="showMemberPanel ? 'md:mr-[400px]' : ''">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
                     <div>
-                        <h3 class="text-xl font-light text-white tracking-wide">Colaboradores Activos</h3>
+                        <h3 class="text-xl font-light text-gray-800 dark:text-white tracking-wide">Colaboradores Activos</h3>
                     </div>
                     
                     <!-- Botón para abrir modal (usando AlpineJS simple) -->
                     <div x-data="{ open: false }" class="w-full md:w-auto">
-                        <button @click="open = true" class="w-full md:w-auto bg-[#1a1a1a] hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-full shadow-lg transition flex items-center justify-center gap-2 text-xs md:text-sm uppercase tracking-widest border border-white/10">
+                        <button @click="open = true" class="w-full md:w-auto bg-gray-900 dark:bg-[#1a1a1a] hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-full shadow-lg transition flex items-center justify-center gap-2 text-xs md:text-sm uppercase tracking-widest border border-gray-800 dark:border-white/10">
                             <i class="fas fa-user-plus"></i> Nuevo Colaborador
                         </button>
 
@@ -150,10 +156,10 @@
                         </thead>
                         <tbody class="divide-y divide-white/5">
                             @forelse($team as $member)
-                                <tr onclick="window.open('{{ route('team.show', $member) }}', '_blank')" class="hover:bg-white/[0.05] transition-all group cursor-pointer">
+                                <tr onclick="window.open('{{ route('team.show', $member) }}', '_blank')" class="hover:bg-gray-50 dark:hover:bg-white/[0.05] transition-all group cursor-pointer">
                                     <td class="px-6 py-6 whitespace-nowrap">
                                         <div class="flex items-center">
-                                            <div class="flex-shrink-0 h-10 w-10 border border-white/10 rounded-full overflow-hidden group-hover:scale-110 transition-transform bg-white/5">
+                                            <div class="flex-shrink-0 h-10 w-10 border border-gray-200 dark:border-white/10 rounded-full overflow-hidden group-hover:scale-110 transition-transform bg-gray-50 dark:bg-white/5">
                                                 @if($member->photo)
                                                     <img src="{{ asset('storage/' . $member->photo) }}" alt="" class="w-full h-full object-cover">
                                                 @else
@@ -163,7 +169,7 @@
                                                 @endif
                                             </div>
                                             <div class="ml-4">
-                                                <div class="text-sm font-medium text-white group-hover:text-orange-500 transition-colors">{{ $member->name }}</div>
+                                                <div class="text-sm font-medium text-gray-800 dark:text-white group-hover:text-orange-500 transition-colors">{{ $member->name }}</div>
                                                 <div class="text-[9px] text-gray-500 font-bold uppercase tracking-widest">ID: {{ $member->cedula }}</div>
                                             </div>
                                         </div>
@@ -305,11 +311,11 @@
          x-transition:leave="transform transition ease-in-out duration-300"
          x-transition:leave-start="translate-x-0"
          x-transition:leave-end="translate-x-full"
-         class="fixed inset-y-0 right-0 w-full md:w-[400px] bg-[#1a1a1a]/95 backdrop-blur-xl border-l border-white/10 shadow-2xl z-[60] flex flex-col"
+         class="fixed inset-y-0 right-0 w-full md:w-[400px] bg-white dark:bg-[#1a1a1a]/95 backdrop-blur-xl border-l border-gray-200 dark:border-white/10 shadow-2xl z-[60] flex flex-col"
          style="display: none;">
         
         <!-- Header Panel -->
-        <div class="px-8 py-6 border-b border-white/5 flex justify-between items-center bg-[#1a1a1a]">
+        <div class="px-8 py-6 border-b border-gray-100 dark:border-white/5 flex justify-between items-center bg-gray-50 dark:bg-[#1a1a1a]">
             <h2 class="text-sm font-bold text-gray-500 uppercase tracking-[0.2em]">Detalle del Perfil</h2>
             <button @click="showMemberPanel = false" class="text-gray-500 hover:text-white transition-colors">
                 <i class="fas fa-times text-lg"></i>
@@ -330,7 +336,7 @@
                     </template>
                 </div>
                 <div>
-                    <h3 class="text-2xl font-medium text-white" x-text="activeMember.name"></h3>
+                    <h3 class="text-2xl font-medium text-gray-900 dark:text-white" x-text="activeMember.name"></h3>
                     <p class="text-orange-500 text-xs font-bold uppercase tracking-widest mt-1" x-text="activeMember.position"></p>
                 </div>
             </div>
@@ -342,11 +348,11 @@
                     <div class="grid grid-cols-1 gap-3">
                         <div class="bg-white/5 rounded-xl p-4 border border-white/5">
                             <p class="text-[10px] text-gray-500 uppercase font-bold mb-1">Correo Electrónico</p>
-                            <p class="text-sm text-gray-200" x-text="activeMember.email || 'No registrado'"></p>
+                            <p class="text-sm text-gray-700 dark:text-gray-200" x-text="activeMember.email || 'No registrado'"></p>
                         </div>
-                        <div class="bg-white/5 rounded-xl p-4 border border-white/5">
+                        <div class="bg-gray-50 dark:bg-white/5 rounded-xl p-4 border border-gray-200 dark:border-white/5">
                             <p class="text-[10px] text-gray-500 uppercase font-bold mb-1">Teléfono Móvil</p>
-                            <p class="text-sm text-gray-200" x-text="activeMember.phone"></p>
+                            <p class="text-sm text-gray-700 dark:text-gray-200" x-text="activeMember.phone"></p>
                         </div>
                     </div>
                 </div>

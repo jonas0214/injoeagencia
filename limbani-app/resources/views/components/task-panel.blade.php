@@ -6,10 +6,10 @@
      x-transition:leave="transition ease-in duration-200"
      x-transition:leave-start="translate-x-0"
      x-transition:leave-end="translate-x-full"
-     class="fixed inset-y-0 right-0 w-full md:w-[650px] bg-[#1a1a1a] border-l border-white/10 shadow-2xl z-[100] flex flex-col" 
+     class="fixed inset-y-0 right-0 w-full md:w-[650px] bg-white dark:bg-[#1a1a1a] border-l border-gray-200 dark:border-white/10 shadow-2xl z-[100] flex flex-col"
      style="display: none;">
     
-    <div class="px-6 py-3 border-b border-white/5 flex justify-between items-center bg-[#1a1a1a]">
+    <div class="px-6 py-3 border-b border-gray-100 dark:border-white/5 flex justify-between items-center bg-gray-50 dark:bg-[#1a1a1a]">
         <div class="flex items-center gap-4">
             <button @click="currentTask.is_completed = !currentTask.is_completed; updateTask().then(() => window.location.reload())" class="flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all text-[10px] font-bold uppercase tracking-widest" :class="currentTask.is_completed ? 'bg-green-500/10 border-green-500/50 text-green-500' : 'bg-white/5 border-white/10 text-gray-400'">
                 <i class="fas fa-check-circle"></i><span x-text="currentTask.is_completed ? 'Finalizada' : 'Marcar Finalizada'"></span>
@@ -38,14 +38,14 @@
     </div>
 
     <div class="flex-1 overflow-y-auto custom-scroll p-10 space-y-10">
-        <textarea x-model="currentTask.title" rows="1" class="w-full bg-transparent border-none text-[32px] font-semibold text-white focus:ring-0 p-0 resize-none leading-tight tracking-tight"></textarea>
+        <textarea x-model="currentTask.title" rows="1" class="w-full bg-transparent border-none text-[32px] font-semibold text-gray-900 dark:text-white focus:ring-0 p-0 resize-none leading-tight tracking-tight"></textarea>
         
         <div class="grid grid-cols-1 gap-6 max-w-md">
             <div class="flex items-center gap-12">
                 <label class="w-32 text-xs font-medium text-gray-500 uppercase tracking-wider">Responsable</label>
                 <div class="flex-1">
                     @if(Auth::user()->role === 'colaborador')
-                        <div class="flex items-center gap-2 px-2 py-1.5 bg-white/5 border border-white/10 rounded-lg">
+                        <div class="flex items-center gap-2 px-2 py-1.5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg">
                             <template x-if="currentTask.team_member_photo">
                                 <img :src="'/storage/' + currentTask.team_member_photo" class="w-5 h-5 rounded-full object-cover border border-white/10">
                             </template>
@@ -54,7 +54,7 @@
                                     <span x-text="currentTask.team_member_name ? currentTask.team_member_name.substring(0, 1) : '?'"></span>
                                 </div>
                             </template>
-                            <span class="text-sm text-gray-300" x-text="currentTask.team_member_name || 'Sin asignar'"></span>
+                            <span class="text-sm text-gray-700 dark:text-gray-300" x-text="currentTask.team_member_name || 'Sin asignar'"></span>
                         </div>
                     @else
                         <form @submit.prevent="updateTask()">
@@ -62,7 +62,7 @@
                                 name="team_member_id"
                                 x-model="currentTask.team_member_id"
                                 @change="updateTask()"
-                                class="w-full bg-[#1a1a1a] border border-white/10 rounded-lg text-sm text-gray-300 focus:ring-1 focus:ring-orange-500 outline-none p-2"
+                                class="w-full bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/10 rounded-lg text-sm text-gray-700 dark:text-gray-300 focus:ring-1 focus:ring-orange-500 outline-none p-2"
                             >
                                 <option value="">Sin asignar</option>
                                 @foreach(\App\Models\TeamMember::orderBy('name')->get() as $m)
@@ -80,12 +80,12 @@
                     @if(Auth::user()->role === 'colaborador')
                         <div class="flex items-center gap-2 px-1 py-1">
                             <i class="far fa-calendar-alt text-gray-500"></i>
-                            <span class="text-sm text-gray-300" x-text="currentTask.due_date ? new Date(currentTask.due_date).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' }) : 'Sin fecha'"></span>
+                            <span class="text-sm text-gray-700 dark:text-gray-300" x-text="currentTask.due_date ? new Date(currentTask.due_date).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' }) : 'Sin fecha'"></span>
                         </div>
                     @else
                         <div class="relative flex items-center group">
                             <i class="far fa-calendar-alt absolute left-0 text-gray-500 group-hover:text-orange-500 transition-colors"></i>
-                            <input type="date" x-model="currentTask.due_date" class="bg-transparent border-none pl-8 text-sm text-gray-300 focus:ring-0 p-0 cursor-pointer hover:text-white transition-colors">
+                            <input type="date" x-model="currentTask.due_date" class="bg-transparent border-none pl-8 text-sm text-gray-700 dark:text-gray-300 focus:ring-0 p-0 cursor-pointer hover:text-black dark:hover:text-white transition-colors">
                         </div>
                     @endif
                     <template x-if="currentTask.due_date">
@@ -97,7 +97,7 @@
 
         <div class="space-y-3">
             <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Descripción</label>
-            <textarea x-model="currentTask.description" rows="4" class="w-full bg-white/[0.02] border border-white/5 rounded-xl p-4 text-sm text-gray-300 placeholder-gray-600 focus:ring-1 focus:ring-orange-500 transition-all resize-none"></textarea>
+            <textarea x-model="currentTask.description" rows="4" class="w-full bg-gray-50 dark:bg-white/[0.02] border border-gray-200 dark:border-white/5 rounded-xl p-4 text-sm text-gray-700 dark:text-gray-300 placeholder-gray-400 dark:placeholder-gray-600 focus:ring-1 focus:ring-orange-500 transition-all resize-none"></textarea>
         </div>
 
         <!-- SUBTAREAS -->
@@ -105,11 +105,11 @@
             <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Subtareas</label>
             <div class="space-y-2">
                 <template x-for="child in (currentTask.children || [])" :key="child.id">
-                    <div class="group flex items-center gap-3 p-2 rounded-lg bg-white/[0.02] border border-white/5 hover:border-white/10 transition-all">
+                    <div class="group flex items-center gap-3 p-2 rounded-lg bg-gray-50 dark:bg-white/[0.02] border border-gray-100 dark:border-white/5 hover:border-gray-200 dark:hover:border-white/10 transition-all">
                         <input type="checkbox" :checked="child.is_completed" @change="fetch('{{ url('/subtasks') }}/'+child.id, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: JSON.stringify({ is_completed: $event.target.checked }) })" class="w-4 h-4 border-gray-600 rounded bg-transparent checked:bg-green-500">
                         
                         <div class="flex-1 flex flex-col min-w-0">
-                            <input type="text" :value="child.title" @change="fetch('{{ url('/subtasks') }}/'+child.id, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: JSON.stringify({ title: $event.target.value }) })" class="bg-transparent border-none text-sm text-gray-300 focus:ring-0 p-0 w-full" :class="child.is_completed ? 'line-through opacity-40' : ''">
+                            <input type="text" :value="child.title" @change="fetch('{{ url('/subtasks') }}/'+child.id, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: JSON.stringify({ title: $event.target.value }) })" class="bg-transparent border-none text-sm text-gray-700 dark:text-gray-300 focus:ring-0 p-0 w-full" :class="child.is_completed ? 'line-through opacity-40' : ''">
                             
                             <div class="flex items-center gap-4 mt-1">
                                 @if(Auth::user()->role === 'colaborador')
@@ -168,7 +168,7 @@
             
             <div class="flex flex-wrap gap-4">
                 <template x-for="file in (currentTask.attachments || [])" :key="file.id">
-                    <div class="group relative w-24 h-24 rounded-xl border border-white/10 bg-white/5 overflow-hidden">
+                    <div class="group relative w-24 h-24 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 overflow-hidden shadow-sm">
                         <template x-if="file.file_type === 'image'">
                             <img :src="'{{ asset('storage') }}/' + file.file_path" class="w-full h-full object-cover">
                         </template>
@@ -204,12 +204,12 @@
                         <template x-if="!(comment.user && comment.user.team_member && comment.user.team_member.photo)">
                             <div class="w-8 h-8 rounded-full bg-gray-800 border border-white/5 flex items-center justify-center text-[10px] font-bold text-gray-400" x-text="comment.user ? comment.user.name.substring(0, 1) : '?'"></div>
                         </template>
-                        <div class="flex-1 bg-white/5 rounded-2xl p-3 border border-white/5">
+                        <div class="flex-1 bg-gray-50 dark:bg-white/5 rounded-2xl p-3 border border-gray-200 dark:border-white/5">
                             <div class="flex justify-between items-center mb-1.5">
                                 <span class="text-[13px] font-bold text-orange-500" x-text="comment.user ? comment.user.name : 'Usuario'"></span>
                                 <span class="text-[10px] text-gray-500 font-medium" x-text="new Date(comment.created_at).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })"></span>
                             </div>
-                            <p class="text-[14px] text-gray-300 leading-[1.6] mb-3" x-text="comment.content"></p>
+                            <p class="text-[14px] text-gray-700 dark:text-gray-300 leading-[1.6] mb-3" x-text="comment.content"></p>
                             <template x-if="comment.image_path">
                                 <div class="rounded-lg overflow-hidden border border-white/5 bg-black/20">
                                     <img :src="'{{ asset('storage') }}/' + comment.image_path" class="max-w-full h-auto cursor-zoom-in" @click="window.open('{{ asset('storage') }}/' + comment.image_path, '_blank')">
@@ -240,7 +240,7 @@
                             @keydown.enter.prevent="sendComment()"
                             @paste="handlePaste($event)"
                             placeholder="Escribe un comentario o pega una captura (Ctrl+V)..."
-                            class="w-full bg-white/5 border border-white/10 rounded-2xl p-3 text-xs text-gray-300 focus:ring-1 focus:ring-orange-500 outline-none resize-none"
+                            class="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl p-3 text-xs text-gray-700 dark:text-gray-300 focus:ring-1 focus:ring-orange-500 outline-none resize-none"
                             rows="2"
                         ></textarea>
                         <div class="absolute bottom-2 right-3 text-[9px] text-gray-600">Enter para enviar | Ctrl+V para capturas</div>

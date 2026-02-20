@@ -59,7 +59,7 @@ class SubtaskController extends Controller
         if ($request->wantsJson()) {
             return response()->json([
                 'message' => 'Guardado correctamente',
-                'subtask' => $subtask->load('teamMember')
+                'subtask' => $subtask->load(['children', 'teamMember', 'attachments', 'comments.user', 'task.project', 'parent'])
             ]);
         }
 

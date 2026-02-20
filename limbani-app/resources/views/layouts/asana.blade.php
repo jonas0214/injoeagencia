@@ -11,6 +11,22 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            bg: '#0f1012',
+                            sidebar: '#0a0a0a',
+                            card: 'rgba(255, 255, 255, 0.03)',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <!-- Alpine.js Plugins -->
     <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
     <!-- Alpine.js Core -->
@@ -27,8 +43,9 @@
         #drawingCanvas { cursor: crosshair; touch-action: none; background-color: #000; }
     </style>
 </head>
-<body class="bg-[#0f1012] text-gray-300 antialiased selection:bg-orange-500 selection:text-white overflow-x-hidden md:overflow-hidden"
+<body class="bg-white dark:bg-[#0f1012] text-gray-800 dark:text-gray-300 antialiased selection:bg-orange-500 selection:text-white overflow-x-hidden md:overflow-hidden transition-colors duration-300"
       x-data="asanaHandler()"
+      :class="darkMode ? 'dark' : ''"
       @open-task.window="openTaskPanel($event.detail.task, $event.detail.sectionTitle, $event.detail.parentTitle)">
     
     @stack('scripts')
@@ -37,17 +54,30 @@
         <!-- Sidebar -->
         <aside
             :class="mobileMenu ? 'translate-x-0' : '-translate-x-full md:translate-x-0'"
-            class="fixed md:relative w-64 h-full bg-[#0a0a0a] border-r border-white/5 text-gray-400 flex flex-col flex-shrink-0 transition-transform duration-300 ease-in-out z-50">
+            class="fixed md:relative w-64 h-full bg-gray-50 dark:bg-[#0a0a0a] border-r border-black/5 dark:border-white/5 text-gray-500 dark:text-gray-400 flex flex-col flex-shrink-0 transition-transform duration-300 ease-in-out z-50 shadow-xl dark:shadow-none">
             
-            <div class="h-20 flex items-center justify-between px-8 border-b border-white/5">
-                <span class="text-white font-black text-2xl tracking-tighter">LIMBANI<span class="text-orange-500">.</span></span>
-                <button @click="mobileMenu = false" class="md:hidden text-gray-500 hover:text-white">
+            <div class="h-20 flex items-center justify-between px-8 border-b border-black/5 dark:border-white/5">
+                <span class="text-gray-900 dark:text-white font-black text-2xl tracking-tighter">LIMBANI<span class="text-orange-500">.</span></span>
+                <button @click="mobileMenu = false" class="md:hidden text-gray-500 hover:text-gray-900 dark:hover:text-white">
                     <i class="fas fa-times text-xl"></i>
                 </button>
             </div>
 
             <nav class="flex-1 px-4 py-6 space-y-8 overflow-y-auto">
                 
+                <!-- Toggle Dark Mode -->
+                <div class="px-3">
+                    <button @click="toggleDarkMode()" class="w-full flex items-center justify-between p-3 rounded-xl bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-400 hover:text-orange-500 transition-all border border-transparent dark:border-white/5 hover:border-orange-500/30">
+                        <div class="flex items-center gap-3">
+                            <i class="fas" :class="darkMode ? 'fa-moon' : 'fa-sun'"></i>
+                            <span class="text-xs font-bold uppercase tracking-widest" x-text="darkMode ? 'Modo Oscuro' : 'Modo Claro'"></span>
+                        </div>
+                        <div class="w-8 h-4 bg-gray-300 dark:bg-gray-700 rounded-full relative transition-colors">
+                            <div class="absolute top-1 left-1 w-2 h-2 rounded-full bg-white transition-transform duration-300" :class="darkMode ? 'translate-x-4 bg-orange-500' : 'translate-x-0 bg-gray-500'"></div>
+                        </div>
+                    </button>
+                </div>
+
                 <div>
                     <h3 class="px-3 text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-4">Proyectos</h3>
                     <div class="space-y-1">
@@ -62,7 +92,7 @@
                                 }
                             @endphp
                             @foreach($sidebarProjects as $proj)
-                            <a href="{{ route('projects.show', $proj) }}" class="group flex items-center px-3 py-2 text-sm font-medium rounded-xl hover:bg-white/5 transition-all text-gray-400 hover:text-white">
+                            <a href="{{ route('projects.show', $proj) }}" class="group flex items-center px-3 py-2 text-sm font-medium rounded-xl hover:bg-white dark:hover:bg-white/5 transition-all text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
                                 <span class="w-2 h-2 rounded-full bg-orange-500 mr-3 shadow-[0_0_8px_rgba(249,115,22,0.6)]"></span>
                                 {{ $proj->name }}
                             </a>
@@ -99,7 +129,7 @@
                 </div>
             </nav>
 
-            <div class="border-t border-white/5 p-4 bg-white/[0.02]">
+            <div class="border-t border-black/5 dark:border-white/5 p-4 bg-gray-100 dark:bg-white/[0.02]">
                 <div class="flex items-center justify-between gap-3">
                     <div class="flex items-center gap-3">
                         @if(Auth::user()->teamMember && Auth::user()->teamMember->photo)
@@ -110,7 +140,7 @@
                             </div>
                         @endif
                         <div>
-                            <p class="text-sm font-bold text-white tracking-tight leading-none">{{ Auth::user()->name ?? 'Usuario' }}</p>
+                            <p class="text-sm font-bold text-gray-900 dark:text-white tracking-tight leading-none">{{ Auth::user()->name ?? 'Usuario' }}</p>
                             <p class="text-[10px] text-gray-500 mt-1 uppercase tracking-wider">{{ strtoupper(Auth::user()->role ?? 'Invitado') }}</p>
                         </div>
                     </div>
@@ -135,20 +165,20 @@
             x-transition:leave="transition opacity-ease-in duration-200"
             x-transition:leave-start="opacity-100"
             x-transition:leave-end="opacity-0"
-            class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden"
+            class="fixed inset-0 bg-black/20 dark:bg-black/60 backdrop-blur-sm z-40 md:hidden"
             style="display: none;">
         </div>
 
-        <main class="flex-1 overflow-y-auto bg-[#0f1012] focus:outline-none relative w-full">
+        <main class="flex-1 overflow-y-auto bg-gray-50 dark:bg-[#0f1012] focus:outline-none relative w-full transition-colors duration-300">
             <!-- Mobile Header -->
-            <div class="md:hidden h-16 bg-[#0a0a0a] border-b border-white/5 flex items-center justify-between px-6 sticky top-0 z-30">
-                <span class="text-white font-black text-xl tracking-tighter">LIMBANI<span class="text-orange-500">.</span></span>
+            <div class="md:hidden h-16 bg-gray-50 dark:bg-[#0a0a0a] border-b border-black/5 dark:border-white/5 flex items-center justify-between px-6 sticky top-0 z-30">
+                <span class="text-gray-900 dark:text-white font-black text-xl tracking-tighter">LIMBANI<span class="text-orange-500">.</span></span>
                 <button @click="mobileMenu = true" class="text-gray-400 hover:text-white p-2">
                     <i class="fas fa-bars text-xl"></i>
                 </button>
             </div>
 
-            <div class="fixed top-0 left-0 md:left-64 w-full h-full bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-orange-900/20 via-[#0f1012] to-[#0f1012] pointer-events-none z-0"></div>
+            <div class="fixed top-0 left-0 md:left-64 w-full h-full bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-orange-500/10 dark:from-orange-900/20 via-transparent dark:via-[#0f1012] to-transparent dark:to-[#0f1012] pointer-events-none z-0"></div>
             
             <div class="relative z-10">
                 @yield('content')
@@ -161,6 +191,11 @@
         document.addEventListener('alpine:init', () => {
             Alpine.data('asanaHandler', () => ({
                 mobileMenu: false, openPanel: false, currentTask: {}, newSubtaskTitle: '', newComment: '', isUploading: false, pastedImage: null, showDrawingModal: false, canvas: null, ctx: null, isDrawing: false, canvasColor: '#ff0000',
+                darkMode: localStorage.getItem('darkMode') === 'true',
+                toggleDarkMode() {
+                    this.darkMode = !this.darkMode;
+                    localStorage.setItem('darkMode', this.darkMode);
+                },
                 async openTaskPanel(task, sectionTitle = '', parentTitle = '') {
                     this._fillTaskData(task, sectionTitle, parentTitle);
                     this.openPanel = true;

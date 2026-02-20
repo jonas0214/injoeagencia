@@ -18,7 +18,7 @@
         <h3 class="text-xl md:text-2xl font-light text-white tracking-wide">Proyectos Activos</h3>
         <p class="text-[10px] text-gray-500 uppercase tracking-widest mt-1">Supervisa el progreso de tus campañas en tiempo real</p>
     </div>
-    <a href="{{ route('projects.create') }}" class="w-full md:w-auto bg-[#1a1a1a] hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-full shadow-lg transition flex items-center justify-center gap-2 text-xs uppercase tracking-widest border border-white/10">
+    <a href="{{ route('projects.create') }}" class="w-full md:w-auto bg-gray-900 dark:bg-[#1a1a1a] hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-full shadow-lg transition flex items-center justify-center gap-2 text-xs uppercase tracking-widest border border-gray-800 dark:border-white/10">
         <i class="fas fa-plus"></i> Nuevo Proyecto
     </a>
 </div>
@@ -30,7 +30,7 @@
 @else
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         @foreach($projects as $project)
-            <div class="group relative bg-[#1a1a1a] border border-white/5 rounded-[2rem] p-6 hover:border-orange-500/30 transition-all duration-500 hover:shadow-2xl hover:shadow-orange-500/10 overflow-hidden">
+            <div class="group relative bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-6 hover:border-orange-500/30 transition-all duration-500 shadow-sm hover:shadow-2xl hover:shadow-orange-500/10 overflow-hidden">
                 <!-- Decoración -->
                 <div class="absolute top-0 right-0 w-24 h-24 bg-orange-500/5 rounded-full blur-3xl group-hover:bg-orange-500/10 transition-colors"></div>
 
@@ -44,7 +44,7 @@
                     </div>
                 </div>
 
-                <h4 class="text-xl font-bold text-white mb-2 group-hover:text-orange-500 transition-colors">
+                <h4 class="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-orange-500 transition-colors">
                     <a href="{{ route('projects.show', $project) }}" class="after:absolute after:inset-0">{{ $project->name }}</a>
                 </h4>
                 
@@ -61,8 +61,8 @@
                 <!-- Barra de Progreso -->
                 <div class="space-y-3 mb-6">
                     <div class="flex justify-between text-[10px] font-bold uppercase tracking-widest">
-                        <span class="text-gray-600">Progreso</span>
-                        <span class="text-white">{{ $percent }}%</span>
+                        <span class="text-gray-500 dark:text-gray-600">Progreso</span>
+                        <span class="text-gray-900 dark:text-white">{{ $percent }}%</span>
                     </div>
                     <div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
                         <div class="h-full bg-gradient-to-r from-orange-600 to-orange-400 transition-all duration-1000" style="width: {{ $percent }}%"></div>

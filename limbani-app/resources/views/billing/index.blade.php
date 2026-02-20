@@ -3,9 +3,9 @@
 @section('content')
 <div class="max-w-[1600px] mx-auto px-8 py-12" x-data="billingHandler()">
     
-    <div class="mb-12 border-b border-white/5 pb-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
+    <div class="mb-12 border-b border-gray-200 dark:border-white/5 pb-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-            <h1 class="text-4xl font-light text-white tracking-wide mb-1">Cuentas de <span class="font-medium text-white">Cobro</span></h1>
+            <h1 class="text-4xl font-light text-gray-800 dark:text-white tracking-wide mb-1">Cuentas de <span class="font-medium text-gray-900 dark:text-white">Cobro</span></h1>
             <p class="text-gray-500 text-xs font-medium tracking-[0.15em] uppercase">Genera tu cobro seleccionando tareas finalizadas y pendientes</p>
         </div>
         @if(Auth::user()->role === 'colaborador')
@@ -17,9 +17,9 @@
     </div>
 
     <!-- Pestañas -->
-    <div class="flex items-center gap-8 border-b border-white/5 mb-10 text-sm font-medium">
-        <a href="{{ route('dashboard') }}" class="pb-4 text-gray-500 hover:text-gray-300 transition-colors">Proyectos</a>
-        <a href="{{ route('billing.index') }}" class="pb-4 text-white border-b-2 border-orange-500">Cuentas de Cobro</a>
+    <div class="flex items-center gap-8 border-b border-gray-200 dark:border-white/5 mb-10 text-sm font-medium">
+        <a href="{{ route('dashboard') }}" class="pb-4 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">Proyectos</a>
+        <a href="{{ route('billing.index') }}" class="pb-4 text-gray-900 dark:text-white border-b-2 border-orange-500">Cuentas de Cobro</a>
     </div>
 
     @if(session('success'))
@@ -34,7 +34,7 @@
         <div class="lg:col-span-8 space-y-8">
             
             @if(Auth::user()->role === 'colaborador')
-            <div class="bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-2xl p-8"
+            <div class="bg-white dark:bg-white/[0.03] backdrop-blur-md border border-gray-200 dark:border-white/10 rounded-2xl p-8 shadow-sm dark:shadow-none"
                  x-show="showGenerator"
                  x-transition:enter="transition ease-out duration-300"
                  x-transition:enter-start="opacity-0 transform -translate-y-4"
@@ -42,7 +42,7 @@
                 
                 @if(isset($availableTasks) && $availableTasks->count() > 0)
                 <div class="flex items-center justify-between mb-2">
-                    <h3 class="text-lg font-medium text-white">Generar Nueva Cuenta de Cobro</h3>
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-white">Generar Nueva Cuenta de Cobro</h3>
                     <div class="flex items-center gap-2">
                         <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
                         <span class="text-[10px] text-green-500 font-bold uppercase tracking-widest">Sistema de Cobros Activo</span>
@@ -58,7 +58,7 @@
                             $isLate = $task->due_date && $task->due_date->isPast() && !$task->is_completed;
                         @endphp
                         <label class="flex items-center gap-4 p-4 rounded-2xl transition-all border cursor-pointer
-                            {{ $isLate ? 'bg-red-500/5 border-red-500/20 opacity-80' : ($task->is_approved ? 'bg-green-500/5 border-green-500/20 hover:bg-green-500/10' : ($task->is_completed ? 'bg-white/5 border-white/5 hover:bg-white/10' : 'bg-orange-500/5 border-orange-500/10 opacity-70')) }}">
+                            {{ $isLate ? 'bg-red-500/5 border-red-500/20 opacity-80' : ($task->is_approved ? 'bg-green-500/5 border-green-500/20 hover:bg-green-500/10' : ($task->is_completed ? 'bg-gray-50 dark:bg-white/5 border-gray-100 dark:border-white/5 hover:bg-gray-100 dark:hover:bg-white/10' : 'bg-orange-500/5 border-orange-500/10 opacity-70')) }}">
                             
                             <div class="flex items-center justify-center w-4 h-4">
                                 <input type="checkbox" name="task_ids[]" value="{{ $task->id }}"
@@ -72,7 +72,7 @@
                             </div>
 
                             <div class="flex-1">
-                                <p class="text-sm font-medium {{ ($task->is_approved || $isLate) ? 'text-white' : 'text-gray-400' }} {{ $isLate ? 'line-through' : '' }}">{{ $task->title }}</p>
+                                <p class="text-sm font-medium {{ ($task->is_approved || $isLate) ? 'text-gray-800 dark:text-white' : 'text-gray-500 dark:text-gray-400' }} {{ $isLate ? 'line-through' : '' }}">{{ $task->title }}</p>
                                 <p class="text-[9px] text-gray-600 uppercase tracking-widest">{{ $task->task->project->name ?? 'General' }}</p>
                             </div>
 
@@ -94,11 +94,11 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-white/5">
                         <div class="space-y-2">
                             <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Valor Total a Cobrar ($)</label>
-                            <input type="number" name="amount" x-model="amount" required step="0.01" placeholder="0.00" class="w-full bg-[#111] border border-white/10 rounded-xl p-4 text-sm text-white focus:ring-1 focus:ring-orange-500 outline-none">
+                            <input type="number" name="amount" x-model="amount" required step="0.01" placeholder="0.00" class="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-white/10 rounded-xl p-4 text-sm text-gray-900 dark:text-white focus:ring-1 focus:ring-orange-500 outline-none">
                         </div>
                         <div class="space-y-2">
                             <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Concepto / Notas</label>
-                            <input type="text" name="notes" x-model="notes" placeholder="Ej: Servicios profesionales mes actual" class="w-full bg-[#111] border border-white/10 rounded-xl p-4 text-sm text-white focus:ring-1 focus:ring-orange-500 outline-none">
+                            <input type="text" name="notes" x-model="notes" placeholder="Ej: Servicios profesionales mes actual" class="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-white/10 rounded-xl p-4 text-sm text-gray-900 dark:text-white focus:ring-1 focus:ring-orange-500 outline-none">
                         </div>
                     </div>
 
@@ -243,8 +243,8 @@
             </div>
             @endif
 
-            <div class="bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-2xl p-8">
-                <h3 class="text-lg font-medium text-white mb-6">Historial de Cuentas</h3>
+            <div class="bg-white dark:bg-white/[0.03] backdrop-blur-md border border-gray-200 dark:border-white/10 rounded-2xl p-8 shadow-sm dark:shadow-none">
+                <h3 class="text-lg font-medium text-gray-800 dark:text-white mb-6">Historial de Cuentas</h3>
                 <div class="overflow-x-auto">
                     <table class="w-full">
                         <thead>
@@ -286,7 +286,7 @@
                                 <td class="py-4 text-sm text-gray-300">{{ $b->teamMember->name }}</td>
                                 @endif
                                 <td class="py-4 text-xs text-gray-500">{{ $b->billed_at->format('d/m/Y') }}</td>
-                                <td class="py-4 text-sm font-black text-white">
+                                <td class="py-4 text-sm font-black text-gray-900 dark:text-white">
                                     <div class="flex flex-col items-end">
                                         <span>${{ number_format($b->amount, 2) }}</span>
                                         @if($b->discount > 0)
@@ -339,17 +339,17 @@
         <div class="lg:col-span-4 space-y-8">
             <div class="bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-2xl p-8 overflow-hidden relative">
                 <div class="absolute -top-10 -right-10 w-32 h-32 bg-orange-600/5 rounded-full blur-3xl"></div>
-                <h3 class="text-sm font-medium text-white uppercase tracking-[0.2em] mb-8 relative z-10">Resumen Financiero</h3>
+                <h3 class="text-sm font-medium text-gray-800 dark:text-white uppercase tracking-[0.2em] mb-8 relative z-10">Resumen Financiero</h3>
                 <div class="space-y-6 relative z-10">
                     <div class="p-6 rounded-2xl bg-green-500/5 border border-green-500/10 hover:bg-green-500/10 transition-colors">
                         <p class="text-[9px] text-gray-500 uppercase font-black tracking-widest mb-2">Total Cobrado (Pagado)</p>
-                        <p class="text-3xl font-light text-white leading-none">
+                        <p class="text-3xl font-light text-gray-900 dark:text-white leading-none">
                             <span class="text-green-500 text-sm font-bold mr-1">$</span>{{ number_format($billings->where('status', 'paid')->sum('amount'), 2) }}
                         </p>
                     </div>
                     <div class="p-6 rounded-2xl bg-yellow-500/5 border border-yellow-500/10 hover:bg-yellow-500/10 transition-colors">
                         <p class="text-[9px] text-gray-500 uppercase font-black tracking-widest mb-2">Pendiente por Recibir</p>
-                        <p class="text-3xl font-light text-white leading-none">
+                        <p class="text-3xl font-light text-gray-900 dark:text-white leading-none">
                             <span class="text-yellow-500 text-sm font-bold mr-1">$</span>{{ number_format($billings->where('status', 'pending')->sum('amount'), 2) }}
                         </p>
                     </div>

@@ -3,14 +3,25 @@
 @section('content')
 <style>
     body {
-        background: #0f1012 !important;
         min-height: 100vh;
+    }
+    .dark body {
+        background: #0f1012 !important;
         color: white;
+    }
+    body:not(.dark) {
+        background: #f3f4f6 !important;
+        color: #1a1a1a;
     }
     .attendance-card {
         background: rgba(255, 255, 255, 0.03);
         backdrop-filter: blur(20px);
         border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    body:not(.dark) .attendance-card {
+        background: white;
+        border-color: #e5e7eb;
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
     }
     .status-in { color: #22c55e; }
     .status-out { color: #f97316; }
@@ -21,9 +32,9 @@
     <div class="flex justify-between items-end mb-12">
         <div>
             <span class="text-orange-500 text-xs font-black uppercase tracking-[0.4em] mb-4 block">Reportes Diarios</span>
-            <h1 class="text-3xl font-black text-white uppercase italic tracking-tighter">Historial de Asistencia<span class="text-orange-500 not-italic">.</span></h1>
+            <h1 class="text-3xl font-black text-gray-900 dark:text-white uppercase italic tracking-tighter">Historial de Asistencia<span class="text-orange-500 not-italic">.</span></h1>
         </div>
-        <a href="{{ route('attendance.scanner') }}" class="px-6 py-3 bg-white text-black font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-gray-200 transition-all flex items-center gap-2">
+        <a href="{{ route('attendance.scanner') }}" class="px-6 py-3 bg-gray-900 dark:bg-white text-white dark:text-black font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-gray-800 dark:hover:bg-gray-200 transition-all flex items-center gap-2 shadow-lg">
             <i class="fas fa-qrcode"></i> Abrir Scanner
         </a>
     </div>
@@ -31,8 +42,8 @@
     <div class="attendance-card rounded-[2rem] overflow-hidden">
         <table class="w-full text-left">
             <thead>
-                <tr class="border-b border-white/10">
-                    <th class="px-8 py-6 text-[10px] font-black text-gray-500 uppercase tracking-widest">Colaborador</th>
+                <tr class="border-b border-gray-100 dark:border-white/10">
+                    <th class="px-8 py-6 text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Colaborador</th>
                     <th class="px-8 py-6 text-[10px] font-black text-gray-500 uppercase tracking-widest">Entrada</th>
                     <th class="px-8 py-6 text-[10px] font-black text-gray-500 uppercase tracking-widest">Salida</th>
                     <th class="px-8 py-6 text-[10px] font-black text-gray-500 uppercase tracking-widest">Tiempo</th>
@@ -41,7 +52,7 @@
             </thead>
             <tbody class="divide-y divide-white/5">
                 @forelse($attendances as $record)
-                <tr class="hover:bg-white/[0.02] transition-colors">
+                <tr class="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
                     <td class="px-8 py-6">
                         <div class="flex items-center gap-4">
                             @if($record->teamMember && $record->teamMember->photo)
@@ -52,7 +63,7 @@
                                 </div>
                             @endif
                             <div>
-                                <p class="text-sm font-bold text-white">{{ $record->teamMember->name }}</p>
+                                <p class="text-sm font-bold text-gray-800 dark:text-white">{{ $record->teamMember->name }}</p>
                                 <p class="text-[10px] text-gray-500 uppercase tracking-widest">{{ $record->teamMember->position }}</p>
                             </div>
                         </div>
