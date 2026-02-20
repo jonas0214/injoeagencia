@@ -17,6 +17,7 @@ class SubtaskController extends Controller
             'title' => $request->title,
             'due_date' => null,
             'is_completed' => false,
+            'position' => $task->subtasks()->count(),
         ]);
 
         return back()->with('success', 'Acción agregada correctamente.');
@@ -98,6 +99,7 @@ class SubtaskController extends Controller
             'task_id' => $subtask->task_id, // Hereda la tarea principal
             'due_date' => null,
             'is_completed' => false,
+            'position' => $subtask->children()->count(),
         ]);
 
         if ($request->wantsJson()) {

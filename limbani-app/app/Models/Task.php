@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Task extends Model
 {
-    protected $fillable = ['title', 'description', 'status', 'project_id'];
+    protected $fillable = ['title', 'description', 'status', 'project_id', 'position'];
 
     public function project()
     {
@@ -16,6 +16,6 @@ class Task extends Model
     // ESTA ES LA FUNCIÓN QUE TE FALTA Y CAUSA EL ERROR 500
     public function subtasks()
     {
-        return $this->hasMany(Subtask::class);
+        return $this->hasMany(Subtask::class)->orderBy('position');
     }
 }

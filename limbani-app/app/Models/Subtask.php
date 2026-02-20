@@ -20,7 +20,8 @@ class Subtask extends Model
         'ai_suggestion',
         'is_approved',
         'approved_at',
-        'approved_by'
+        'approved_by',
+        'position'
     ];
 
     /**

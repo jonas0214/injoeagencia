@@ -47,14 +47,34 @@
                     expanded: localStorage.getItem('section_{{ $section->id }}') === 'false' ? false : true,
                     toggle() { this.expanded = !this.expanded; localStorage.setItem('section_{{ $section->id }}', this.expanded); }
                 }" class="mb-10">
-                    <div class="flex items-center gap-3 mb-4 group/sec relative">
-                        <div @click="toggle()" class="flex items-center gap-3 cursor-pointer flex-1">
-                            <i class="fas fa-caret-down text-gray-500 transition-transform" :class="{ '-rotate-90': !expanded }"></i>
-                            <h3 class="text-[11px] font-bold text-gray-500 uppercase tracking-[0.2em] group-hover/sec:text-orange-500 transition-colors">{{ $section->title }}</h3>
-                            <div class="h-[1px] flex-1 bg-white/5 ml-4"></div>
+                    <div class="flex items-center gap-3 mb-4 group/sec relative" x-data="{ editingTitle: false, newTitle: '{{ addslashes($section->title) }}' }">
+                        <div class="flex items-center gap-3 flex-1">
+                            <i @click="toggle()" class="fas fa-caret-down text-gray-500 transition-transform cursor-pointer" :class="{ '-rotate-90': !expanded }"></i>
+                            
+                            <div x-show="!editingTitle" class="flex-1 flex items-center">
+                                <h3 @click="if('{{ Auth::user()->role }}' !== 'colaborador') { editingTitle = true; $nextTick(() => $refs.titleInput.focus()); }" class="text-[11px] font-bold text-gray-500 uppercase tracking-[0.2em] group-hover/sec:text-orange-500 transition-colors cursor-pointer">{{ $section->title }}</h3>
+                                <div @click="toggle()" class="h-[1px] flex-1 bg-white/5 ml-4 cursor-pointer"></div>
+                            </div>
+                            
+                            <div x-show="editingTitle" class="flex-1" style="display: none;">
+                                <input type="text"
+                                    x-model="newTitle"
+                                    x-ref="titleInput"
+                                    @keydown.enter="fetch('{{ url('/tasks') }}/{{ $section->id }}', { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' }, body: JSON.stringify({ title: newTitle }) }).then(() => window.location.reload())"
+                                    @keydown.escape="editingTitle = false"
+                                    @click.away="editingTitle = false"
+                                    class="bg-transparent border-none p-0 text-[11px] font-bold text-white uppercase tracking-[0.2em] focus:ring-0 outline-none w-full">
+                            </div>
                         </div>
+
                         @if(in_array(Auth::user()->role, ['admin', 'ceo']))
-                        <button type="button" @click.stop="if(confirm('¿Borrar sección?')) fetch('{{ url('/tasks') }}/{{ $section->id }}', { method: 'DELETE', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' } }).then(() => window.location.reload())" class="opacity-0 group-hover/sec:opacity-100 text-gray-600 hover:text-red-500 p-1 transition-opacity"><i class="fas fa-trash-alt text-[10px]"></i></button>
+                        <div class="flex items-center gap-1 opacity-0 group-hover/sec:opacity-100 transition-opacity bg-[#1a1a1a] px-2 rounded-lg border border-white/5 shadow-xl">
+                            <button type="button" @click="fetch('{{ route('tasks.move', $section) }}', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: JSON.stringify({ direction: 'up' }) }).then(() => window.location.reload())" class="text-gray-500 hover:text-white p-1.5" title="Subir"><i class="fas fa-chevron-up text-[9px]"></i></button>
+                            <button type="button" @click="fetch('{{ route('tasks.move', $section) }}', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: JSON.stringify({ direction: 'down' }) }).then(() => window.location.reload())" class="text-gray-500 hover:text-white p-1.5" title="Bajar"><i class="fas fa-chevron-down text-[9px]"></i></button>
+                            <div class="w-[1px] h-3 bg-white/10 mx-1"></div>
+                            <button type="button" @click="fetch('{{ route('tasks.duplicate', $section) }}', { method: 'POST', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' } }).then(() => window.location.reload())" class="text-gray-500 hover:text-orange-500 p-1.5" title="Duplicar Sección"><i class="fas fa-copy text-[9px]"></i></button>
+                            <button type="button" @click="if(confirm('¿Borrar sección?')) fetch('{{ url('/tasks') }}/{{ $section->id }}', { method: 'DELETE', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' } }).then(() => window.location.reload())" class="text-gray-500 hover:text-red-500 p-1.5" title="Borrar Sección"><i class="fas fa-trash-alt text-[9px]"></i></button>
+                        </div>
                         @endif
                     </div>
 
@@ -86,7 +106,9 @@
                                     </div>
                                     <div class="col-span-2 text-right">
                                         <div class="flex flex-col items-end">
-                                            <span class="text-[13px] font-medium text-gray-400">{{ $task->due_date ? \Carbon\Carbon::parse($task->due_date)->format('d M') : '--' }}</span>
+                                            <span class="text-[13px] font-medium text-gray-400">
+                                                {{ $task->due_date ? \Carbon\Carbon::parse($task->due_date)->format('d M, h:i A') : '--' }}
+                                            </span>
                                             @if($task->due_date)
                                                 <span class="text-[9px] font-bold uppercase tracking-tight {{ \Carbon\Carbon::parse($task->due_date)->isPast() ? 'text-red-500' : 'text-green-500' }}">
                                                     {{ \Carbon\Carbon::parse($task->due_date)->isPast() ? 'Vencida' : 'Pendiente' }}

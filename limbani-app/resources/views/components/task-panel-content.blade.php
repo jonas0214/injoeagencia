@@ -83,13 +83,13 @@
                     <template x-if="'{{ Auth::user()->role }}' === 'colaborador'">
                         <div class="flex items-center gap-2 px-1 py-1">
                             <i class="far fa-calendar-alt text-gray-500"></i>
-                            <span class="text-sm text-gray-300" x-text="currentTask.due_date ? new Date(currentTask.due_date).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' }) : 'Sin fecha'"></span>
+                            <span class="text-sm text-gray-300" x-text="currentTask.due_date ? new Date(currentTask.due_date).toLocaleString('es-ES', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : 'Sin fecha'"></span>
                         </div>
                     </template>
                     <template x-if="'{{ Auth::user()->role }}' !== 'colaborador'">
                         <div class="relative flex items-center group">
                             <i class="far fa-calendar-alt absolute left-0 text-gray-500 group-hover:text-orange-500 transition-colors"></i>
-                            <input type="date" x-model="currentTask.due_date" class="bg-transparent border-none pl-8 text-sm text-gray-300 focus:ring-0 p-0 cursor-pointer hover:text-white transition-colors">
+                            <input type="datetime-local" x-model="currentTask.due_date" class="bg-[#1a1a1a] border border-white/10 rounded-lg pl-8 pr-2 py-1 text-sm text-gray-300 focus:ring-1 focus:ring-orange-500 outline-none cursor-pointer hover:text-white transition-colors">
                         </div>
                     </template>
                     <template x-if="currentTask.due_date">
@@ -124,7 +124,7 @@
                                         </div>
                                         <div class="flex items-center gap-1.5">
                                             <i class="far fa-calendar text-[8px] text-gray-600"></i>
-                                            <span class="text-[10px] text-gray-500" x-text="child.due_date ? new Date(child.due_date).toLocaleDateString('es-ES') : '--'"></span>
+                                            <span class="text-[10px] text-gray-500" x-text="child.due_date ? new Date(child.due_date).toLocaleString('es-ES', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '--'"></span>
                                         </div>
                                     </div>
                                 </template>
@@ -144,7 +144,7 @@
                                         </div>
                                         <div class="flex items-center gap-1.5">
                                             <i class="far fa-calendar text-[8px] text-gray-600"></i>
-                                            <input type="date" :value="child.due_date ? child.due_date.substring(0, 10) : ''" @change="fetch('{{ url('/subtasks') }}/'+child.id, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: JSON.stringify({ due_date: $event.target.value }) }).then(() => window.location.reload())" class="bg-transparent border-none text-[10px] text-gray-500 focus:ring-0 p-0 cursor-pointer hover:text-orange-500 transition-colors">
+                                            <input type="datetime-local" :value="child.due_date ? child.due_date.substring(0, 16).replace(' ', 'T') : ''" @change="fetch('{{ url('/subtasks') }}/'+child.id, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: JSON.stringify({ due_date: $event.target.value }) }).then(() => window.location.reload())" class="bg-transparent border-none text-[10px] text-gray-500 focus:ring-0 p-0 cursor-pointer hover:text-orange-500 transition-colors">
                                         </div>
                                     </div>
                                 </template>
@@ -286,170 +286,3 @@
     </div>
 </div>
 
-<script>
-    function projectManager() {
-        return {
-            openPanel: false, currentTask: {}, newSubtaskTitle: '', newComment: '', isUploading: false, pastedImage: null,
-            showDrawingModal: false, canvas: null, ctx: null, isDrawing: false, canvasColor: '#ff0000',
-            async openTaskPanel(task, sectionTitle = '', parentTitle = '') {
-                this._fillTaskData(task, sectionTitle, parentTitle);
-                this.openPanel = true;
-
-                try {
-                    const res = await fetch(`{{ url('/subtasks-detail') }}/${task.id}`, { headers: { 'Accept': 'application/json' } });
-                    if (res.ok) {
-                        const freshTask = await res.json();
-                        this._fillTaskData(freshTask, sectionTitle, parentTitle);
-                    }
-                } catch (e) { console.error('Error refreshing task data:', e); }
-            },
-            _fillTaskData(task, sectionTitle, parentTitle) {
-                let projectName = '';
-                if (task.task && task.task.project) projectName = task.task.project.name;
-                else if (task.project) projectName = task.project.name;
-                else projectName = '{{ $project->name ?? '' }}';
-
-                this.currentTask = {
-                    ...task,
-                    project_name: projectName,
-                    section_title: sectionTitle || (task.task ? task.task.title : 'General'),
-                    parent_title: parentTitle || (task.parent ? task.parent.title : ''),
-                    team_member_id: task.team_member_id || '',
-                    team_member_name: task.team_member ? task.team_member.name : null,
-                    due_date: task.due_date ? task.due_date.substring(0, 10) : '',
-                    description: task.description || '',
-                    attachments: task.attachments || [],
-                    comments: (task.comments || []).sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
-                };
-                this.newSubtaskTitle = ''; this.newComment = '';
-                this.$nextTick(() => { const dateInput = document.querySelector('input[type="date"]'); if (dateInput) dateInput.value = this.currentTask.due_date; });
-            },
-            getRemainingTime(date) {
-                const now = new Date();
-                const due = new Date(date);
-                const diff = due - now;
-                const absDiff = Math.abs(diff);
-                const days = Math.floor(absDiff / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((absDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((absDiff % (1000 * 60 * 60)) / (1000 * 60));
-                const timeStr = (days > 0 ? days + 'd ' : '') + hours + 'h ' + minutes + 'm';
-                return diff < 0 ? 'VENCIDA HACE ' + timeStr : 'FALTAN ' + timeStr;
-            },
-            async updateTask() {
-                if(!this.currentTask.id) return;
-                const body = {
-                    title: this.currentTask.title,
-                    description: this.currentTask.description,
-                    due_date: this.currentTask.due_date,
-                    team_member_id: this.currentTask.team_member_id || null,
-                    is_completed: !!this.currentTask.is_completed,
-                    is_approved: !!this.currentTask.is_approved
-                };
-                return fetch(`{{ url('/subtasks') }}/${this.currentTask.id}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                    body: JSON.stringify(body)
-                }).then(res => res.json());
-            },
-            async createChildSubtask() {
-                if(!this.newSubtaskTitle || !this.currentTask.id) return;
-                const res = await fetch(`{{ url('/subtasks') }}/${this.currentTask.id}/subtasks`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                    body: JSON.stringify({ title: this.newSubtaskTitle })
-                });
-                const data = await res.json();
-                if (!this.currentTask.children) this.currentTask.children = [];
-                this.currentTask.children.push(data);
-                this.newSubtaskTitle = '';
-            },
-            async uploadFile(e) {
-                const file = e.target.files[0];
-                if (!file || !this.currentTask.id) return;
-                this.isUploading = true;
-                const formData = new FormData();
-                formData.append('file', file);
-                try {
-                    const res = await fetch(`{{ url('/subtasks') }}/${this.currentTask.id}/attachments`, {
-                        method: 'POST',
-                        headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
-                        body: formData
-                    });
-                    const data = await res.json();
-                    if (!this.currentTask.attachments) this.currentTask.attachments = [];
-                    this.currentTask.attachments.push(data);
-                } catch (e) { console.error(e); } finally { this.isUploading = false; e.target.value = ''; }
-            },
-            async deleteFile(id) {
-                if (!confirm('¿Borrar archivo?')) return;
-                await fetch(`{{ url('/attachments') }}/${id}`, { method: 'DELETE', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' } });
-                this.currentTask.attachments = this.currentTask.attachments.filter(a => a.id !== id);
-            },
-            handlePaste(e) {
-                const items = (e.clipboardData || e.originalEvent.clipboardData).items;
-                for (let index in items) {
-                    const item = items[index];
-                    if (item.kind === 'file' && item.type.includes('image')) {
-                        const blob = item.getAsFile();
-                        const reader = new FileReader();
-                        reader.onload = (event) => { this.pastedImage = event.target.result; this.initCanvas(); };
-                        reader.readAsDataURL(blob);
-                    }
-                }
-            },
-            initCanvas() {
-                this.showDrawingModal = true;
-                this.$nextTick(() => {
-                    this.canvas = document.getElementById('drawingCanvas');
-                    this.ctx = this.canvas.getContext('2d');
-                    const img = new Image();
-                    img.onload = () => {
-                        const maxWidth = window.innerWidth * 0.8;
-                        const maxHeight = window.innerHeight * 0.7;
-                        let width = img.width, height = img.height;
-                        if (width > maxWidth) { height *= maxWidth / width; width = maxWidth; }
-                        if (height > maxHeight) { width *= maxHeight / height; height = maxHeight; }
-                        this.canvas.width = width; this.canvas.height = height;
-                        this.ctx.drawImage(img, 0, 0, width, height);
-                        this.ctx.lineJoin = 'round'; this.ctx.lineCap = 'round'; this.ctx.lineWidth = 4;
-                    };
-                    img.src = this.pastedImage;
-                });
-            },
-            startDrawing(e) {
-                this.isDrawing = true;
-                const pos = this.getMousePos(e);
-                this.ctx.beginPath(); this.ctx.moveTo(pos.x, pos.y);
-            },
-            draw(e) {
-                if (!this.isDrawing) return;
-                const pos = this.getMousePos(e);
-                this.ctx.strokeStyle = this.canvasColor; this.ctx.lineTo(pos.x, pos.y); this.ctx.stroke();
-            },
-            stopDrawing() { this.isDrawing = false; },
-            getMousePos(e) {
-                if (!this.canvas) return {x:0, y:0};
-                const rect = this.canvas.getBoundingClientRect();
-                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-                return { x: clientX - rect.left, y: clientY - rect.top };
-            },
-            clearCanvas() { this.initCanvas(); },
-            saveAnnotatedImage() { this.pastedImage = this.canvas.toDataURL('image/png'); this.showDrawingModal = false; },
-            async sendComment() {
-                if (!this.newComment && !this.pastedImage) return;
-                try {
-                    const res = await fetch(`{{ url('/subtasks') }}/${this.currentTask.id}/comments`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                        body: JSON.stringify({ content: this.newComment, image: this.pastedImage })
-                    });
-                    const data = await res.json();
-                    if (!this.currentTask.comments) this.currentTask.comments = [];
-                    this.currentTask.comments.push(data);
-                    this.newComment = ''; this.pastedImage = null;
-                } catch (e) { console.error(e); }
-            }
-        }
-    }
-</script>

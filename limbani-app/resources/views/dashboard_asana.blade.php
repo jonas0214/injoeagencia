@@ -205,7 +205,7 @@
                                         <div class="flex items-center gap-4 mt-1">
                                             @if($task->due_date)
                                                 <span class="text-[9px] font-bold uppercase {{ \Carbon\Carbon::parse($task->due_date)->isPast() ? 'text-red-500' : 'text-gray-500' }}">
-                                                    <i class="far fa-calendar-alt mr-1"></i> {{ \Carbon\Carbon::parse($task->due_date)->format('d M') }}
+                                                    <i class="far fa-calendar-alt mr-1"></i> {{ \Carbon\Carbon::parse($task->due_date)->format('d M, h:i A') }}
                                                 </span>
                                             @endif
                                             @if($task->comments->count() > 0)
@@ -266,7 +266,8 @@
                     @forelse($agendaTasks as $task)
                         <div @click="$dispatch('open-task', { task: @js($task), sectionTitle: @js($task->task->title ?? 'General'), parentTitle: @js($task->parent->title ?? '') })" class="group flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 transition-colors cursor-pointer border border-transparent hover:border-white/5">
                             <div class="flex flex-col items-center justify-center w-10 h-10 rounded-lg bg-black/20 border border-white/5 text-gray-400 group-hover:text-orange-500 transition-colors">
-                                <span class="text-xs font-bold">{{ $task->due_date ? \Carbon\Carbon::parse($task->due_date)->format('d') : 'Hoy' }}</span>
+                                <span class="text-[10px] font-bold">{{ $task->due_date ? \Carbon\Carbon::parse($task->due_date)->format('d/m') : 'Hoy' }}</span>
+                                <span class="text-[8px] opacity-50">{{ $task->due_date ? \Carbon\Carbon::parse($task->due_date)->format('h:i') : '' }}</span>
                             </div>
                             <div class="flex-1 min-w-0">
                                 <h4 class="text-sm font-light text-gray-300 truncate group-hover:text-white transition-colors">{{ $task->title }}</h4>
