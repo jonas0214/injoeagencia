@@ -249,9 +249,13 @@
                                 <tr class="hover:bg-white/[0.02] transition-colors">
                                     <td class="px-4 md:px-6 py-5 whitespace-nowrap">
                                         <div class="flex items-center gap-3 md:gap-4">
-                                            <div class="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-500 font-bold text-[10px]">
-                                                {{ substr($record->teamMember->name, 0, 1) }}
-                                            </div>
+                                            @if($record->teamMember && $record->teamMember->photo)
+                                                <img src="{{ asset('storage/' . $record->teamMember->photo) }}" class="w-8 h-8 rounded-lg object-cover">
+                                            @else
+                                                <div class="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-500 font-bold text-[10px]">
+                                                    {{ substr($record->teamMember->name, 0, 1) }}
+                                                </div>
+                                            @endif
                                             <p class="text-xs md:text-sm font-medium text-white">{{ $record->teamMember->name }}</p>
                                         </div>
                                     </td>

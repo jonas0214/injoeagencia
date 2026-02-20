@@ -97,7 +97,11 @@
                                     <div class="col-span-3">
                                         @if($task->team_member_id)
                                             <div class="flex items-center gap-2.5">
-                                                <div class="w-7 h-7 rounded-full bg-orange-500 text-black flex items-center justify-center text-[10px] font-bold">{{ substr($task->teamMember->name ?? '?', 0, 1) }}</div>
+                                                @if($task->teamMember && $task->teamMember->photo)
+                                                    <img src="{{ asset('storage/' . $task->teamMember->photo) }}" class="w-7 h-7 rounded-full object-cover border border-white/10">
+                                                @else
+                                                    <div class="w-7 h-7 rounded-full bg-orange-500 text-black flex items-center justify-center text-[10px] font-bold">{{ substr($task->teamMember->name ?? '?', 0, 1) }}</div>
+                                                @endif
                                                 <span class="text-[13px] text-gray-400 font-medium truncate max-w-[100px]">{{ $task->teamMember->name ?? '' }}</span>
                                             </div>
                                         @else
@@ -126,7 +130,14 @@
                                             </div>
                                             <div class="col-span-3">
                                                 @if($child->team_member_id)
-                                                    <div class="flex items-center gap-2"><div class="w-5 h-5 rounded-full bg-orange-500/10 flex items-center justify-center text-[8px] text-orange-500 font-bold">{{ substr($child->teamMember->name ?? '?', 0, 1) }}</div><span class="text-[9px] text-gray-600 truncate">{{ $child->teamMember->name ?? '' }}</span></div>
+                                                    <div class="flex items-center gap-2">
+                                                        @if($child->teamMember && $child->teamMember->photo)
+                                                            <img src="{{ asset('storage/' . $child->teamMember->photo) }}" class="w-5 h-5 rounded-full object-cover border border-white/10">
+                                                        @else
+                                                            <div class="w-5 h-5 rounded-full bg-orange-500/10 flex items-center justify-center text-[8px] text-orange-500 font-bold">{{ substr($child->teamMember->name ?? '?', 0, 1) }}</div>
+                                                        @endif
+                                                        <span class="text-[9px] text-gray-600 truncate">{{ $child->teamMember->name ?? '' }}</span>
+                                                    </div>
                                                 @endif
                                             </div>
                                             <div class="col-span-2 text-right opacity-0 group-hover:opacity-100">

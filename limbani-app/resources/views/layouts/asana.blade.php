@@ -84,9 +84,13 @@
                         @if(isset($team))
                             @foreach($team as $member)
                             <div class="flex items-center gap-3 opacity-60 hover:opacity-100 transition-opacity cursor-pointer">
-                                <div class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-xs font-bold text-white border border-white/10">
-                                    {{ substr($member->name, 0, 2) }}
-                                </div>
+                                @if($member->photo)
+                                    <img src="{{ asset('storage/' . $member->photo) }}" class="w-8 h-8 rounded-full object-cover border border-white/10">
+                                @else
+                                    <div class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-xs font-bold text-white border border-white/10">
+                                        {{ substr($member->name, 0, 2) }}
+                                    </div>
+                                @endif
                                 <span class="text-sm font-medium">{{ $member->name }}</span>
                             </div>
                             @endforeach
@@ -98,9 +102,13 @@
             <div class="border-t border-white/5 p-4 bg-white/[0.02]">
                 <div class="flex items-center justify-between gap-3">
                     <div class="flex items-center gap-3">
-                        <div class="h-10 w-10 rounded-full bg-gradient-to-br from-orange-500 to-orange-700 flex items-center justify-center text-white font-bold shadow-lg shadow-orange-900/50">
-                            {{ substr(Auth::user()->name ?? 'U', 0, 1) }}
-                        </div>
+                        @if(Auth::user()->teamMember && Auth::user()->teamMember->photo)
+                            <img src="{{ asset('storage/' . Auth::user()->teamMember->photo) }}" class="h-10 w-10 rounded-full object-cover border-2 border-orange-500 shadow-lg shadow-orange-900/50">
+                        @else
+                            <div class="h-10 w-10 rounded-full bg-gradient-to-br from-orange-500 to-orange-700 flex items-center justify-center text-white font-bold shadow-lg shadow-orange-900/50">
+                                {{ substr(Auth::user()->name ?? 'U', 0, 1) }}
+                            </div>
+                        @endif
                         <div>
                             <p class="text-sm font-bold text-white tracking-tight leading-none">{{ Auth::user()->name ?? 'Usuario' }}</p>
                             <p class="text-[10px] text-gray-500 mt-1 uppercase tracking-wider">{{ strtoupper(Auth::user()->role ?? 'Invitado') }}</p>

@@ -71,10 +71,14 @@
 
                 <div class="flex justify-between items-center pt-6 border-t border-white/5">
                     <div class="flex -space-x-2">
-                        @foreach($project->tasks->flatMap->subtasks->pluck('user')->unique('id')->take(3) as $user)
-                            <div class="w-7 h-7 rounded-full bg-[#111] border-2 border-[#1a1a1a] flex items-center justify-center text-[10px] text-gray-400 font-bold uppercase">
-                                {{ substr($user->name ?? 'U', 0, 1) }}
-                            </div>
+                        @foreach($project->tasks->flatMap->subtasks->pluck('teamMember')->unique('id')->filter()->take(3) as $member)
+                            @if($member->photo)
+                                <img src="{{ asset('storage/' . $member->photo) }}" class="w-7 h-7 rounded-full border-2 border-[#1a1a1a] object-cover" title="{{ $member->name }}">
+                            @else
+                                <div class="w-7 h-7 rounded-full bg-[#111] border-2 border-[#1a1a1a] flex items-center justify-center text-[10px] text-gray-400 font-bold uppercase" title="{{ $member->name }}">
+                                    {{ substr($member->name ?? 'U', 0, 1) }}
+                                </div>
+                            @endif
                         @endforeach
                     </div>
                     <span class="text-[9px] font-bold text-gray-600 uppercase tracking-widest">

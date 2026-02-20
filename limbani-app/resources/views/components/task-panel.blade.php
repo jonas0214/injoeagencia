@@ -46,9 +46,14 @@
                 <div class="flex-1">
                     @if(Auth::user()->role === 'colaborador')
                         <div class="flex items-center gap-2 px-2 py-1.5 bg-white/5 border border-white/10 rounded-lg">
-                            <div class="w-5 h-5 rounded-full bg-orange-500 text-black flex items-center justify-center text-[8px] font-bold">
-                                <span x-text="currentTask.team_member_name ? currentTask.team_member_name.substring(0, 1) : '?'"></span>
-                            </div>
+                            <template x-if="currentTask.team_member_photo">
+                                <img :src="'/storage/' + currentTask.team_member_photo" class="w-5 h-5 rounded-full object-cover border border-white/10">
+                            </template>
+                            <template x-if="!currentTask.team_member_photo">
+                                <div class="w-5 h-5 rounded-full bg-orange-500 text-black flex items-center justify-center text-[8px] font-bold">
+                                    <span x-text="currentTask.team_member_name ? currentTask.team_member_name.substring(0, 1) : '?'"></span>
+                                </div>
+                            </template>
                             <span class="text-sm text-gray-300" x-text="currentTask.team_member_name || 'Sin asignar'"></span>
                         </div>
                     @else
@@ -193,7 +198,12 @@
             <div class="space-y-4">
                 <template x-for="comment in (currentTask.comments || [])" :key="comment.id">
                     <div class="flex gap-3">
-                        <div class="w-8 h-8 rounded-full bg-gray-800 border border-white/5 flex items-center justify-center text-[10px] font-bold text-gray-400" x-text="comment.user ? comment.user.name.substring(0, 1) : '?'"></div>
+                        <template x-if="comment.user && comment.user.team_member && comment.user.team_member.photo">
+                            <img :src="'/storage/' + comment.user.team_member.photo" class="w-8 h-8 rounded-full object-cover border border-white/5">
+                        </template>
+                        <template x-if="!(comment.user && comment.user.team_member && comment.user.team_member.photo)">
+                            <div class="w-8 h-8 rounded-full bg-gray-800 border border-white/5 flex items-center justify-center text-[10px] font-bold text-gray-400" x-text="comment.user ? comment.user.name.substring(0, 1) : '?'"></div>
+                        </template>
                         <div class="flex-1 bg-white/5 rounded-2xl p-3 border border-white/5">
                             <div class="flex justify-between items-center mb-1.5">
                                 <span class="text-[13px] font-bold text-orange-500" x-text="comment.user ? comment.user.name : 'Usuario'"></span>
@@ -308,6 +318,7 @@
                     parent_title: parentTitle || (task.parent ? task.parent.title : ''),
                     team_member_id: task.team_member_id || '',
                     team_member_name: task.team_member ? task.team_member.name : null,
+                    team_member_photo: task.team_member ? task.team_member.photo : null,
                     due_date: task.due_date ? task.due_date.substring(0, 10) : '',
                     description: task.description || '',
                     attachments: task.attachments || [],
