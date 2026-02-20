@@ -6,6 +6,7 @@ use App\Models\Project;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ProjectController extends Controller
 {
@@ -54,7 +55,8 @@ class ProjectController extends Controller
     // 2. Mostrar el formulario de nueva campaña
     public function create()
     {
-        return view('projects.create');
+        $templates = Project::where('is_template', true)->get();
+        return view('projects.create', compact('templates'));
     }
 
     // 3. Guardar la campaña en la base de datos
@@ -62,16 +64,70 @@ class ProjectController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'template_id' => 'nullable|exists:projects,id',
         ]);
 
-        Project::create([
-            'name' => $request->name,
-            'description' => $request->description,
-            'user_id' => Auth::id(),
-            'status' => 'activo',
+        DB::transaction(function () use ($request) {
+            $project = Project::create([
+                'name' => $request->name,
+                'description' => $request->description,
+                'user_id' => Auth::id(),
+                'status' => 'activo',
+                'is_template' => $request->has('is_template'),
+            ]);
+
+            // Crear automáticamente la sección de PROGRAMACIÓN META ADS
+            $metaSection = $project->tasks()->create([
+                'title' => 'PROGRAMACIÓN META ADS',
+                'position' => 0
+            ]);
+
+            // Añadir tareas base de Meta Ads
+            $metaSection->subtasks()->createMany([
+                ['title' => 'Definición de Público Objetivo', 'position' => 0],
+                ['title' => 'Diseño de Creativos (Artes)', 'position' => 1],
+                ['title' => 'Redacción de Copywriting', 'position' => 2],
+                ['title' => 'Montaje en Business Manager', 'position' => 3],
+            ]);
+
+            // Si se seleccionó una plantilla, clonar sus tareas y subtareas
+            if ($request->filled('template_id')) {
+                $template = Project::with('tasks.subtasks')->find($request->template_id);
+                
+                foreach ($template->tasks as $templateSection) {
+                    $newSection = $project->tasks()->create([
+                        'title' => $templateSection->title,
+                        'position' => $templateSection->position,
+                    ]);
+
+                    foreach ($templateSection->subtasks->whereNull('parent_id') as $templateSubtask) {
+                        $this->cloneSubtask($templateSubtask, $newSection->id, null);
+                    }
+                }
+            }
+        });
+
+        return redirect()->route('dashboard')->with('success', '¡Proyecto creado con éxito!');
+    }
+
+    /**
+     * Clonar subtarea de forma recursiva
+     */
+    private function cloneSubtask($templateSubtask, $taskId, $parentId = null)
+    {
+        $newSubtask = \App\Models\Subtask::create([
+            'title' => $templateSubtask->title,
+            'description' => $templateSubtask->description,
+            'task_id' => $taskId,
+            'parent_id' => $parentId,
+            'position' => $templateSubtask->position,
+            'is_completed' => false,
         ]);
 
-        return redirect()->route('dashboard')->with('success', '¡Campaña creada con éxito!');
+        // Clonar hijos recursivamente
+        foreach ($templateSubtask->children as $child) {
+            $this->cloneSubtask($child, $taskId, $newSubtask->id);
+        }
     }
 
     public function show(Project $project)
@@ -105,7 +161,8 @@ class ProjectController extends Controller
     // 4. Mostrar formulario de edición (reutilizando create)
     public function edit(Project $project)
     {
-        return view('projects.create', compact('project'));
+        $templates = Project::where('is_template', true)->where('id', '!=', $project->id)->get();
+        return view('projects.create', compact('project', 'templates'));
     }
 
     // 5. Actualizar el proyecto en BD
@@ -115,7 +172,10 @@ class ProjectController extends Controller
             'name' => 'required|string|max:255',
         ]);
 
-        $project->update($request->all());
+        $data = $request->all();
+        $data['is_template'] = $request->has('is_template');
+
+        $project->update($data);
 
         return redirect()->route('dashboard')->with('success', 'Proyecto actualizado correctamente.');
     }

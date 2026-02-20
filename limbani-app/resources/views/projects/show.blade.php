@@ -8,7 +8,7 @@
     body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; overflow: hidden; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; letter-spacing: -0.01em; }
 </style>
 
-<div class="flex h-screen w-full bg-white dark:bg-[#0f1012] text-gray-800 dark:text-white overflow-hidden relative">
+<div class="flex h-screen w-full bg-white dark:bg-[#0f1012] text-gray-800 dark:text-white overflow-hidden relative" x-data="{ currentTab: 'list' }">
 
     <div class="flex-1 flex flex-col min-w-0 transition-all duration-300" :class="openPanel ? 'md:mr-[650px]' : ''">
         
@@ -37,6 +37,15 @@
             @endif
         </div>
 
+        <!-- Pestañas de Proyecto -->
+        <div class="px-4 md:px-8 border-b border-gray-200 dark:border-white/5 bg-white dark:bg-[#0f1012] flex gap-8 shrink-0 overflow-x-auto scrollbar-hide">
+            <button @click="currentTab = 'list'; $dispatch('tab-changed', 'list')" :class="currentTab === 'list' ? 'text-orange-500 border-b-2 border-orange-500' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'" class="pb-4 pt-2 text-xs font-bold uppercase tracking-widest transition-all">Listado de Tareas</button>
+            <button @click="currentTab = 'meta'; $dispatch('tab-changed', 'meta')" :class="currentTab === 'meta' ? 'text-orange-500 border-b-2 border-orange-500' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'" class="pb-4 pt-2 text-xs font-bold uppercase tracking-widest transition-all flex items-center gap-2">
+                <i class="fab fa-facebook"></i> Programación Meta Ads
+            </button>
+        </div>
+
+        <div x-show="currentTab === 'list'">
         <div class="hidden md:grid grid-cols-12 gap-4 px-8 py-3 border-b border-gray-200 dark:border-white/10 text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest bg-gray-50 dark:bg-[#111] shrink-0">
             <div class="col-span-7">Nombre de la Tarea</div>
             <div class="col-span-3">Responsable</div>
@@ -158,6 +167,97 @@
                     </div>
                 </div>
             @endforeach
+        </div>
+        </div>
+
+        <!-- Nueva Sección Meta Ads -->
+        <div x-show="currentTab === 'meta'" style="display: none;" class="flex-1 overflow-y-auto custom-scroll p-4 md:p-8">
+            <div class="max-w-6xl mx-auto space-y-8">
+                <div class="flex justify-between items-center bg-orange-500/5 border border-orange-500/10 p-6 rounded-3xl">
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900 dark:text-white uppercase tracking-tight">Calendario de Contenidos Meta Ads</h3>
+                        <p class="text-xs text-gray-500 mt-1">Gestiona la programación mensual de Facebook e Instagram</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="bg-gray-900 dark:bg-white text-white dark:text-black px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest">
+                            <i class="fas fa-file-export mr-2"></i> Exportar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tabla de Programación Meta -->
+                <div class="bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/5 rounded-[2.5rem] overflow-hidden shadow-sm">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="border-b border-gray-100 dark:border-white/10 bg-gray-50 dark:bg-black/20 text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">
+                                <th class="px-6 py-4">Fecha Pub</th>
+                                <th class="px-6 py-4">Tipo / Formato</th>
+                                <th class="px-6 py-4">Pilar / Tema</th>
+                                <th class="px-6 py-4">Copywriting</th>
+                                <th class="px-6 py-4">Estado Arte</th>
+                                <th class="px-6 py-4 text-right">Inversión</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100 dark:divide-white/5">
+                            @php
+                                $metaSection = $project->tasks->where('title', 'PROGRAMACIÓN META ADS')->first();
+                                $metaTasks = $metaSection ? $metaSection->subtasks : collect();
+                            @endphp
+                            @forelse($metaTasks as $task)
+                            <tr class="group hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors cursor-pointer" @click="openTaskPanel(@js($task), 'META ADS', '')">
+                                <td class="px-6 py-5">
+                                    <div class="flex flex-col">
+                                        <span class="text-sm font-bold text-gray-800 dark:text-white">{{ $task->due_date ? $task->due_date->format('d M') : 'Sin fecha' }}</span>
+                                        <span class="text-[9px] text-gray-500 uppercase tracking-tighter">{{ $task->due_date ? $task->due_date->locale('es')->dayName : '--' }}</span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-5">
+                                    <span class="px-2.5 py-1 rounded-lg bg-blue-500/10 text-blue-500 text-[9px] font-black uppercase">
+                                        {{ str_contains(strtolower($task->title), 'video') || str_contains(strtolower($task->title), 'reel') ? 'VIDEO / REEL' : 'ESTÁTICO / CARROUSEL' }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-5">
+                                    <p class="text-xs font-medium text-gray-700 dark:text-gray-300">{{ $task->title }}</p>
+                                </td>
+                                <td class="px-6 py-5">
+                                    <p class="text-[10px] text-gray-500 dark:text-gray-400 italic line-clamp-2 truncate max-w-[200px]">{{ $task->description ?? 'Sin descripción de copy' }}</p>
+                                </td>
+                                <td class="px-6 py-5">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-1.5 h-1.5 rounded-full {{ $task->is_completed ? 'bg-green-500' : 'bg-yellow-500' }}"></div>
+                                        <span class="text-[10px] font-bold {{ $task->is_completed ? 'text-green-600' : 'text-yellow-600' }} uppercase">
+                                            {{ $task->is_completed ? 'Finalizado' : 'En Proceso' }}
+                                        </span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-5 text-right font-mono text-xs text-orange-500 font-bold">
+                                    {{ $task->teamMember ? $task->teamMember->name : 'N/A' }}
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="6" class="px-6 py-10 text-center text-gray-500 italic text-xs uppercase tracking-widest">No hay programación cargada para este proyecto</td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-blue-500/5 border border-blue-500/10 p-6 rounded-3xl">
+                        <p class="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase mb-2">Presupuesto Asignado</p>
+                        <p class="text-2xl font-black text-gray-900 dark:text-white">$1,500,000</p>
+                    </div>
+                    <div class="bg-orange-500/5 border border-orange-500/10 p-6 rounded-3xl">
+                        <p class="text-[10px] font-bold text-orange-600 dark:text-orange-400 uppercase mb-2">Alcance Estimado</p>
+                        <p class="text-2xl font-black text-gray-900 dark:text-white">45,000 - 80,000</p>
+                    </div>
+                    <div class="bg-green-500/5 border border-green-500/10 p-6 rounded-3xl">
+                        <p class="text-[10px] font-bold text-green-600 dark:text-green-400 uppercase mb-2">Conversiones Meta</p>
+                        <p class="text-2xl font-black text-gray-900 dark:text-white">124 Leads</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
