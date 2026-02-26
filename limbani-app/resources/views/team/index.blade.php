@@ -84,39 +84,39 @@
                                             </div>
                                             <div class="col-span-2">
                                                 <label class="block text-sm font-medium text-gray-700">Nombre Completo</label>
-                                                <input type="text" name="name" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
+                                                <input type="text" name="name" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 text-gray-900 dark:text-gray-100 dark:bg-gray-700">
                                             </div>
                                             <div>
                                                 <label class="block text-sm font-medium text-gray-700">Cédula / ID</label>
-                                                <input type="text" name="cedula" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
+                                                <input type="text" name="cedula" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 text-gray-900 dark:text-gray-100 dark:bg-gray-700">
                                             </div>
                                             <div>
                                                 <label class="block text-sm font-medium text-gray-700">Teléfono</label>
-                                                <input type="text" name="phone" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
+                                                <input type="text" name="phone" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 text-gray-900 dark:text-gray-100 dark:bg-gray-700">
                                             </div>
                                             <div>
                                                 <label class="block text-sm font-medium text-gray-700">Fecha de Nacimiento</label>
-                                                <input type="date" name="birth_date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
+                                                <input type="date" name="birth_date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 text-gray-900 dark:text-gray-100 dark:bg-gray-700">
                                             </div>
                                             <div>
                                                 <label class="block text-sm font-medium text-gray-700">Correo Electrónico (Acceso)</label>
-                                                <input type="email" name="email" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
+                                                <input type="email" name="email" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 text-gray-900 dark:text-gray-100 dark:bg-gray-700">
                                             </div>
                                             <div class="col-span-2">
                                                 <label class="block text-sm font-medium text-gray-700">Dirección de Residencia</label>
-                                                <input type="text" name="address" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
+                                                <input type="text" name="address" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 text-gray-900 dark:text-gray-100 dark:bg-gray-700">
                                             </div>
                                             <div class="col-span-2">
                                                 <label class="block text-sm font-medium text-gray-700">Cargo en la Agencia</label>
-                                                <input type="text" name="position" placeholder="Ej: Diseñador Senior, Copywriter..." required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
+                                                <input type="text" name="position" placeholder="Ej: Diseñador Senior, Copywriter..." required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 text-gray-900 dark:text-gray-100 dark:bg-gray-700">
                                             </div>
                                             <div>
                                                 <label class="block text-sm font-medium text-gray-700">Salario Mensual</label>
-                                                <input type="number" step="0.01" name="salary" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
+                                                <input type="number" step="0.01" name="salary" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 text-gray-900 dark:text-gray-100 dark:bg-gray-700">
                                             </div>
                                             <div class="col-span-2">
                                                 <label class="block text-sm font-medium text-gray-700">Rol del Sistema</label>
-                                                <select name="role" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
+                                                <select name="role" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 text-gray-900 dark:text-gray-100 dark:bg-gray-700">
                                                     <option value="colaborador">Colaborador</option>
                                                     <option value="ceo">CEO</option>
                                                     <option value="rrhh">Recursos Humanos</option>
@@ -127,7 +127,7 @@
                                             </div>
                                             <div class="col-span-2">
                                                 <label class="block text-sm font-medium text-gray-700">Información Bancaria</label>
-                                                <textarea name="bank_details" rows="2" placeholder="Banco, Tipo de Cuenta, Número..." class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500"></textarea>
+                                                <textarea name="bank_details" rows="2" placeholder="Banco, Tipo de Cuenta, Número..." class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 text-gray-900 dark:text-gray-100 dark:bg-gray-700"></textarea>
                                             </div>
                                         </div>
                                         

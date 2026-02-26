@@ -156,15 +156,18 @@
                             </div>
                         </div>
                         
-                        <template x-if="'{{ Auth::user()->role }}' !== 'colaborador'">
-                            <button type="button" @click="if(confirm('¿Eliminar subtarea?')) fetch('{{ url('/subtasks') }}/'+child.id, { method: 'DELETE', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' } }).then(() => window.location.reload())" class="opacity-0 group-hover:opacity-100 p-2 text-gray-600 hover:text-red-500 transition-all"><i class="fas fa-trash-alt text-[10px]"></i></button>
-                        </template>
+                        <div class="flex items-center gap-2">
+                            <button type="button" @click="openTaskPanel(child, currentTask.section_title, currentTask.title)" class="p-2 text-gray-400 hover:text-orange-500 transition-all"><i class="fas fa-external-link-alt text-[10px]"></i></button>
+                            <template x-if="'{{ Auth::user()->role }}' !== 'colaborador'">
+                                <button type="button" @click="if(confirm('¿Eliminar subtarea?')) fetch('{{ url('/subtasks') }}/'+child.id, { method: 'DELETE', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' } }).then(() => window.location.reload())" class="opacity-0 group-hover:opacity-100 p-2 text-gray-600 hover:text-red-500 transition-all"><i class="fas fa-trash-alt text-[10px]"></i></button>
+                            </template>
+                        </div>
                     </div>
                 </template>
                 <template x-if="'{{ Auth::user()->role }}' !== 'colaborador'">
                     <div class="pt-2 flex items-center gap-3 p-3 rounded-xl border border-dashed border-white/10 group focus-within:border-orange-500/50 transition-all">
                         <i class="fas fa-plus text-[10px] text-gray-600 group-focus-within:text-orange-500"></i>
-                        <input type="text" x-model="newSubtaskTitle" @keydown.enter.prevent="createChildSubtask()" placeholder="Presiona Enter para agregar una subtarea..." class="flex-1 bg-transparent border-none text-sm text-gray-500 placeholder-gray-700 focus:ring-0 p-0 focus:text-white transition-colors">
+                        <input type="text" x-model="newSubtaskTitle" @keydown.enter.prevent="createChildSubtask()" placeholder="Presiona Enter para agregar una subtarea..." class="flex-1 bg-transparent border-none text-sm text-gray-700 dark:text-gray-300 placeholder-gray-500 focus:ring-0 p-0 transition-colors">
                     </div>
                 </template>
             </div>

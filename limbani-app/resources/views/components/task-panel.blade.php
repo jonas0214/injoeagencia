@@ -158,7 +158,7 @@
                 @if(Auth::user()->role !== 'colaborador')
                 <div class="pt-2 flex items-center gap-3 p-3 rounded-xl border border-dashed border-white/10 group focus-within:border-orange-500/50 transition-all">
                     <i class="fas fa-plus text-[10px] text-gray-600 group-focus-within:text-orange-500"></i>
-                    <input type="text" x-model="newSubtaskTitle" @keydown.enter.prevent="createChildSubtask()" placeholder="Presiona Enter para agregar una subtarea..." class="flex-1 bg-transparent border-none text-sm text-gray-500 placeholder-gray-700 focus:ring-0 p-0 focus:text-white transition-colors">
+                    <input type="text" x-model="newSubtaskTitle" @keydown.enter.prevent="createChildSubtask()" placeholder="Presiona Enter para agregar una subtarea..." class="flex-1 bg-transparent border-none text-sm text-gray-700 dark:text-gray-300 placeholder-gray-500 focus:ring-0 p-0 transition-colors">
                 </div>
                 @endif
             </div>
