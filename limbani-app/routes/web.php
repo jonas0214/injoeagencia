@@ -69,6 +69,13 @@ Route::middleware('auth')->group(function () {
         Route::patch('/billing/{billing}/status', [\App\Http\Controllers\BillingController::class, 'updateStatus'])->name('billing.status');
     });
 
+    // Rutas de Briefs (Formularios dinámicos para clientes)
+    Route::get('/projects/{project}/brief', [\App\Http\Controllers\BriefController::class, 'edit'])->name('briefs.edit');
+    Route::put('/projects/{project}/brief', [\App\Http\Controllers\BriefController::class, 'update'])->name('briefs.update');
+    Route::get('/projects/{project}/brief/show', [\App\Http\Controllers\BriefController::class, 'show'])->name('briefs.show');
+    Route::get('/projects/{project}/brief/download', [\App\Http\Controllers\BriefController::class, 'download'])->name('briefs.download');
+    Route::get('/projects/{project}/brief/status', [\App\Http\Controllers\BriefController::class, 'status'])->name('briefs.status');
+
     // Rutas de Cuentas de Cobro
     Route::get('/billing', [\App\Http\Controllers\BillingController::class, 'index'])->name('billing.index');
     Route::post('/billing', [\App\Http\Controllers\BillingController::class, 'store'])->name('billing.store');

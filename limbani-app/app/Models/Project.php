@@ -12,4 +12,17 @@ class Project extends Model
     {
         return $this->hasMany(Task::class)->orderBy('position');
     }
+
+    public function brief()
+    {
+        return $this->hasOne(Brief::class);
+    }
+
+    /**
+     * Get or create brief for this project
+     */
+    public function getOrCreateBrief(): Brief
+    {
+        return $this->brief()->firstOrCreate([]);
+    }
 }

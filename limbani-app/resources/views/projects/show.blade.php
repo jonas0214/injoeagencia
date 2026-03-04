@@ -54,6 +54,9 @@
             <button @click="currentTab = 'meta'; $dispatch('tab-changed', 'meta')" :class="currentTab === 'meta' ? 'text-orange-500 border-b-2 border-orange-500' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'" class="pb-4 pt-2 text-xs font-bold uppercase tracking-widest transition-all flex items-center gap-2">
                 <i class="fab fa-facebook"></i> Programación Meta Ads
             </button>
+            <button @click="currentTab = 'brief'; $dispatch('tab-changed', 'brief')" :class="currentTab === 'brief' ? 'text-orange-500 border-b-2 border-orange-500' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'" class="pb-4 pt-2 text-xs font-bold uppercase tracking-widest transition-all flex items-center gap-2">
+                <i class="fas fa-file-alt"></i> Brief del Cliente
+            </button>
         </div>
 
         <div x-show="currentTab === 'list'" class="flex-1 flex flex-col min-h-0">
@@ -229,6 +232,141 @@
                         <p class="text-2xl font-black text-gray-900 dark:text-white">124 Leads</p>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Sección Brief del Cliente -->
+        <div x-show="currentTab === 'brief'" style="display: none;" class="flex-1 overflow-y-auto custom-scroll p-4 md:p-8">
+            <div class="max-w-6xl mx-auto">
+                @php
+                    $brief = $project->brief;
+                    $hasBrief = $brief ? true : false;
+                @endphp
+                
+                <div class="bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/10 rounded-[2.5rem] p-8 mb-8">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                        <div>
+                            <h3 class="text-2xl font-black text-gray-900 dark:text-white uppercase tracking-tighter">Brief del Cliente</h3>
+                            <p class="text-sm text-gray-500 mt-1">Formulario dinámico para levantar requerimientos y planificar estrategias</p>
+                        </div>
+                        
+                        <div class="flex flex-wrap gap-3">
+                            @if($hasBrief)
+                                <div class="px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest
+                                    @if($brief->status === 'draft') bg-gray-500/10 text-gray-500
+                                    @elseif($brief->status === 'submitted') bg-blue-500/10 text-blue-500
+                                    @elseif($brief->status === 'reviewed') bg-yellow-500/10 text-yellow-500
+                                    @elseif($brief->status === 'approved') bg-green-500/10 text-green-500
+                                    @endif">
+                                    {{ $brief->status === 'draft' ? 'Borrador' :
+                                       ($brief->status === 'submitted' ? 'Enviado' :
+                                       ($brief->status === 'reviewed' ? 'Revisado' : 'Aprobado')) }}
+                                </div>
+                            @endif
+                            
+                            <a href="{{ route('briefs.edit', $project) }}"
+                                class="bg-orange-500 hover:bg-orange-600 text-black px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all shadow-xl shadow-orange-500/20 flex items-center gap-2">
+                                <i class="fas fa-edit"></i>
+                                {{ $hasBrief ? 'Editar Brief' : 'Crear Brief' }}
+                            </a>
+                            
+                            @if($hasBrief && $brief->status !== 'draft')
+                            <a href="{{ route('briefs.show', $project) }}"
+                                class="bg-gray-900 dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest shadow-lg flex items-center gap-2">
+                                <i class="fas fa-eye"></i> Ver Brief
+                            </a>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
+                @if($hasBrief)
+                <!-- Resumen del Brief -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                    <div class="bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/10 rounded-2xl p-6">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-500">
+                                <i class="fas fa-bullseye"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-medium text-gray-900 dark:text-white">Objetivos</h4>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Metas del mes</p>
+                            </div>
+                        </div>
+                        @if($brief->objectives)
+                            <p class="text-gray-600 dark:text-gray-300 text-sm">{{ Str::limit($brief->objectives, 200) }}</p>
+                        @else
+                            <p class="text-gray-500 dark:text-gray-400 text-sm italic">No se han definido objetivos</p>
+                        @endif
+                    </div>
+                    
+                    <div class="bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/10 rounded-2xl p-6">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-medium text-gray-900 dark:text-white">Fechas Clave</h4>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Eventos importantes</p>
+                            </div>
+                        </div>
+                        @if($brief->key_dates)
+                            <p class="text-gray-600 dark:text-gray-300 text-sm">{{ Str::limit($brief->key_dates, 200) }}</p>
+                        @else
+                            <p class="text-gray-500 dark:text-gray-400 text-sm italic">No hay fechas especiales definidas</p>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Detalles adicionales -->
+                <div class="bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/10 rounded-2xl p-6 mb-8">
+                    <h4 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Información del Brief</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <p class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2">Audiencia Objetivo</p>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">
+                                @if($brief->target_audience)
+                                    {{ Str::limit($brief->target_audience, 100) }}
+                                @else
+                                    <span class="text-gray-500 italic">No definida</span>
+                                @endif
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2">Presupuesto</p>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">
+                                @if($brief->budget)
+                                    ${{ number_format($brief->budget, 2) }}
+                                @else
+                                    <span class="text-gray-500 italic">No definido</span>
+                                @endif
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2">Última Actualización</p>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">
+                                {{ $brief->updated_at->diffForHumans() }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                @else
+                <!-- Estado sin brief -->
+                <div class="bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/10 rounded-[2.5rem] p-12 text-center">
+                    <div class="w-20 h-20 rounded-2xl bg-orange-500/10 flex items-center justify-center text-orange-500 mx-auto mb-6">
+                        <i class="fas fa-file-alt text-2xl"></i>
+                    </div>
+                    <h4 class="text-xl font-medium text-gray-900 dark:text-white mb-3">No hay brief creado</h4>
+                    <p class="text-gray-500 dark:text-gray-400 mb-6 max-w-md mx-auto">
+                        Crea un brief para este proyecto para levantar requerimientos del cliente, definir objetivos y planificar la estrategia.
+                    </p>
+                    <a href="{{ route('briefs.edit', $project) }}"
+                        class="bg-orange-500 hover:bg-orange-600 text-black px-8 py-4 rounded-2xl text-sm font-black uppercase tracking-widest transition-all shadow-xl shadow-orange-500/20 inline-flex items-center gap-3">
+                        <i class="fas fa-plus"></i>
+                        Crear Brief del Cliente
+                    </a>
+                </div>
+                @endif
             </div>
         </div>
     </div>
