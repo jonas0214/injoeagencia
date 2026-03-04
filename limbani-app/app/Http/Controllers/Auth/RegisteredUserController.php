@@ -39,6 +39,16 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => 'colaborador', // Asignar explícitamente el rol por defecto
+        ]);
+
+        // Log para depuración
+        \Log::info('Nuevo usuario registrado', [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'role' => $user->role,
+            'total_users' => User::count()
         ]);
 
         event(new Registered($user));
