@@ -10,27 +10,28 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <script src="https://cdn.tailwindcss.com"></script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        dark: {
-                            bg: '#0f1012',
-                            sidebar: '#0a0a0a',
-                            card: 'rgba(255, 255, 255, 0.03)',
+        // Configuración de Tailwind para modo oscuro
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.tailwind) {
+                window.tailwind.config = {
+                    darkMode: 'class',
+                    theme: {
+                        extend: {
+                            colors: {
+                                dark: {
+                                    bg: '#0f1012',
+                                    sidebar: '#0a0a0a',
+                                    card: 'rgba(255, 255, 255, 0.03)',
+                                }
+                            }
                         }
                     }
                 }
             }
-        }
+        });
     </script>
-    <!-- Alpine.js Plugins -->
-    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
-    <!-- Alpine.js Core -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     <style>
         body { font-family: 'Outfit', sans-serif; }
