@@ -336,8 +336,8 @@
                     </template>
                 </div>
                 <div>
-                    <h3 class="text-2xl font-medium text-gray-900 dark:text-white" x-text="activeMember.name"></h3>
-                    <p class="text-orange-500 text-xs font-bold uppercase tracking-widest mt-1" x-text="activeMember.position"></p>
+                    <h3 class="text-2xl font-medium text-gray-900 dark:text-white" x-text="activeMember.name || ''"></h3>
+                    <p class="text-orange-500 text-xs font-bold uppercase tracking-widest mt-1" x-text="activeMember.position || ''"></p>
                 </div>
             </div>
 
@@ -348,11 +348,11 @@
                     <div class="grid grid-cols-1 gap-3">
                         <div class="bg-white/5 rounded-xl p-4 border border-white/5">
                             <p class="text-[10px] text-gray-500 uppercase font-bold mb-1">Correo Electrónico</p>
-                            <p class="text-sm text-gray-700 dark:text-gray-200" x-text="activeMember.email || 'No registrado'"></p>
+                            <p class="text-sm text-gray-700 dark:text-gray-200" x-text="activeMember.email ? activeMember.email : 'No registrado'"></p>
                         </div>
                         <div class="bg-gray-50 dark:bg-white/5 rounded-xl p-4 border border-gray-200 dark:border-white/5">
                             <p class="text-[10px] text-gray-500 uppercase font-bold mb-1">Teléfono Móvil</p>
-                            <p class="text-sm text-gray-700 dark:text-gray-200" x-text="activeMember.phone"></p>
+                            <p class="text-sm text-gray-700 dark:text-gray-200" x-text="activeMember.phone || ''"></p>
                         </div>
                     </div>
                 </div>
@@ -363,7 +363,7 @@
                         <div class="bg-white/5 rounded-xl p-4 border border-white/5 flex justify-between items-center">
                             <div>
                                 <p class="text-[10px] text-gray-500 uppercase font-bold mb-1">Identificación</p>
-                                <p class="text-sm text-gray-200" x-text="activeMember.cedula"></p>
+                                <p class="text-sm text-gray-200" x-text="activeMember.cedula || ''"></p>
                             </div>
                             <div class="px-2 py-1 rounded bg-white/10 text-[9px] font-bold text-gray-400">CC</div>
                         </div>
@@ -372,7 +372,7 @@
                                 <p class="text-[10px] text-gray-500 uppercase font-bold mb-1">Asignación Salarial</p>
                                 <p class="text-lg font-medium text-white">
                                     <span class="text-orange-500 mr-1">$</span>
-                                    <span x-text="new Intl.NumberFormat('es-CO').format(activeMember.salary)"></span>
+                                    <span x-text="activeMember.salary ? new Intl.NumberFormat('es-CO').format(activeMember.salary) : '0'"></span>
                                 </p>
                             </div>
                             <i class="fas fa-money-bill-wave text-gray-700"></i>
@@ -384,7 +384,7 @@
                     <label class="text-[10px] font-bold text-gray-600 uppercase tracking-widest">Tesorería & Pagos</label>
                     <div class="bg-white/5 rounded-xl p-4 border border-white/5">
                         <p class="text-[10px] text-gray-500 uppercase font-bold mb-1">Detalles Bancarios</p>
-                        <p class="text-xs text-gray-300 leading-relaxed italic" x-text="activeMember.bank_details || 'Información pendiente de registro'"></p>
+                        <p class="text-xs text-gray-300 leading-relaxed italic" x-text="activeMember.bank_details ? activeMember.bank_details : 'Información pendiente de registro'"></p>
                     </div>
                 </div>
             </div>
