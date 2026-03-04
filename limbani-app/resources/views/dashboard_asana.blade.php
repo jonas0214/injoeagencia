@@ -109,8 +109,12 @@
                         <a href="{{ route('projects.show', $project) }}" class="absolute inset-0 z-10"></a>
 
                         <div class="flex justify-between items-start mb-8 relative z-0">
-                            <div class="w-12 h-12 rounded-xl bg-black/20 border border-white/5 flex items-center justify-center text-white/80 text-lg group-hover:text-orange-500 transition-colors duration-500">
-                                <i class="fas fa-cube"></i>
+                            <div class="w-12 h-12 rounded-xl bg-black/20 border border-white/5 flex items-center justify-center text-white/80 text-lg group-hover:text-orange-500 transition-colors duration-500 overflow-hidden">
+                                @if($project->logo)
+                                    <img src="{{ asset('storage/' . $project->logo) }}" alt="{{ $project->name }}" class="w-full h-full object-cover">
+                                @else
+                                    <i class="fas fa-cube"></i>
+                                @endif
                             </div>
                             <div class="flex items-center gap-2">
                                 <div class="w-1.5 h-1.5 rounded-full {{ $progress == 100 ? 'bg-green-500' : 'bg-orange-600' }}"></div>
@@ -181,8 +185,12 @@
                     <div class="bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/5 rounded-3xl overflow-hidden group hover:border-orange-500/20 transition-all duration-500 shadow-sm dark:shadow-none">
                         <div class="p-6 border-b border-gray-100 dark:border-white/5 bg-gray-50/30 dark:bg-white/[0.01] flex justify-between items-center">
                             <div class="flex items-center gap-4">
-                                <div class="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-500">
-                                    <i class="fas fa-layer-group text-sm"></i>
+                                <div class="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-500 overflow-hidden border border-white/10">
+                                    @if($project->logo)
+                                        <img src="{{ asset('storage/' . $project->logo) }}" alt="{{ $project->name }}" class="w-full h-full object-cover">
+                                    @else
+                                        <i class="fas fa-layer-group text-sm"></i>
+                                    @endif
                                 </div>
                                 <div>
                                     <h3 class="text-lg font-medium text-gray-900 dark:text-white">{{ $project->name }}</h3>

@@ -35,8 +35,12 @@
                 <div class="absolute top-0 right-0 w-24 h-24 bg-orange-500/5 rounded-full blur-3xl group-hover:bg-orange-500/10 transition-colors"></div>
 
                 <div class="flex justify-between items-start mb-6">
-                    <div class="w-12 h-12 rounded-2xl bg-orange-500/10 flex items-center justify-center text-orange-500">
-                        <i class="fas fa-layer-group text-xl"></i>
+                    <div class="w-12 h-12 rounded-2xl bg-orange-500/10 flex items-center justify-center text-orange-500 overflow-hidden border border-white/10">
+                        @if($project->logo)
+                            <img src="{{ asset('storage/' . $project->logo) }}" alt="{{ $project->name }}" class="w-full h-full object-cover">
+                        @else
+                            <i class="fas fa-layer-group text-xl"></i>
+                        @endif
                     </div>
                     <div class="flex items-center gap-2">
                         <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>

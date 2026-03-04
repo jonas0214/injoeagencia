@@ -10,7 +10,7 @@
     </div>
 
     <div class="bg-white dark:bg-white/[0.03] backdrop-blur-md border border-gray-200 dark:border-white/10 rounded-3xl p-8 shadow-sm dark:shadow-2xl transition-all duration-300">
-        <form action="{{ isset($project) ? route('projects.update', $project) : route('projects.store') }}" method="POST" class="space-y-8">
+        <form action="{{ isset($project) ? route('projects.update', $project) : route('projects.store') }}" method="POST" enctype="multipart/form-data" class="space-y-8">
             @csrf
             @if(isset($project))
                 @method('PUT')
@@ -28,9 +28,23 @@
                 <!-- Descripción -->
                 <div class="space-y-2">
                     <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Descripción / Objetivo</label>
-                    <textarea name="description" rows="4" 
+                    <textarea name="description" rows="4"
                               class="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-white/10 rounded-xl p-4 text-sm text-gray-900 dark:text-white focus:ring-1 focus:ring-orange-500 outline-none resize-none"
                               placeholder="Describe brevemente de qué trata este proyecto...">{{ $project->description ?? '' }}</textarea>
+                </div>
+
+                <!-- Logo del Proyecto -->
+                <div class="space-y-2">
+                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Logo del Proyecto (Opcional)</label>
+                    <input type="file" name="logo" accept="image/*"
+                           class="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-white/10 rounded-xl p-4 text-sm text-gray-900 dark:text-white focus:ring-1 focus:ring-orange-500 outline-none">
+                    @if(isset($project) && $project->logo)
+                        <div class="mt-2 flex items-center gap-3">
+                            <span class="text-xs text-gray-500">Logo actual:</span>
+                            <img src="{{ asset('storage/' . $project->logo) }}" class="w-10 h-10 rounded-lg object-cover border border-white/10">
+                        </div>
+                    @endif
+                    <p class="text-[9px] text-gray-500 mt-1">Sube una imagen para representar el proyecto (PNG, JPG, SVG). Tamaño recomendado: 128x128px.</p>
                 </div>
             </div>
 

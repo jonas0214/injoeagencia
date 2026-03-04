@@ -65,12 +65,19 @@ class ProjectController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'template_id' => 'nullable|exists:projects,id',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         DB::transaction(function () use ($request) {
+            $logoPath = null;
+            if ($request->hasFile('logo')) {
+                $logoPath = $request->file('logo')->store('project-logos', 'public');
+            }
+
             $project = Project::create([
                 'name' => $request->name,
                 'description' => $request->description,
+                'logo' => $logoPath,
                 'user_id' => Auth::id(),
                 'status' => 'activo',
                 'is_template' => $request->has('is_template'),
@@ -170,10 +177,20 @@ class ProjectController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        $data = $request->all();
+        $data = $request->only(['name', 'description', 'is_template']);
         $data['is_template'] = $request->has('is_template');
+
+        if ($request->hasFile('logo')) {
+            // Eliminar logo anterior si existe
+            if ($project->logo) {
+                \Storage::disk('public')->delete($project->logo);
+            }
+            $data['logo'] = $request->file('logo')->store('project-logos', 'public');
+        }
+        // Si no se sube archivo, no modificamos el campo logo
 
         $project->update($data);
 

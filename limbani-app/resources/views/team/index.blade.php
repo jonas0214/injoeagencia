@@ -30,7 +30,7 @@
                     <h1 class="text-2xl md:text-4xl font-light text-gray-800 dark:text-white tracking-wide mb-1">
                         Gestión de <span class="font-medium text-gray-900 dark:text-white">Talento Humano</span>
                     </h1>
-                    <p class="text-gray-500 text-[10px] md:text-xs font-medium tracking-[0.15em] uppercase">
+                    <p class="text-gray-600 dark:text-gray-300 text-[10px] md:text-xs font-medium tracking-[0.15em] uppercase">
                         Administra la información de tus colaboradores, cargos y nómina
                     </p>
                 </div>
@@ -84,11 +84,11 @@
                                             </div>
                                             <div class="col-span-2">
                                                 <label class="block text-sm font-medium text-gray-700">Nombre Completo</label>
-                                                <input type="text" name="name" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 text-gray-900 dark:text-gray-100 dark:bg-gray-700">
+                                                <input type="text" name="name" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 text-black dark:text-gray-100 dark:bg-gray-700">
                                             </div>
                                             <div>
                                                 <label class="block text-sm font-medium text-gray-700">Cédula / ID</label>
-                                                <input type="text" name="cedula" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 text-gray-900 dark:text-gray-100 dark:bg-gray-700">
+                                                <input type="text" name="cedula" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 text-black dark:text-gray-100 dark:bg-gray-700">
                                             </div>
                                             <div>
                                                 <label class="block text-sm font-medium text-gray-700">Teléfono</label>
@@ -147,11 +147,11 @@
                     <table class="min-w-full">
                         <thead>
                             <tr class="border-b border-white/5">
-                                <th scope="col" class="px-4 md:px-6 py-4 text-left text-[10px] font-bold text-gray-500 uppercase tracking-widest">Colaborador</th>
-                                <th scope="col" class="hidden md:table-cell px-6 py-4 text-left text-[10px] font-bold text-gray-500 uppercase tracking-widest">Cargo / Rol</th>
-                                <th scope="col" class="hidden lg:table-cell px-6 py-4 text-left text-[10px] font-bold text-gray-500 uppercase tracking-widest">Contacto</th>
-                                <th scope="col" class="hidden sm:table-cell px-6 py-4 text-left text-[10px] font-bold text-gray-500 uppercase tracking-widest">Correo</th>
-                                <th scope="col" class="px-4 md:px-6 py-4 text-right text-[10px] font-bold text-gray-500 uppercase tracking-widest">Estado</th>
+                                <th scope="col" class="px-4 md:px-6 py-4 text-left text-[10px] font-bold text-gray-700 dark:text-gray-300 uppercase tracking-widest">Colaborador</th>
+                                <th scope="col" class="hidden md:table-cell px-6 py-4 text-left text-[10px] font-bold text-gray-700 dark:text-gray-300 uppercase tracking-widest">Cargo / Rol</th>
+                                <th scope="col" class="hidden lg:table-cell px-6 py-4 text-left text-[10px] font-bold text-gray-700 dark:text-gray-300 uppercase tracking-widest">Contacto</th>
+                                <th scope="col" class="hidden sm:table-cell px-6 py-4 text-left text-[10px] font-bold text-gray-700 dark:text-gray-300 uppercase tracking-widest">Correo</th>
+                                <th scope="col" class="px-4 md:px-6 py-4 text-right text-[10px] font-bold text-gray-700 dark:text-gray-300 uppercase tracking-widest">Estado</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-white/5">
@@ -170,13 +170,13 @@
                                             </div>
                                             <div class="ml-4">
                                                 <div class="text-sm font-medium text-gray-800 dark:text-white group-hover:text-orange-500 transition-colors">{{ $member->name }}</div>
-                                                <div class="text-[9px] text-gray-500 font-bold uppercase tracking-widest">ID: {{ $member->cedula }}</div>
+                                                <div class="text-[9px] text-gray-600 dark:text-gray-400 font-bold uppercase tracking-widest">ID: {{ $member->cedula }}</div>
                                             </div>
                                         </div>
                                     </td>
                                     <td class="hidden md:table-cell px-6 py-6 whitespace-nowrap">
                                         <div class="flex flex-col gap-1">
-                                            <span class="px-3 py-1 inline-flex text-[10px] leading-5 font-bold rounded-full bg-white/5 border border-white/10 text-gray-400 uppercase tracking-widest group-hover:border-orange-500/30 transition-colors w-fit">
+                                            <span class="px-3 py-1 inline-flex text-[10px] leading-5 font-bold rounded-full bg-white/5 border border-white/10 text-gray-300 dark:text-gray-300 uppercase tracking-widest group-hover:border-orange-500/30 transition-colors w-fit">
                                                 {{ $member->position }}
                                             </span>
                                             @if($member->user)
@@ -187,10 +187,10 @@
                                         </div>
                                     </td>
                                     <td class="hidden lg:table-cell px-6 py-6 whitespace-nowrap">
-                                        <div class="text-xs text-gray-400 font-medium"><i class="fas fa-phone text-gray-600 mr-2"></i> {{ $member->phone }}</div>
+                                        <div class="text-xs text-gray-600 dark:text-gray-300 font-medium"><i class="fas fa-phone text-gray-600 dark:text-gray-400 mr-2"></i> {{ $member->phone }}</div>
                                     </td>
                                     <td class="hidden sm:table-cell px-6 py-6 whitespace-nowrap">
-                                        <div class="text-xs text-gray-500 italic">{{ $member->email ?? 'no-email@agency.com' }}</div>
+                                        <div class="text-xs text-gray-600 dark:text-gray-400 italic">{{ $member->email ?? 'no-email@agency.com' }}</div>
                                     </td>
                                     <td class="px-4 md:px-6 py-6 whitespace-nowrap text-right">
                                         <div class="flex items-center justify-end gap-2">
@@ -216,7 +216,7 @@
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
                     <div>
                         <h3 class="text-xl font-light text-white tracking-wide">Registro de Asistencia</h3>
-                        <p class="text-[10px] text-gray-500 uppercase tracking-widest mt-1">Control de entrada y salida mediante QR</p>
+                        <p class="text-[10px] text-gray-600 dark:text-gray-300 uppercase tracking-widest mt-1">Control de entrada y salida mediante QR</p>
                     </div>
                     <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
                         <a href="{{ route('attendance.scanner') }}" target="_blank" class="w-full sm:w-auto justify-center bg-white text-black font-bold py-3 px-6 rounded-xl shadow-lg transition flex items-center gap-2 text-xs uppercase tracking-widest hover:bg-gray-200">
@@ -232,11 +232,11 @@
                     <table class="min-w-full">
                         <thead>
                             <tr class="border-b border-white/5">
-                                <th class="px-4 md:px-6 py-4 text-left text-[10px] font-bold text-gray-500 uppercase tracking-widest">Colaborador</th>
-                                <th class="px-4 md:px-6 py-4 text-left text-[10px] font-bold text-gray-500 uppercase tracking-widest">Entrada</th>
-                                <th class="hidden sm:table-cell px-6 py-4 text-left text-[10px] font-bold text-gray-500 uppercase tracking-widest">Salida</th>
-                                <th class="px-4 md:px-6 py-4 text-left text-[10px] font-bold text-gray-500 uppercase tracking-widest">Total Hoy</th>
-                                <th class="px-4 md:px-6 py-4 text-right text-[10px] font-bold text-gray-500 uppercase tracking-widest">Estado</th>
+                                <th class="px-4 md:px-6 py-4 text-left text-[10px] font-bold text-gray-700 dark:text-gray-300 uppercase tracking-widest">Colaborador</th>
+                                <th class="px-4 md:px-6 py-4 text-left text-[10px] font-bold text-gray-700 dark:text-gray-300 uppercase tracking-widest">Entrada</th>
+                                <th class="hidden sm:table-cell px-6 py-4 text-left text-[10px] font-bold text-gray-700 dark:text-gray-300 uppercase tracking-widest">Salida</th>
+                                <th class="px-4 md:px-6 py-4 text-left text-[10px] font-bold text-gray-700 dark:text-gray-300 uppercase tracking-widest">Total Hoy</th>
+                                <th class="px-4 md:px-6 py-4 text-right text-[10px] font-bold text-gray-700 dark:text-gray-300 uppercase tracking-widest">Estado</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-white/5">
@@ -266,11 +266,11 @@
                                         </div>
                                     </td>
                                     <td class="px-4 md:px-6 py-5 whitespace-nowrap">
-                                        <span class="text-xs md:text-sm text-gray-300 font-mono">{{ $record->check_in->format('H:i:s') }}</span>
+                                        <span class="text-xs md:text-sm text-gray-700 dark:text-gray-300 font-mono">{{ $record->check_in->format('H:i:s') }}</span>
                                     </td>
                                     <td class="hidden sm:table-cell px-6 py-5 whitespace-nowrap">
                                         @if($record->check_out)
-                                            <span class="text-sm text-gray-300 font-mono">{{ $record->check_out->format('H:i:s') }}</span>
+                                            <span class="text-sm text-gray-700 dark:text-gray-300 font-mono">{{ $record->check_out->format('H:i:s') }}</span>
                                         @else
                                             <span class="text-[10px] font-bold text-green-500/50 uppercase tracking-widest italic animate-pulse">Presente</span>
                                         @endif
@@ -293,7 +293,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="4" class="px-6 py-10 text-center text-gray-500 italic text-sm">No hay registros de asistencia para hoy.</td>
+                                    <td colspan="4" class="px-6 py-10 text-center text-gray-600 dark:text-gray-400 italic text-sm">No hay registros de asistencia para hoy.</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -317,7 +317,7 @@
         <!-- Header Panel -->
         <div class="px-8 py-6 border-b border-gray-100 dark:border-white/5 flex justify-between items-center bg-gray-50 dark:bg-[#1a1a1a]">
             <h2 class="text-sm font-bold text-gray-500 uppercase tracking-[0.2em]">Detalle del Perfil</h2>
-            <button @click="showMemberPanel = false" class="text-gray-500 hover:text-white transition-colors">
+            <button @click="showMemberPanel = false" class="text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors">
                 <i class="fas fa-times text-lg"></i>
             </button>
         </div>
@@ -344,14 +344,14 @@
             <!-- Información General -->
             <div class="space-y-6">
                 <div class="space-y-2">
-                    <label class="text-[10px] font-bold text-gray-600 uppercase tracking-widest">Información de Contacto</label>
+                    <label class="text-[10px] font-bold text-gray-700 dark:text-gray-300 uppercase tracking-widest">Información de Contacto</label>
                     <div class="grid grid-cols-1 gap-3">
                         <div class="bg-white/5 rounded-xl p-4 border border-white/5">
-                            <p class="text-[10px] text-gray-500 uppercase font-bold mb-1">Correo Electrónico</p>
+                            <p class="text-[10px] text-gray-600 dark:text-gray-400 uppercase font-bold mb-1">Correo Electrónico</p>
                             <p class="text-sm text-gray-700 dark:text-gray-200" x-text="activeMember.email ? activeMember.email : 'No registrado'"></p>
                         </div>
                         <div class="bg-gray-50 dark:bg-white/5 rounded-xl p-4 border border-gray-200 dark:border-white/5">
-                            <p class="text-[10px] text-gray-500 uppercase font-bold mb-1">Teléfono Móvil</p>
+                            <p class="text-[10px] text-gray-600 dark:text-gray-400 uppercase font-bold mb-1">Teléfono Móvil</p>
                             <p class="text-sm text-gray-700 dark:text-gray-200" x-text="activeMember.phone || ''"></p>
                         </div>
                     </div>
@@ -362,15 +362,15 @@
                     <div class="grid grid-cols-1 gap-3">
                         <div class="bg-white/5 rounded-xl p-4 border border-white/5 flex justify-between items-center">
                             <div>
-                                <p class="text-[10px] text-gray-500 uppercase font-bold mb-1">Identificación</p>
+                                <p class="text-[10px] text-gray-600 dark:text-gray-400 uppercase font-bold mb-1">Identificación</p>
                                 <p class="text-sm text-gray-200" x-text="activeMember.cedula || ''"></p>
                             </div>
                             <div class="px-2 py-1 rounded bg-white/10 text-[9px] font-bold text-gray-400">CC</div>
                         </div>
                         <div class="bg-white/5 rounded-xl p-4 border border-white/5 flex justify-between items-center">
                             <div>
-                                <p class="text-[10px] text-gray-500 uppercase font-bold mb-1">Asignación Salarial</p>
-                                <p class="text-lg font-medium text-white">
+                                <p class="text-[10px] text-gray-600 dark:text-gray-400 uppercase font-bold mb-1">Asignación Salarial</p>
+                                <p class="text-lg font-medium text-gray-900 dark:text-white">
                                     <span class="text-orange-500 mr-1">$</span>
                                     <span x-text="activeMember.salary ? new Intl.NumberFormat('es-CO').format(activeMember.salary) : '0'"></span>
                                 </p>
@@ -383,8 +383,8 @@
                 <div class="space-y-2">
                     <label class="text-[10px] font-bold text-gray-600 uppercase tracking-widest">Tesorería & Pagos</label>
                     <div class="bg-white/5 rounded-xl p-4 border border-white/5">
-                        <p class="text-[10px] text-gray-500 uppercase font-bold mb-1">Detalles Bancarios</p>
-                        <p class="text-xs text-gray-300 leading-relaxed italic" x-text="activeMember.bank_details ? activeMember.bank_details : 'Información pendiente de registro'"></p>
+                        <p class="text-[10px] text-gray-600 dark:text-gray-400 uppercase font-bold mb-1">Detalles Bancarios</p>
+                        <p class="text-xs text-gray-700 dark:text-gray-300 leading-relaxed italic" x-text="activeMember.bank_details ? activeMember.bank_details : 'Información pendiente de registro'"></p>
                     </div>
                 </div>
             </div>

@@ -17,8 +17,19 @@
                 <a href="{{ route('dashboard') }}" class="w-10 h-10 rounded-xl bg-gray-100 dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/10 flex items-center justify-center shadow-sm hover:bg-gray-200 dark:hover:bg-white/5 transition-colors text-gray-400">
                     <i class="fas fa-arrow-left"></i>
                 </a>
-                <div>
-                    <h1 class="text-xl md:text-3xl font-medium tracking-tight text-gray-900 dark:text-white truncate max-w-[200px] md:max-w-none">{{ $project->name }}</h1>
+                <div class="flex items-center gap-3 md:gap-4">
+                    @if($project->logo)
+                        <div class="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-orange-500/10 border border-white/10 overflow-hidden flex items-center justify-center">
+                            <img src="{{ asset('storage/' . $project->logo) }}" alt="{{ $project->name }}" class="w-full h-full object-cover">
+                        </div>
+                    @else
+                        <div class="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-orange-500/10 border border-white/10 flex items-center justify-center text-orange-500">
+                            <i class="fas fa-layer-group text-lg md:text-xl"></i>
+                        </div>
+                    @endif
+                    <div>
+                        <h1 class="text-xl md:text-3xl font-medium tracking-tight text-gray-900 dark:text-white truncate max-w-[200px] md:max-w-none">{{ $project->name }}</h1>
+                    </div>
                 </div>
             </div>
             
