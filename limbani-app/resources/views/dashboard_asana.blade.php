@@ -257,8 +257,23 @@
                 <div class="absolute top-0 right-0 w-32 h-32 bg-orange-500/5 rounded-full blur-3xl -mr-10 -mt-10"></div>
                 <div class="relative z-10">
                     <i class="fas fa-quote-left text-orange-500/50 text-xl mb-4"></i>
-                    <p class="font-light text-gray-600 dark:text-gray-300 italic leading-relaxed text-sm mb-4">"La simplicidad es la máxima sofisticación."</p>
-                    <p class="text-[10px] font-bold text-gray-400 dark:text-gray-600 uppercase tracking-widest">— Leonardo da Vinci</p>
+                    @php
+                        $versiculos = [
+                            ['texto' => 'Todo lo puedo en Cristo que me fortalece.', 'referencia' => 'Filipenses 4:13'],
+                            ['texto' => 'El Señor es mi pastor, nada me faltará.', 'referencia' => 'Salmos 23:1'],
+                            ['texto' => 'Para Dios todo es posible.', 'referencia' => 'Mateo 19:26'],
+                            ['texto' => 'Todo tiene su tiempo, y todo lo que se quiere debajo del cielo tiene su hora.', 'referencia' => 'Eclesiastés 3:1'],
+                            ['texto' => 'El amor es paciente, es bondadoso. El amor no es envidioso ni jactancioso ni orgulloso.', 'referencia' => '1 Corintios 13:4'],
+                            ['texto' => 'No temas, porque yo estoy contigo; no desmayes, porque yo soy tu Dios.', 'referencia' => 'Isaías 41:10'],
+                            ['texto' => 'Encomienda al Señor tus obras, y tus pensamientos serán afirmados.', 'referencia' => 'Proverbios 16:3'],
+                            ['texto' => 'Buscad primeramente el reino de Dios y su justicia, y todas estas cosas os serán añadidas.', 'referencia' => 'Mateo 6:33'],
+                            ['texto' => 'El fruto del Espíritu es amor, gozo, paz, paciencia, benignidad, bondad, fe, mansedumbre, templanza.', 'referencia' => 'Gálatas 5:22-23'],
+                            ['texto' => 'Porque de tal manera amó Dios al mundo, que ha dado a su Hijo unigénito.', 'referencia' => 'Juan 3:16'],
+                        ];
+                        $versiculo = $versiculos[array_rand($versiculos)];
+                    @endphp
+                    <p class="font-light text-gray-600 dark:text-gray-300 italic leading-relaxed text-sm mb-4">"{{ $versiculo['texto'] }}"</p>
+                    <p class="text-[10px] font-bold text-gray-400 dark:text-gray-600 uppercase tracking-widest">— {{ $versiculo['referencia'] }}</p>
                 </div>
             </div>
 
