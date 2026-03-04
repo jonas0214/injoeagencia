@@ -11,27 +11,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <script>
-        // Configuración de Tailwind para modo oscuro
-        document.addEventListener('DOMContentLoaded', function() {
-            if (window.tailwind) {
-                window.tailwind.config = {
-                    darkMode: 'class',
-                    theme: {
-                        extend: {
-                            colors: {
-                                dark: {
-                                    bg: '#0f1012',
-                                    sidebar: '#0a0a0a',
-                                    card: 'rgba(255, 255, 255, 0.03)',
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    </script>
 
     <style>
         body { font-family: 'Outfit', sans-serif; }
