@@ -9,6 +9,8 @@ use App\Http\Controllers\SubtaskController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\TeamMemberController;
 use App\Http\Controllers\AttachmentController;
+use App\Http\Controllers\UserController;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -80,6 +82,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/billing', [\App\Http\Controllers\BillingController::class, 'index'])->name('billing.index');
     Route::post('/billing', [\App\Http\Controllers\BillingController::class, 'store'])->name('billing.store');
     Route::delete('/billing/{billing}', [\App\Http\Controllers\BillingController::class, 'destroy'])->name('billing.destroy');
-});
+
+    // 7. Gestion de Usuarios (Admin/CEO)
+    Route::resource('users', UserController::class)->except(['show', 'edit', 'update']);
+
+
+
+    });
 
 require __DIR__.'/auth.php';

@@ -1,14 +1,19 @@
 <!-- NAVEGACIÓN TIPO PESTAÑAS -->
 <div class="flex items-center gap-4 md:gap-8 border-b border-white/5 mb-10 text-xs md:text-sm font-medium overflow-x-auto scrollbar-hide whitespace-nowrap">
-    <a href="{{ route('dashboard') }}" class="pb-4 text-white border-b-2 border-orange-500">
+    <a href="{{ route('dashboard') }}" class="pb-4 transition-colors {{ request()->routeIs('dashboard') ? 'text-white border-b-2 border-orange-500' : 'text-gray-500 hover:text-gray-300' }}">
         Proyectos
     </a>
     @if(in_array(Auth::user()->role, ['admin', 'ceo', 'rrhh', 'contabilidad']))
-    <a href="{{ route('team.index') }}" class="pb-4 text-gray-500 hover:text-gray-300 transition-colors">
+    <a href="{{ route('team.index') }}" class="pb-4 transition-colors {{ request()->routeIs('team.index*') ? 'text-white border-b-2 border-orange-500' : 'text-gray-500 hover:text-gray-300' }}">
         Equipo & Nómina
     </a>
     <a href="#" class="pb-4 text-gray-500 hover:text-gray-300 transition-colors opacity-50 cursor-not-allowed">
         Informes
+    </a>
+    @endif
+    @if(in_array(Auth::user()->role, ['admin', 'ceo']))
+    <a href="{{ route('users.index') }}" class="pb-4 transition-colors {{ request()->routeIs('users.*') ? 'text-white border-b-2 border-orange-500' : 'text-gray-500 hover:text-gray-300' }}">
+        Usuarios
     </a>
     @endif
 </div>
