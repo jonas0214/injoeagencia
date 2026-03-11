@@ -62,6 +62,7 @@
                     this.vx = (Math.random() - 0.5) * 0.5; // Velocidad X lenta
                     this.vy = (Math.random() - 0.5) * 0.5; // Velocidad Y lenta
                     this.size = Math.random() * 2 + 1;
+                    this.opacity = Math.random() * 0.6 + 0.1; // Brillo aleatorio entre 0.1 y 0.7
                 }
 
                 update() {
@@ -74,7 +75,7 @@
                 }
 
                 draw() {
-                    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                    ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
                     ctx.beginPath();
                     ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                     ctx.fill();
