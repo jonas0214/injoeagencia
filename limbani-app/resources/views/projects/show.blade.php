@@ -19,11 +19,11 @@
                 </a>
                 <div class="flex items-center gap-3 md:gap-4">
                     @if($project->logo)
-                        <div class="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-orange-500/10 border border-white/10 overflow-hidden flex items-center justify-center">
-                            <img src="{{ asset('storage/' . $project->logo) }}" alt="{{ $project->name }}" class="w-full h-full object-cover">
+                        <div class="h-10 md:h-12 min-w-[2.5rem] md:min-w-[3rem] max-w-[10rem] px-2 rounded-xl bg-white dark:bg-orange-500/10 border border-gray-200 dark:border-white/10 flex items-center justify-center overflow-hidden shadow-sm">
+                            <img src="{{ asset('storage/' . $project->logo) }}" alt="{{ $project->name }}" class="h-full w-auto object-contain py-1">
                         </div>
                     @else
-                        <div class="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-orange-500/10 border border-white/10 flex items-center justify-center text-orange-500">
+                        <div class="h-10 md:h-12 min-w-[2.5rem] md:min-w-[3rem] px-2 rounded-xl bg-white dark:bg-orange-500/10 border border-gray-200 dark:border-white/10 flex items-center justify-center text-orange-500 shadow-sm">
                             <i class="fas fa-layer-group text-lg md:text-xl"></i>
                         </div>
                     @endif
@@ -35,13 +35,14 @@
             
             @if(in_array(Auth::user()->role, ['admin', 'ceo']))
             <div class="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
-                <div x-data="{ addingSection: false, sectionTitle: '' }">
+                <div x-data="{ addingSection: false, sectionTitle: '', saveSection() { if(this.sectionTitle.trim() === '') return; fetch('/projects/{{ $project->id }}/tasks', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: JSON.stringify({ title: this.sectionTitle }) }).then(() => window.location.reload()); } }">
                     <button @click="addingSection = true; $nextTick(() => $refs.sectionInput.focus())" x-show="!addingSection" class="bg-gray-900 dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-colors shadow-lg">
                         <i class="fas fa-plus mr-2"></i> Nueva Sección
                     </button>
                     <div x-show="addingSection" class="flex items-center gap-2" style="display: none;">
-                        <input type="text" x-model="sectionTitle" x-ref="sectionInput" @keydown.enter.prevent="fetch('/projects/{{ $project->id }}/tasks', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: JSON.stringify({ title: sectionTitle }) }).then(() => window.location.reload())" placeholder="Nombre de la sección..." class="bg-gray-100 dark:bg-[#1a1a1a] border border-gray-300 dark:border-white/10 rounded-lg px-3 py-1.5 text-xs text-gray-900 dark:text-white focus:ring-1 focus:ring-orange-500 outline-none">
-                        <button @click="addingSection = false" class="text-gray-500 hover:text-white p-1.5 transition-colors"><i class="fas fa-times text-[10px]"></i></button>
+                        <input type="text" x-model="sectionTitle" x-ref="sectionInput" @keydown.enter.prevent="saveSection()" placeholder="Nombre de la sección..." class="bg-gray-100 dark:bg-[#1a1a1a] border border-gray-300 dark:border-white/10 rounded-lg px-3 py-1.5 text-xs text-gray-900 dark:text-white focus:ring-1 focus:ring-orange-500 outline-none">
+                        <button @click="saveSection()" class="text-green-500 hover:text-green-400 p-1.5 transition-colors" title="Guardar"><i class="fas fa-check text-xs"></i></button>
+                        <button @click="addingSection = false; sectionTitle = '';" class="text-gray-500 hover:text-red-400 p-1.5 transition-colors" title="Cancelar"><i class="fas fa-times text-xs"></i></button>
                     </div>
                 </div>
             </div>
@@ -81,14 +82,15 @@
                                 <div @click="toggle()" class="h-[1px] flex-1 bg-white/5 ml-4 cursor-pointer"></div>
                             </div>
                             
-                            <div x-show="editingTitle" class="flex-1" style="display: none;">
+                            <div x-show="editingTitle" class="flex-1 flex items-center gap-2 bg-gray-50 dark:bg-[#1a1a1a] px-2 py-1 rounded-lg border border-gray-200 dark:border-white/5" style="display: none;">
                                 <input type="text"
                                     x-model="newTitle"
                                     x-ref="titleInput"
                                     @keydown.enter="fetch('{{ url('/tasks') }}/{{ $section->id }}', { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' }, body: JSON.stringify({ title: newTitle }) }).then(() => window.location.reload())"
-                                    @keydown.escape="editingTitle = false"
-                                    @click.away="editingTitle = false"
-                                    class="bg-transparent border-none p-0 text-[11px] font-bold text-white uppercase tracking-[0.2em] focus:ring-0 outline-none w-full">
+                                    @keydown.escape="editingTitle = false; newTitle = '{{ addslashes($section->title) }}';"
+                                    class="bg-transparent border-none p-0 text-[11px] font-bold text-gray-900 dark:text-white uppercase tracking-[0.2em] focus:ring-0 outline-none w-full">
+                                <button type="button" @click="fetch('{{ url('/tasks') }}/{{ $section->id }}', { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' }, body: JSON.stringify({ title: newTitle }) }).then(() => window.location.reload())" class="text-green-500 hover:text-green-600 dark:hover:text-green-400 p-1" title="Guardar"><i class="fas fa-check text-[10px]"></i></button>
+                                <button type="button" @click="editingTitle = false; newTitle = '{{ addslashes($section->title) }}';" class="text-gray-400 hover:text-red-500 p-1" title="Cancelar"><i class="fas fa-times text-[10px]"></i></button>
                             </div>
                         </div>
 
@@ -106,7 +108,7 @@
                     <div x-show="expanded" x-collapse class="space-y-[1px]">
                         @include('projects._subtask_recursive', ['subtasks' => $section->subtasks->whereNull('parent_id'), 'level' => 0, 'section' => $section])
                         @if(in_array(Auth::user()->role, ['admin', 'ceo']))
-                        <form action="{{ route('subtasks.store', $section) }}" method="POST" class="pl-12 pt-2 flex items-center gap-4 opacity-40 hover:opacity-100 transition-opacity">@csrf<button type="submit" class="w-7 h-7 rounded-lg flex items-center justify-center bg-black/5 dark:bg-white/5 hover:bg-orange-500 hover:text-black transition-all"><i class="fas fa-plus text-xs"></i></button><input type="text" name="title" placeholder="Agregar tarea..." class="bg-transparent border-none text-[14px] text-gray-500 dark:text-gray-400 focus:ring-0 w-full"></form>
+                        <form action="{{ route('subtasks.store', $section) }}" method="POST" class="pl-12 pt-2 flex items-center gap-4 opacity-40 hover:opacity-100 transition-opacity">@csrf<button type="submit" class="w-7 h-7 rounded-lg flex items-center justify-center bg-black/5 dark:bg-white/5 hover:bg-orange-500 hover:text-black transition-all" title="Añadir tarea"><i class="fas fa-plus text-xs"></i></button><input type="text" name="title" placeholder="Agregar tarea..." required class="bg-transparent border-none text-[14px] text-gray-800 dark:text-gray-400 focus:ring-0 w-full"></form>
                         @endif
                     </div>
                 </div>
