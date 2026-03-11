@@ -161,6 +161,26 @@
             <div class="fixed top-0 left-0 md:left-64 w-full h-full bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-orange-500/10 dark:from-orange-900/20 via-transparent dark:via-[#0f1012] to-transparent dark:to-[#0f1012] pointer-events-none z-0"></div>
             
             <div class="relative z-10">
+                @if(session('success'))
+                    <div class="m-8 p-4 mb-0 bg-green-100 dark:bg-green-900/30 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-300 rounded-xl" x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)">
+                        {{ session('success') }}
+                    </div>
+                @endif
+                @if(session('error'))
+                    <div class="m-8 p-4 mb-0 bg-red-100 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-300 rounded-xl" x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)">
+                        {{ session('error') }}
+                    </div>
+                @endif
+                @if($errors->any())
+                    <div class="m-8 p-4 mb-0 bg-red-100 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-300 rounded-xl">
+                        <ul class="list-disc pl-5">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 @yield('content')
             </div>
         </main>
