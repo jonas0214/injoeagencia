@@ -216,7 +216,7 @@
                     <div class="mt-8 pt-8 border-t border-gray-200 dark:border-white/5 flex flex-wrap gap-8">
                         <div>
                             <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Presupuesto Pauta</p>
-                            <p class="text-sm font-bold text-orange-500">${{ number_format($brief->answers['q17'] ?? 0, 2) }}</p>
+                            <p class="text-sm font-bold text-orange-500">${{ number_format((float)($brief->answers['q17'] ?? 0), 2) }}</p>
                         </div>
                         <div>
                             <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Última edicion</p>
