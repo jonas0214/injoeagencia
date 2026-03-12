@@ -33,8 +33,10 @@
                 </div>
             </div>
             
-            @if(in_array(Auth::user()->role, ['admin', 'ceo']))
             <div class="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
+                <x-notification-center />
+                
+                @if(in_array(Auth::user()->role, ['admin', 'ceo']))
                 <div x-data="{ addingSection: false }">
                     <button type="button" @click="addingSection = true; $nextTick(() => $refs.sectionInput.focus())" x-show="!addingSection" class="bg-gray-900 dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-colors shadow-lg">
                         <i class="fas fa-plus mr-2"></i> Nueva Sección
@@ -46,8 +48,8 @@
                         <button type="button" @click="addingSection = false" class="text-gray-500 hover:text-red-400 p-1.5 transition-colors" title="Cancelar"><i class="fas fa-times text-xs"></i></button>
                     </form>
                 </div>
+                @endif
             </div>
-            @endif
         </div>
 
         <!-- Pestañas de Proyecto -->
