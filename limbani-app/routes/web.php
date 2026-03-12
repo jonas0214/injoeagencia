@@ -77,6 +77,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/projects/{project}/brief/show', [\App\Http\Controllers\BriefController::class, 'show'])->name('briefs.show');
     Route::get('/projects/{project}/brief/download', [\App\Http\Controllers\BriefController::class, 'download'])->name('briefs.download');
     Route::get('/projects/{project}/brief/status', [\App\Http\Controllers\BriefController::class, 'status'])->name('briefs.status');
+    Route::post('/projects/{project}/brief/ai-suggestions', [\App\Http\Controllers\BriefAIController::class, 'getSuggestions'])->name('briefs.ai-suggestions');
 
     // Rutas de Cuentas de Cobro
     Route::get('/billing', [\App\Http\Controllers\BillingController::class, 'index'])->name('billing.index');

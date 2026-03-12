@@ -79,17 +79,34 @@
                                 <p class="text-lg text-gray-500 dark:text-gray-400">Define lo más relevante para tu marca este periodo.</p>
                             </div>
                             <div class="space-y-10">
-                                <div class="data-box p-8 rounded-3xl bg-gray-50 dark:bg-white/[0.02] border border-gray-200 dark:border-white/10">
-                                    <label class="block text-sm font-bold uppercase tracking-widest text-gray-400 mb-4">1. ¿Lanzamientos, promociones o novedades importantes?</label>
-                                    <textarea name="answers[q1]" rows="4" class="w-full bg-transparent border-0 p-0 text-xl focus:ring-0 placeholder-gray-300 dark:placeholder-white/10" placeholder="Ej: Nuevos productos, aperturas, eventos...">{{ old('answers.q1', $brief->answers['q1'] ?? '') }}</textarea>
+                                <div class="data-box p-8 rounded-3xl bg-gray-50 dark:bg-white/[0.02] border border-gray-200 dark:border-white/10 relative group/ai">
+                                    <div class="flex justify-between items-start mb-4">
+                                        <label class="block text-sm font-bold uppercase tracking-widest text-gray-400">1. ¿Lanzamientos, promociones o novedades importantes?</label>
+                                        <button type="button" @click="fetchAISuggestions('q1')" class="text-orange-500 hover:scale-110 transition-transform p-2 bg-orange-500/10 rounded-lg" title="Sugerencias de IA">
+                                            <i class="fas fa-wand-magic-sparkles" :class="aiWorking === 'q1' ? 'fa-spin' : ''"></i>
+                                        </button>
+                                    </div>
+                                    <textarea name="answers[q1]" x-ref="q1_input" @input="formData.answers['q1'] = $el.value" rows="4" class="w-full bg-transparent border-0 p-0 text-xl focus:ring-0 placeholder-gray-300 dark:placeholder-white/10" placeholder="Ej: Nuevos productos, aperturas, eventos...">{{ old('answers.q1', $brief->answers['q1'] ?? '') }}</textarea>
+                                    
+                                    <!-- AI Suggestions Chips -->
+                                    <div x-show="aiSuggestions['q1']?.length" x-transition class="mt-4 flex flex-wrap gap-2">
+                                        <template x-for="sug in aiSuggestions['q1']">
+                                            <button type="button" @click="applyAISuggestion('q1', sug)" class="px-4 py-2 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl text-xs font-medium hover:border-orange-500 transition-colors" x-text="sug"></button>
+                                        </template>
+                                    </div>
                                 </div>
                                 <div class="data-box p-8 rounded-3xl bg-gray-50 dark:bg-white/[0.02] border border-gray-200 dark:border-white/10">
                                     <label class="block text-sm font-bold uppercase tracking-widest text-gray-400 mb-4">2. ¿Qué producto/servicio necesita mayor visibilidad?</label>
                                     <textarea name="answers[q2]" rows="3" class="w-full bg-transparent border-0 p-0 text-xl focus:ring-0 placeholder-gray-300 dark:placeholder-white/10" placeholder="Ej: Nuestro servicio premium de consultoría...">{{ old('answers.q2', $brief->answers['q2'] ?? '') }}</textarea>
                                 </div>
-                                <div class="data-box p-8 rounded-3xl bg-gray-50 dark:bg-white/[0.02] border border-gray-200 dark:border-white/10">
-                                    <label class="block text-sm font-bold uppercase tracking-widest text-gray-400 mb-4">3. Objetivo comercial principal</label>
-                                    <select name="answers[q3]" class="w-full bg-transparent border-0 p-0 text-xl focus:ring-0">
+                                <div class="data-box p-8 rounded-3xl bg-gray-50 dark:bg-white/[0.02] border border-gray-200 dark:border-white/10 relative group/ai">
+                                    <div class="flex justify-between items-start mb-4">
+                                        <label class="block text-sm font-bold uppercase tracking-widest text-gray-400">3. Objetivo comercial principal</label>
+                                        <button type="button" @click="fetchAISuggestions('q3')" class="text-orange-500 hover:scale-110 transition-transform p-2 bg-orange-500/10 rounded-lg" title="IA Copilot">
+                                            <i class="fas fa-wand-magic-sparkles" :class="aiWorking === 'q3' ? 'fa-spin' : ''"></i>
+                                        </button>
+                                    </div>
+                                    <select name="answers[q3]" x-model="formData.answers['q3']" class="w-full bg-transparent border-0 p-0 text-xl focus:ring-0">
                                         <option value="">Selecciona uno...</option>
                                         <option value="leads" {{ ($brief->answers['q3'] ?? '') == 'leads' ? 'selected' : '' }}>Generar más clientes potenciales</option>
                                         <option value="ventas" {{ ($brief->answers['q3'] ?? '') == 'ventas' ? 'selected' : '' }}>Aumentar ventas</option>
@@ -97,6 +114,13 @@
                                         <option value="lanzamiento" {{ ($brief->answers['q3'] ?? '') == 'lanzamiento' ? 'selected' : '' }}>Lanzar producto</option>
                                         <option value="comunidad" {{ ($brief->answers['q3'] ?? '') == 'comunidad' ? 'selected' : '' }}>Fortalecer comunidad</option>
                                     </select>
+
+                                    <!-- AI Suggestions Chips -->
+                                    <div x-show="aiSuggestions['q3']?.length" x-transition class="mt-4 flex flex-wrap gap-2">
+                                        <template x-for="sug in aiSuggestions['q3']">
+                                            <button type="button" @click="formData.answers['q3'] = sug; aiSuggestions['q3'] = []" class="px-3 py-1 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl text-[10px] font-bold uppercase hover:border-orange-500 transition-colors" x-text="sug"></button>
+                                        </template>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -108,9 +132,21 @@
                                 <p class="text-lg text-gray-500 dark:text-gray-400">¿Qué quieres decirle al mundo este mes?</p>
                             </div>
                             <div class="space-y-10">
-                                <div class="data-box p-8 rounded-3xl bg-gray-50 dark:bg-white/[0.02] border border-gray-200 dark:border-white/10">
-                                    <label class="block text-sm font-bold uppercase tracking-widest text-gray-400 mb-4">4. Mensaje principal a comunicar</label>
-                                    <textarea name="answers[q4]" rows="4" class="w-full bg-transparent border-0 p-0 text-xl focus:ring-0 placeholder-gray-300 dark:placeholder-white/10" placeholder="Ej: Nueva promoción, innovación, beneficios...">{{ old('answers.q4', $brief->answers['q4'] ?? '') }}</textarea>
+                                <div class="data-box p-8 rounded-3xl bg-gray-50 dark:bg-white/[0.02] border border-gray-200 dark:border-white/10 relative group/ai">
+                                    <div class="flex justify-between items-start mb-4">
+                                        <label class="block text-sm font-bold uppercase tracking-widest text-gray-400">4. Mensaje principal a comunicar</label>
+                                        <button type="button" @click="fetchAISuggestions('q4')" class="text-blue-500 hover:scale-110 transition-transform p-2 bg-blue-500/10 rounded-lg" title="IA Copilot">
+                                            <i class="fas fa-magic" :class="aiWorking === 'q4' ? 'fa-spin' : ''"></i>
+                                        </button>
+                                    </div>
+                                    <textarea name="answers[q4]" x-ref="q4_input" @input="formData.answers['q4'] = $el.value" rows="4" class="w-full bg-transparent border-0 p-0 text-xl focus:ring-0 placeholder-gray-300 dark:placeholder-white/10" placeholder="Ej: Nueva promoción, innovación, beneficios...">{{ old('answers.q4', $brief->answers['q4'] ?? '') }}</textarea>
+                                    
+                                    <!-- AI Suggestions Chips -->
+                                    <div x-show="aiSuggestions['q4']?.length" x-transition class="mt-4 flex flex-wrap gap-2">
+                                        <template x-for="sug in aiSuggestions['q4']">
+                                            <button type="button" @click="applyAISuggestion('q4', sug)" class="px-4 py-2 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl text-xs font-medium hover:border-blue-500 transition-colors" x-text="sug"></button>
+                                        </template>
+                                    </div>
                                 </div>
                                 <div class="data-box p-8 rounded-3xl bg-gray-50 dark:bg-white/[0.02] border border-gray-200 dark:border-white/10">
                                     <label class="block text-sm font-bold uppercase tracking-widest text-gray-400 mb-4">5. Campañas internas o anuncios importantes</label>
@@ -251,9 +287,21 @@
                                 <p class="text-lg text-gray-500 dark:text-gray-400">¿Qué te gustaría lograr al final del mes?</p>
                             </div>
                             <div class="space-y-10">
-                                <div class="data-box p-8 rounded-3xl bg-gray-50 dark:bg-white/[0.02] border border-gray-200 dark:border-white/10">
-                                    <label class="block text-sm font-bold uppercase tracking-widest text-gray-400 mb-4">19. Resultado ideal tras la estrategia</label>
-                                    <textarea name="answers[q19]" rows="6" class="w-full bg-transparent border-0 p-0 text-xl focus:ring-0 placeholder-gray-300 dark:placeholder-white/10" placeholder="Ej: Más ventas, más mensajes, más reservas, visibilidad...">{{ old('answers.q19', $brief->answers['q19'] ?? '') }}</textarea>
+                                <div class="data-box p-8 rounded-3xl bg-gray-50 dark:bg-white/[0.02] border border-gray-200 dark:border-white/10 relative group/ai">
+                                    <div class="flex justify-between items-start mb-4">
+                                        <label class="block text-sm font-bold uppercase tracking-widest text-gray-400">19. Resultado ideal tras la estrategia</label>
+                                        <button type="button" @click="fetchAISuggestions('q19')" class="text-orange-500 hover:scale-110 transition-transform p-2 bg-orange-500/10 rounded-lg" title="IA Copilot">
+                                            <i class="fas fa-star" :class="aiWorking === 'q19' ? 'fa-spin' : ''"></i>
+                                        </button>
+                                    </div>
+                                    <textarea name="answers[q19]" x-ref="q19_input" @input="formData.answers['q19'] = $el.value" rows="6" class="w-full bg-transparent border-0 p-0 text-xl focus:ring-0 placeholder-gray-300 dark:placeholder-white/10" placeholder="Ej: Más ventas, más mensajes, más reservas, visibilidad...">{{ old('answers.q19', $brief->answers['q19'] ?? '') }}</textarea>
+                                    
+                                    <!-- AI Suggestions Chips -->
+                                    <div x-show="aiSuggestions['q19']?.length" x-transition class="mt-4 flex flex-wrap gap-2">
+                                        <template x-for="sug in aiSuggestions['q19']">
+                                            <button type="button" @click="applyAISuggestion('q19', sug)" class="px-4 py-2 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl text-xs font-medium hover:border-orange-500 transition-colors" x-text="sug"></button>
+                                        </template>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -307,8 +355,40 @@
             lastSaved: null,
             formData: {
                 answers: {
-                    q16: '{{ $brief->answers['q16'] ?? '' }}'
+                    q1: '{{ addslashes($brief->answers['q1'] ?? '') }}',
+                    q3: '{{ $brief->answers['q3'] ?? '' }}',
+                    q4: '{{ addslashes($brief->answers['q4'] ?? '') }}',
+                    q16: '{{ $brief->answers['q16'] ?? '' }}',
+                    q19: '{{ addslashes($brief->answers['q19'] ?? '') }}'
                 }
+            },
+            aiSuggestions: {},
+            aiWorking: null,
+            fetchAISuggestions(qId) {
+                this.aiWorking = qId;
+                fetch('{{ route("briefs.ai-suggestions", $project) }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ question_id: qId })
+                })
+                .then(r => r.json())
+                .then(data => {
+                    this.aiSuggestions[qId] = data.suggestions;
+                    this.aiWorking = null;
+                })
+                .catch(() => this.aiWorking = null);
+            },
+            applyAISuggestion(qId, text) {
+                const currentVal = this.formData.answers[qId] || '';
+                this.formData.answers[qId] = currentVal ? currentVal + "\n" + text : text;
+                // Actualizar el valor real del textarea
+                if(this.$refs[qId + '_input']) {
+                    this.$refs[qId + '_input'].value = this.formData.answers[qId];
+                }
+                this.aiSuggestions[qId] = []; // Limpiar sugerencias aplicadas
             },
             selectedContentTypes: @json($brief->answers['q11'] ?? []),
             contentTypes: [

@@ -26,6 +26,17 @@ class TaskController extends Controller
             'position' => $project->tasks()->count(),
         ]);
 
+        // [AUTOMATIZACIÓN] Actualizar contexto del Brief
+        $brief = $project->getOrCreateBrief();
+        $answers = $brief->answers;
+        $currentContext = $answers['q1'] ?? '';
+        $note = "\n- Automatización: Se ha añadido la sección '" . $request->title . "' al proyecto. Revisar objetivos relacionados.";
+        
+        if (strpos($currentContext, $request->title) === false) {
+            $answers['q1'] = trim($currentContext . $note);
+            $brief->update(['answers' => $answers]);
+        }
+
         if ($request->wantsJson()) {
             return response()->json($section);
         }
