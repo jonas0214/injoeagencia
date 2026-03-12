@@ -1,28 +1,46 @@
 <div x-data="notificationsHandler()" x-init="init()" class="relative">
-    <!-- Notification Button with Label -->
+    <style>
+        @keyframes custom-ringing {
+            0% { transform: rotate(0); }
+            5% { transform: rotate(15deg); }
+            10% { transform: rotate(-12deg); }
+            15% { transform: rotate(10deg); }
+            20% { transform: rotate(-8deg); }
+            25% { transform: rotate(0); }
+            100% { transform: rotate(0); }
+        }
+        @keyframes custom-glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(249, 115, 22, 0.2), 0 0 10px rgba(249, 115, 22, 0.1); }
+            50% { box-shadow: 0 0 20px rgba(249, 115, 22, 0.6), 0 0 30px rgba(249, 115, 22, 0.4); border-color: rgba(249, 115, 22, 0.8); }
+        }
+        .animate-ringing { animation: custom-ringing 2s infinite; }
+        .animate-vibrant-glow { animation: custom-glow 2s infinite; }
+    </style>
+
+    <!-- Notification Button with Enhanced Effects -->
     <button @click="open = !open" 
             class="relative flex items-center gap-3 px-6 py-2.5 rounded-full bg-white dark:bg-white/10 border transition-all duration-500 group overflow-hidden"
             :class="unreadCount > 0 
-                ? 'border-orange-500/50 shadow-[0_0_20px_rgba(249,115,22,0.3)] dark:shadow-[0_0_30px_rgba(249,115,22,0.5)] bg-orange-500/5' 
+                ? 'animate-vibrant-glow border-orange-500 bg-orange-500/10' 
                 : 'border-gray-200 dark:border-white/10 hover:border-orange-500/30'">
         
-        <!-- Persistent Blinking Glow when unread -->
+        <!-- Vibrant Background Pulse -->
         <div x-show="unreadCount > 0" 
-             class="absolute inset-0 bg-orange-500/10 animate-[pulse_2s_infinite] pointer-events-none"></div>
+             class="absolute inset-0 bg-gradient-to-r from-orange-500/20 to-transparent animate-[pulse_1.5s_infinite] pointer-events-none"></div>
         
         <div class="relative flex items-center justify-center">
-            <i class="fas fa-bell text-sm transition-transform duration-500 group-hover:scale-110" 
-               :class="unreadCount > 0 ? 'text-orange-500 animate-[bounce_3s_infinite]' : 'text-gray-400 dark:text-gray-500'"></i>
+            <i class="fas fa-bell text-sm transition-transform duration-500" 
+               :class="unreadCount > 0 ? 'text-orange-500 animate-ringing' : 'text-gray-400 dark:text-gray-500'"></i>
         </div>
 
-        <span class="relative text-[10px] font-bold uppercase tracking-[0.2em]"
+        <span class="relative text-[10px] font-black uppercase tracking-[0.2em]"
               :class="unreadCount > 0 ? 'text-orange-600 dark:text-orange-400' : 'text-gray-500 dark:text-gray-400'">
             Notificaciones
         </span>
         
         <!-- Unread Badge -->
         <span x-show="unreadCount > 0" 
-              class="relative flex h-5 w-5 items-center justify-center rounded-full bg-orange-600 text-[10px] font-black text-white border-2 border-white dark:border-[#0a0a0a] shadow-lg"
+              class="relative flex h-5 w-5 items-center justify-center rounded-full bg-orange-600 text-[10px] font-black text-white border-2 border-white dark:border-[#0f1012] shadow-[0_0_10px_rgba(249,115,22,0.5)]"
               x-text="unreadCount"></span>
     </button>
 
