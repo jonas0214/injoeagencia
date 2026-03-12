@@ -35,15 +35,16 @@
             
             @if(in_array(Auth::user()->role, ['admin', 'ceo']))
             <div class="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
-                <div x-data="{ addingSection: false, sectionTitle: '', saveSection() { if(this.sectionTitle.trim() === '') return; fetch('{{ route('tasks.store', $project) }}', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' }, body: JSON.stringify({ title: this.sectionTitle }) }).then(res => { if(!res.ok) throw new Error('Error al guardar'); return res.json(); }).then(() => window.location.reload()).catch(err => { console.error(err); alert('No se pudo guardar la sección'); }); } }">
-                    <button @click="addingSection = true; $nextTick(() => $refs.sectionInput.focus())" x-show="!addingSection" class="bg-gray-900 dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-colors shadow-lg">
+                <div x-data="{ addingSection: false }">
+                    <button type="button" @click="addingSection = true; $nextTick(() => $refs.sectionInput.focus())" x-show="!addingSection" class="bg-gray-900 dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-colors shadow-lg">
                         <i class="fas fa-plus mr-2"></i> Nueva Sección
                     </button>
-                    <div x-show="addingSection" class="flex items-center gap-2" style="display: none;">
-                        <input type="text" x-model="sectionTitle" x-ref="sectionInput" @keydown.enter.prevent="saveSection()" placeholder="Nombre de la sección..." class="bg-gray-100 dark:bg-[#1a1a1a] border border-gray-300 dark:border-white/10 rounded-lg px-3 py-1.5 text-xs text-gray-900 dark:text-white focus:ring-1 focus:ring-orange-500 outline-none">
-                        <button @click="saveSection()" class="text-green-500 hover:text-green-400 p-1.5 transition-colors" title="Guardar"><i class="fas fa-check text-xs"></i></button>
-                        <button @click="addingSection = false; sectionTitle = '';" class="text-gray-500 hover:text-red-400 p-1.5 transition-colors" title="Cancelar"><i class="fas fa-times text-xs"></i></button>
-                    </div>
+                    <form action="{{ route('tasks.store', $project) }}" method="POST" x-show="addingSection" class="flex items-center gap-2" style="display: none;">
+                        @csrf
+                        <input type="text" name="title" x-ref="sectionInput" placeholder="Nombre de la sección..." required class="bg-gray-100 dark:bg-[#1a1a1a] border border-gray-300 dark:border-white/10 rounded-lg px-3 py-1.5 text-xs text-gray-900 dark:text-white focus:ring-1 focus:ring-orange-500 outline-none">
+                        <button type="submit" class="text-green-500 hover:text-green-400 p-1.5 transition-colors" title="Guardar"><i class="fas fa-check text-xs"></i></button>
+                        <button type="button" @click="addingSection = false" class="text-gray-500 hover:text-red-400 p-1.5 transition-colors" title="Cancelar"><i class="fas fa-times text-xs"></i></button>
+                    </form>
                 </div>
             </div>
             @endif
@@ -52,9 +53,6 @@
         <!-- Pestañas de Proyecto -->
         <div class="px-4 md:px-8 border-b border-gray-200 dark:border-white/5 bg-white dark:bg-[#0f1012] flex gap-8 shrink-0 overflow-x-auto scrollbar-hide">
             <button @click="currentTab = 'list'; $dispatch('tab-changed', 'list')" :class="currentTab === 'list' ? 'text-orange-500 border-b-2 border-orange-500' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'" class="pb-4 pt-2 text-xs font-bold uppercase tracking-widest transition-all">Listado de Tareas</button>
-            <button @click="currentTab = 'meta'; $dispatch('tab-changed', 'meta')" :class="currentTab === 'meta' ? 'text-orange-500 border-b-2 border-orange-500' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'" class="pb-4 pt-2 text-xs font-bold uppercase tracking-widest transition-all flex items-center gap-2">
-                <i class="fab fa-facebook"></i> Programación Meta Ads
-            </button>
             <button @click="currentTab = 'brief'; $dispatch('tab-changed', 'brief')" :class="currentTab === 'brief' ? 'text-orange-500 border-b-2 border-orange-500' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'" class="pb-4 pt-2 text-xs font-bold uppercase tracking-widest transition-all flex items-center gap-2">
                 <i class="fas fa-file-alt"></i> Brief del Cliente
             </button>
@@ -82,16 +80,18 @@
                                 <div @click="toggle()" class="h-[1px] flex-1 bg-white/5 ml-4 cursor-pointer"></div>
                             </div>
                             
-                            <div x-show="editingTitle" class="flex-1 flex items-center gap-2 bg-gray-50 dark:bg-[#1a1a1a] px-2 py-1 rounded-lg border border-gray-200 dark:border-white/5" style="display: none;">
+                            <form action="{{ url('/tasks') }}/{{ $section->id }}" method="POST" x-show="editingTitle" class="flex-1 flex items-center gap-2 bg-gray-50 dark:bg-[#1a1a1a] px-2 py-1 rounded-lg border border-gray-200 dark:border-white/5" style="display: none;">
+                                @csrf
+                                @method('PUT')
                                 <input type="text"
-                                    x-model="newTitle"
+                                    name="title"
+                                    value="{{ $section->title }}"
                                     x-ref="titleInput"
-                                    @keydown.enter="fetch('{{ url('/tasks') }}/{{ $section->id }}', { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' }, body: JSON.stringify({ title: newTitle }) }).then(() => window.location.reload())"
-                                    @keydown.escape="editingTitle = false; newTitle = '{{ addslashes($section->title) }}';"
+                                    @keydown.escape="editingTitle = false;"
                                     class="bg-transparent border-none p-0 text-[11px] font-bold text-gray-900 dark:text-white uppercase tracking-[0.2em] focus:ring-0 outline-none w-full">
-                                <button type="button" @click="fetch('{{ url('/tasks') }}/{{ $section->id }}', { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' }, body: JSON.stringify({ title: newTitle }) }).then(() => window.location.reload())" class="text-green-500 hover:text-green-600 dark:hover:text-green-400 p-1" title="Guardar"><i class="fas fa-check text-[10px]"></i></button>
-                                <button type="button" @click="editingTitle = false; newTitle = '{{ addslashes($section->title) }}';" class="text-gray-400 hover:text-red-500 p-1" title="Cancelar"><i class="fas fa-times text-[10px]"></i></button>
-                            </div>
+                                <button type="submit" class="text-green-500 hover:text-green-600 dark:hover:text-green-400 p-1" title="Guardar"><i class="fas fa-check text-[10px]"></i></button>
+                                <button type="button" @click="editingTitle = false;" class="text-gray-400 hover:text-red-500 p-1" title="Cancelar"><i class="fas fa-times text-[10px]"></i></button>
+                            </form>
                         </div>
 
                         @if(in_array(Auth::user()->role, ['admin', 'ceo']))
@@ -116,126 +116,7 @@
         </div>
         </div>
 
-        <!-- Nueva Sección Meta Ads -->
-        <div x-show="currentTab === 'meta'" style="display: none;" class="flex-1 overflow-y-auto custom-scroll p-4 md:p-8">
-            <div class="max-w-6xl mx-auto space-y-8" x-data="{ isGenerating: false }">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center bg-orange-500/5 border border-orange-500/10 p-8 rounded-[2.5rem] gap-6 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-64 h-64 bg-orange-500/5 rounded-full blur-3xl -mr-20 -mt-20"></div>
-                    <div class="relative z-10">
-                        <h3 class="text-2xl font-black text-gray-900 dark:text-white uppercase tracking-tighter">Planificador Estratégico Meta Ads</h3>
-                        <p class="text-sm text-gray-500 mt-1">Optimiza tu pauta con inteligencia artificial y flujos automáticos</p>
-                    </div>
-                    <div class="flex flex-wrap gap-3 relative z-10">
-                        <button @click="isGenerating = true;
-                                       fetch('{{ url('/projects/'.$project->id.'/generate-meta-strategy') }}', {
-                                           method: 'POST',
-                                           headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' }
-                                       }).then(() => window.location.reload())"
-                                :disabled="isGenerating"
-                                class="bg-orange-500 hover:bg-orange-600 text-black px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all shadow-xl shadow-orange-500/20 disabled:opacity-50 flex items-center gap-2">
-                            <i class="fas" :class="isGenerating ? 'fa-spinner animate-spin' : 'fa-magic'"></i>
-                            <span x-text="isGenerating ? 'Generando...' : 'Generar Estrategia IA'"></span>
-                        </button>
-                        <button class="bg-gray-900 dark:bg-white text-white dark:text-black px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest shadow-lg">
-                            <i class="fas fa-rocket mr-2"></i> Lanzar Campaña
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Tabla de Programación Meta -->
-                <div class="bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/5 rounded-[2.5rem] overflow-hidden shadow-sm transition-all">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="border-b border-gray-100 dark:border-white/10 bg-gray-50 dark:bg-black/20 text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">
-                                <th class="px-6 py-4">Fecha Pub</th>
-                                <th class="px-6 py-4">Estrategia Meta</th>
-                                <th class="px-6 py-4">Copywriting / Descripción</th>
-                                <th class="px-6 py-4">Estado / Arte</th>
-                                <th class="px-6 py-4 text-right">Inversión Sugerida</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100 dark:divide-white/5">
-                            @php
-                                $metaSection = $project->tasks->where('title', 'PROGRAMACIÓN META ADS')->first();
-                                $metaTasks = $metaSection ? $metaSection->subtasks->sortBy('due_date') : collect();
-                            @endphp
-                            @forelse($metaTasks as $task)
-                            <tr class="group hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-all cursor-pointer border-l-4 border-transparent hover:border-orange-500" @click="openTaskPanel(@js($task), 'META ADS', '')">
-                                <td class="px-6 py-6">
-                                    <div class="flex flex-col">
-                                        <span class="text-sm font-black text-gray-800 dark:text-white">{{ $task->due_date ? $task->due_date->format('d M') : 'Pendiente' }}</span>
-                                        <span class="text-[9px] text-gray-400 dark:text-gray-500 uppercase font-bold">{{ $task->due_date ? $task->due_date->locale('es')->dayName : 'Sin programar' }}</span>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-6">
-                                    <div class="space-y-2">
-                                        <span class="px-2 py-0.5 rounded bg-blue-500/10 text-blue-500 text-[8px] font-black uppercase tracking-tighter">
-                                            {{ str_contains(strtolower($task->title), 'video') || str_contains(strtolower($task->title), 'reel') ? 'VIDEO / REEL' : 'ESTÁTICO / CARROUSEL' }}
-                                        </span>
-                                        <p class="text-sm font-bold text-gray-700 dark:text-gray-200 leading-tight">{{ $task->title }}</p>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-6 max-w-xs">
-                                    <div class="space-y-2">
-                                        <p class="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 leading-relaxed">{{ $task->description ?? 'Haz clic para añadir el copy del anuncio...' }}</p>
-                                        @if($task->ai_suggestion)
-                                            <div class="flex items-center gap-1.5 text-orange-500 text-[9px] font-black uppercase tracking-tighter">
-                                                <i class="fas fa-magic animate-pulse"></i> Sugerencia IA Activa
-                                            </div>
-                                        @endif
-                                    </div>
-                                </td>
-                                <td class="px-6 py-6">
-                                    <div class="flex flex-col gap-2">
-                                        <div class="flex items-center gap-2">
-                                            <div class="w-1.5 h-1.5 rounded-full {{ $task->is_completed ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]' : 'bg-yellow-500 shadow-[0_0_8px_rgba(234,179,8,0.5)]' }}"></div>
-                                            <span class="text-[10px] font-black {{ $task->is_completed ? 'text-green-600 dark:text-green-500' : 'text-yellow-600 dark:text-yellow-500' }} uppercase tracking-widest">
-                                                {{ $task->is_completed ? 'Listo para publicar' : 'En producción' }}
-                                            </span>
-                                        </div>
-                                        @if($task->attachments->count() > 0)
-                                            <div class="flex -space-x-1">
-                                                @foreach($task->attachments->take(3) as $att)
-                                                    <div class="w-5 h-5 rounded border border-white/10 bg-gray-800 overflow-hidden">
-                                                        <i class="fas fa-image text-[8px] flex items-center justify-center h-full text-gray-500"></i>
-                                                    </div>
-                                                @endforeach
-                                            </div>
-                                        @endif
-                                    </div>
-                                </td>
-                                <td class="px-6 py-6 text-right font-mono">
-                                    <div class="flex flex-col items-end">
-                                        <span class="text-white bg-gray-900 dark:bg-orange-500/20 px-2 py-0.5 rounded text-[10px] font-black mb-1 leading-none tracking-tighter">${{ number_format($task->position * 5000 + 25000) }}</span>
-                                        <span class="text-[9px] text-gray-400 font-bold uppercase tracking-widest">Presupuesto Diario</span>
-                                    </div>
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="6" class="px-6 py-10 text-center text-gray-500 italic text-xs uppercase tracking-widest">No hay programación cargada para este proyecto</td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="bg-blue-500/5 border border-blue-500/10 p-6 rounded-3xl">
-                        <p class="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase mb-2">Presupuesto Asignado</p>
-                        <p class="text-2xl font-black text-gray-900 dark:text-white">$1,500,000</p>
-                    </div>
-                    <div class="bg-orange-500/5 border border-orange-500/10 p-6 rounded-3xl">
-                        <p class="text-[10px] font-bold text-orange-600 dark:text-orange-400 uppercase mb-2">Alcance Estimado</p>
-                        <p class="text-2xl font-black text-gray-900 dark:text-white">45,000 - 80,000</p>
-                    </div>
-                    <div class="bg-green-500/5 border border-green-500/10 p-6 rounded-3xl">
-                        <p class="text-[10px] font-bold text-green-600 dark:text-green-400 uppercase mb-2">Conversiones Meta</p>
-                        <p class="text-2xl font-black text-gray-900 dark:text-white">124 Leads</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!-- Nueva Sección Meta Ads (Oculto) -->
 
         <!-- Sección Brief del Cliente -->
         <div x-show="currentTab === 'brief'" style="display: none;" class="flex-1 overflow-y-auto custom-scroll p-4 md:p-8">
