@@ -163,7 +163,7 @@
                     </div>
                 </div>
 
-                @if($hasBrief)
+                @if($hasBrief && is_array($brief->answers))
                 <!-- Resumen del Brief (20 Preguntas) -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                     <div class="bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/10 rounded-3xl p-6">
@@ -206,7 +206,7 @@
                 <div class="bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/10 rounded-3xl p-8 mb-8">
                     <h4 class="text-xs font-bold uppercase tracking-[0.2em] text-gray-500 mb-6">Prioridades del Mes</h4>
                     <div class="text-lg font-medium text-gray-900 dark:text-white leading-relaxed">
-                        @if($brief->answers['q1'])
+                        @if(!empty($brief->answers['q1']))
                             {!! nl2br(e($brief->answers['q1'])) !!}
                         @else
                             <span class="text-gray-500 italic">Cliente no ha especificado prioridades aún.</span>
@@ -225,19 +225,19 @@
                     </div>
                 </div>
                 @else
-                <!-- Estado sin brief -->
+                <!-- Estado sin brief o datos corruptos -->
                 <div class="bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/10 rounded-[2.5rem] p-12 text-center">
                     <div class="w-20 h-20 rounded-2xl bg-orange-500/10 flex items-center justify-center text-orange-500 mx-auto mb-6">
                         <i class="fas fa-file-alt text-2xl"></i>
                     </div>
-                    <h4 class="text-xl font-medium text-gray-900 dark:text-white mb-3">No hay brief creado</h4>
+                    <h4 class="text-xl font-medium text-gray-900 dark:text-white mb-3">{{ $hasBrief ? 'Configuración de Brief Requerida' : 'No hay brief creado' }}</h4>
                     <p class="text-gray-500 dark:text-gray-400 mb-6 max-w-md mx-auto">
-                        Crea un brief para este proyecto para levantar requerimientos del cliente, definir objetivos y planificar la estrategia.
+                        {{ $hasBrief ? 'Tus datos del brief necesitan ser actualizados al nuevo formato estratégico.' : 'Crea un brief para este proyecto para levantar requerimientos del cliente, definir objetivos y planificar la estrategia.' }}
                     </p>
                     <a href="{{ route('briefs.edit', $project) }}"
                         class="bg-orange-500 hover:bg-orange-600 text-black px-8 py-4 rounded-2xl text-sm font-black uppercase tracking-widest transition-all shadow-xl shadow-orange-500/20 inline-flex items-center gap-3">
-                        <i class="fas fa-plus"></i>
-                        Crear Brief del Cliente
+                        <i class="fas fa-{{ $hasBrief ? 'sync' : 'plus' }}"></i>
+                        {{ $hasBrief ? 'Actualizar Formato de Brief' : 'Crear Brief del Cliente' }}
                     </a>
                 </div>
                 @endif

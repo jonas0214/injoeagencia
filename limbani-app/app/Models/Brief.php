@@ -48,6 +48,20 @@ class Brief extends Model
     ];
 
     /**
+     * Ensure answers is always an array.
+     */
+    public function getAnswersAttribute($value)
+    {
+        $decoded = json_decode($value, true);
+        if (is_array($decoded)) {
+            return $decoded;
+        }
+        
+        // Default structure if null or invalid
+        return array_fill_keys(array_map(fn($i) => "q$i", range(1, 20)), '');
+    }
+
+    /**
      * Get the project that owns the brief.
      */
     public function project(): BelongsTo

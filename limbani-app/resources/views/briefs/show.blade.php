@@ -84,38 +84,47 @@
                     ];
                 @endphp
 
-                @foreach($sections as $section)
-                    <section class="space-y-6">
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 rounded-2xl bg-{{ $section['color'] }}-500/10 flex items-center justify-center text-{{ $section['color'] }}-500 text-xl border border-{{ $section['color'] }}-500/20">
-                                <i class="{{ $section['icon'] }}"></i>
-                            </div>
-                            <h2 class="text-2xl font-bold tracking-tight">{{ $section['title'] }}</h2>
-                        </div>
-
-                        <div class="grid grid-cols-1 gap-4">
-                            @foreach($section['qs'] as $key => $label)
-                                <div class="p-6 rounded-3xl bg-gray-50 dark:bg-white/[0.02] border border-gray-200 dark:border-white/10">
-                                    <h4 class="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-3">{{ $label }}</h4>
-                                    <div class="text-gray-900 dark:text-gray-200 leading-relaxed font-medium">
-                                        @php $val = $brief->answers[$key] ?? null; @endphp
-                                        @if(is_array($val))
-                                            <div class="flex flex-wrap gap-2">
-                                                @foreach($val as $item)
-                                                    <span class="px-3 py-1 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg text-xs font-bold">{{ $item }}</span>
-                                                @endforeach
-                                            </div>
-                                        @elseif($val)
-                                            {!! nl2br(e($val)) !!}
-                                        @else
-                                            <span class="text-gray-400 italic text-sm">Sin respuesta</span>
-                                        @endif
-                                    </div>
+                @if(is_array($brief->answers))
+                    @foreach($sections as $section)
+                        <section class="space-y-6">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-2xl bg-{{ $section['color'] }}-500/10 flex items-center justify-center text-{{ $section['color'] }}-500 text-xl border border-{{ $section['color'] }}-500/20">
+                                    <i class="{{ $section['icon'] }}"></i>
                                 </div>
-                            @endforeach
-                        </div>
-                    </section>
-                @endforeach
+                                <h2 class="text-2xl font-bold tracking-tight">{{ $section['title'] }}</h2>
+                            </div>
+
+                            <div class="grid grid-cols-1 gap-4">
+                                @foreach($section['qs'] as $key => $label)
+                                    <div class="p-6 rounded-3xl bg-gray-50 dark:bg-white/[0.02] border border-gray-200 dark:border-white/10">
+                                        <h4 class="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-3">{{ $label }}</h4>
+                                        <div class="text-gray-900 dark:text-gray-200 leading-relaxed font-medium">
+                                            @php $val = $brief->answers[$key] ?? null; @endphp
+                                            @if(is_array($val))
+                                                <div class="flex flex-wrap gap-2">
+                                                    @foreach($val as $item)
+                                                        <span class="px-3 py-1 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg text-xs font-bold">{{ $item }}</span>
+                                                    @endforeach
+                                                </div>
+                                            @elseif($val)
+                                                {!! nl2br(e($val)) !!}
+                                            @else
+                                                <span class="text-gray-400 italic text-sm">Sin respuesta</span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </section>
+                    @endforeach
+                @else
+                    <div class="text-center py-20 bg-gray-50 dark:bg-white/[0.02] rounded-[3rem] border border-dashed border-gray-200 dark:border-white/10">
+                        <i class="fas fa-exclamation-triangle text-orange-500 text-4xl mb-4"></i>
+                        <h3 class="text-xl font-bold">Datos de Brief no encontrados</h3>
+                        <p class="text-gray-500 mt-2">Este brief fue creado en una versión anterior de Limbani. Por favor, edítalo para actualizarlo al nuevo formato estratégico.</p>
+                        <a href="{{ route('briefs.edit', $project) }}" class="mt-6 inline-block bg-orange-500 text-black px-8 py-3 rounded-2xl font-bold uppercase tracking-widest text-xs">Actualizar Formato</a>
+                    </div>
+                @endif
 
             </div>
         </div>
