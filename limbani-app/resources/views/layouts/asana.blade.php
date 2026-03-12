@@ -23,7 +23,7 @@
         #drawingCanvas { cursor: crosshair; touch-action: none; background-color: #000; }
     </style>
 </head>
-<body class="bg-white dark:bg-[#0f1012] text-gray-800 dark:text-gray-300 antialiased selection:bg-orange-500 selection:text-white overflow-x-hidden md:overflow-hidden transition-colors duration-300"
+<body class="text-gray-800 dark:text-gray-300 antialiased selection:bg-orange-500 selection:text-white overflow-x-hidden md:overflow-hidden transition-colors duration-300"
       x-data="asanaHandler()"
       :class="darkMode ? 'dark' : ''"
       @open-task.window="openTaskPanel($event.detail.task, $event.detail.sectionTitle, $event.detail.parentTitle)">
@@ -35,7 +35,7 @@
             :class="darkMode ? 'bg-[#0a0a0a]' : 'bg-[#e5e7eb]'">
     </canvas>
 
-    <div class="flex h-screen overflow-hidden relative z-0">
+    <div class="flex h-screen overflow-hidden relative z-0 bg-transparent">
         
         <!-- Sidebar -->
         <aside
@@ -155,7 +155,7 @@
             style="display: none;">
         </div>
 
-        <main class="flex-1 overflow-y-auto bg-gray-50 dark:bg-[#0f1012] focus:outline-none relative w-full transition-colors duration-300">
+        <main class="flex-1 overflow-y-auto focus:outline-none relative w-full transition-colors duration-300 bg-transparent">
             <!-- Mobile Header -->
             <div class="md:hidden h-16 bg-gray-50 dark:bg-[#0a0a0a] border-b border-black/5 dark:border-white/5 flex items-center justify-between px-6 sticky top-0 z-30">
                 <span class="text-gray-900 dark:text-white font-black text-xl tracking-tighter">LIMBANI<span class="text-orange-500">.</span></span>
