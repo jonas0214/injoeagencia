@@ -37,7 +37,7 @@
             class="fixed md:relative w-64 h-full bg-gray-50 dark:bg-[#0a0a0a] border-r border-black/5 dark:border-white/5 text-gray-500 dark:text-gray-400 flex flex-col flex-shrink-0 transition-transform duration-300 ease-in-out z-50 shadow-xl dark:shadow-none">
             
             <div class="h-20 flex items-center justify-between px-8 border-b border-black/5 dark:border-white/5">
-                <span class="text-gray-900 dark:text-white font-black text-2xl tracking-tighter">LIMBANI<span class="text-orange-500">.</span></span>
+                <a href="{{ route('dashboard') }}" class="text-gray-900 dark:text-white font-black text-2xl tracking-tighter hover:text-orange-500 transition-colors">LIMBANI<span class="text-orange-500">.</span></a>
                 <button @click="mobileMenu = false" class="md:hidden text-gray-500 hover:text-gray-900 dark:hover:text-white">
                     <i class="fas fa-times text-xl"></i>
                 </button>
