@@ -35,7 +35,7 @@
             
             @if(in_array(Auth::user()->role, ['admin', 'ceo']))
             <div class="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
-                <div x-data="{ addingSection: false, sectionTitle: '', saveSection() { if(this.sectionTitle.trim() === '') return; fetch('/projects/{{ $project->id }}/tasks', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' }, body: JSON.stringify({ title: this.sectionTitle }) }).then(() => window.location.reload()); } }">
+                <div x-data="{ addingSection: false, sectionTitle: '', saveSection() { if(this.sectionTitle.trim() === '') return; fetch('{{ route('tasks.store', $project) }}', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' }, body: JSON.stringify({ title: this.sectionTitle }) }).then(res => { if(!res.ok) throw new Error('Error al guardar'); return res.json(); }).then(() => window.location.reload()).catch(err => { console.error(err); alert('No se pudo guardar la sección'); }); } }">
                     <button @click="addingSection = true; $nextTick(() => $refs.sectionInput.focus())" x-show="!addingSection" class="bg-gray-900 dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-colors shadow-lg">
                         <i class="fas fa-plus mr-2"></i> Nueva Sección
                     </button>
