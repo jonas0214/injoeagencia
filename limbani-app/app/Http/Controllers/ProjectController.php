@@ -83,19 +83,7 @@ class ProjectController extends Controller
                 'is_template' => $request->has('is_template'),
             ]);
 
-            // Crear automáticamente la sección de PROGRAMACIÓN META ADS
-            $metaSection = $project->tasks()->create([
-                'title' => 'PROGRAMACIÓN META ADS',
-                'position' => 0
-            ]);
-
-            // Añadir tareas base de Meta Ads
-            $metaSection->subtasks()->createMany([
-                ['title' => 'Definición de Público Objetivo', 'position' => 0],
-                ['title' => 'Diseño de Creativos (Artes)', 'position' => 1],
-                ['title' => 'Redacción de Copywriting', 'position' => 2],
-                ['title' => 'Montaje en Business Manager', 'position' => 3],
-            ]);
+            // (Removido) Código que forzaba la creación de "PROGRAMACIÓN META ADS" y subtareas base.
 
             // Si se seleccionó una plantilla, clonar sus tareas y subtareas
             if ($request->filled('template_id')) {
