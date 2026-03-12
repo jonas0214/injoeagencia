@@ -25,11 +25,6 @@
             </p>
         </div>
         <div class="flex items-center gap-4">
-            @if(in_array(Auth::user()->role, ['admin', 'ceo']))
-            <a href="{{ route('projects.create') }}" class="bg-gray-900 dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors px-6 py-2.5 rounded-full font-medium text-xs uppercase tracking-widest">
-                <i class="fas fa-plus mr-2 text-[10px]"></i> Quick Action
-            </a>
-            @endif
             <x-notification-center />
         </div>
     </div>
