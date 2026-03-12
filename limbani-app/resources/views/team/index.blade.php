@@ -54,7 +54,7 @@
                 </a>
             </div>
 
-            <div x-show="tab === 'team'" class="bg-white dark:bg-white/[0.03] backdrop-blur-md border border-gray-200 dark:border-white/10 rounded-2xl p-4 md:p-8 shadow-sm dark:shadow-2xl transition-all duration-300" :class="showMemberPanel ? 'md:mr-[400px]' : ''">
+            <div x-show="tab === 'team'" class="bg-white/70 dark:bg-[#1a1a1a]/60 backdrop-blur-xl border border-gray-200 dark:border-white/10 rounded-2xl p-4 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] transition-all duration-300 relative z-10" :class="showMemberPanel ? 'md:mr-[400px]' : ''">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
                     <div>
                         <h3 class="text-xl font-light text-gray-800 dark:text-white tracking-wide">Colaboradores Activos</h3>
@@ -212,7 +212,7 @@
             </div>
 
             <!-- CONTENIDO DE ASISTENCIA (Integrado con AlpineJS) -->
-            <div x-show="tab === 'attendance'" style="display: none;" class="bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-2xl p-4 md:p-8 shadow-2xl">
+            <div x-show="tab === 'attendance'" style="display: none;" class="bg-white/70 dark:bg-[#1a1a1a]/60 backdrop-blur-xl border border-gray-200 dark:border-white/10 rounded-2xl p-4 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] relative z-10">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
                     <div>
                         <h3 class="text-xl font-light text-white tracking-wide">Registro de Asistencia</h3>
@@ -310,11 +310,11 @@
          x-transition:leave="transform transition ease-in-out duration-300"
          x-transition:leave-start="translate-x-0"
          x-transition:leave-end="translate-x-full"
-         class="fixed inset-y-0 right-0 w-full md:w-[400px] bg-white dark:bg-[#1a1a1a]/95 backdrop-blur-xl border-l border-gray-200 dark:border-white/10 shadow-2xl z-[60] flex flex-col"
+         class="fixed inset-y-0 right-0 w-full md:w-[400px] bg-white/80 dark:bg-[#1a1a1a]/80 backdrop-blur-2xl border-l border-gray-200 dark:border-white/10 shadow-2xl z-[60] flex flex-col"
          style="display: none;">
         
         <!-- Header Panel -->
-        <div class="px-8 py-6 border-b border-gray-100 dark:border-white/5 flex justify-between items-center bg-gray-50 dark:bg-[#1a1a1a]">
+        <div class="px-8 py-6 border-b border-gray-200/50 dark:border-white/5 flex justify-between items-center bg-transparent">
             <h2 class="text-sm font-bold text-gray-500 uppercase tracking-[0.2em]">Detalle del Perfil</h2>
             <button @click="showMemberPanel = false" class="text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors">
                 <i class="fas fa-times text-lg"></i>

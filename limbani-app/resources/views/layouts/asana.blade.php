@@ -29,7 +29,13 @@
       @open-task.window="openTaskPanel($event.detail.task, $event.detail.sectionTitle, $event.detail.parentTitle)">
     
     @stack('scripts')
-    <div class="flex h-screen overflow-hidden relative">
+    
+    <!-- CONSTELLATION BACKGROUND CANVAS -->
+    <canvas id="appConstellationCanvas" class="fixed top-0 left-0 w-full h-full -z-10 transition-colors duration-500" 
+            :class="darkMode ? 'bg-[#0a0a0a]' : 'bg-[#e5e7eb]'">
+    </canvas>
+
+    <div class="flex h-screen overflow-hidden relative z-0">
         
         <!-- Sidebar -->
         <aside
@@ -355,6 +361,105 @@
                         this.currentTask.comments.push(data);
                         this.newComment = ''; this.pastedImage = null;
                     } catch (e) { console.error(e); }
+                },
+
+                // Lógica del Canva de Estrellas (Constelación)
+                initConstellation() {
+                    const bgCanvas = document.getElementById('appConstellationCanvas');
+                    if (!bgCanvas) return;
+                    const bCtx = bgCanvas.getContext('2d');
+                    let w, h;
+                    let particles = [];
+                    const particleCount = 40; // Estrellas menos densas
+                    const connectionDistance = 150;
+                    const mouseDistance = 250;
+                    let mouse = { x: null, y: null };
+
+                    const resize = () => {
+                        w = bgCanvas.width = window.innerWidth;
+                        h = bgCanvas.height = window.innerHeight;
+                    };
+
+                    window.addEventListener('mousemove', (e) => {
+                        mouse.x = e.clientX;
+                        mouse.y = e.clientY;
+                    });
+                    window.addEventListener('resize', resize);
+
+                    class Particle {
+                        constructor() {
+                            this.x = Math.random() * w;
+                            this.y = Math.random() * h;
+                            this.vx = (Math.random() - 0.5) * 0.3;
+                            this.vy = (Math.random() - 0.5) * 0.3;
+                            this.size = Math.random() * 1.5 + 0.5;
+                            this.opacity = Math.random() * 0.3 + 0.1;
+                        }
+                        update() {
+                            this.x += this.vx;
+                            this.y += this.vy;
+                            if (this.x < 0 || this.x > w) this.vx *= -1;
+                            if (this.y < 0 || this.y > h) this.vy *= -1;
+                        }
+                        draw(isDark) {
+                            bCtx.fillStyle = isDark ? `rgba(255, 255, 255, ${this.opacity})` : `rgba(0, 0, 0, ${this.opacity})`;
+                            bCtx.beginPath();
+                            bCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                            bCtx.fill();
+                        }
+                    }
+
+                    resize();
+                    for (let i = 0; i < particleCount; i++) {
+                        particles.push(new Particle());
+                    }
+
+                    const animate = () => {
+                        bCtx.clearRect(0, 0, w, h);
+                        const isDark = this.darkMode; 
+
+                        particles.forEach((p, index) => {
+                            p.update();
+                            p.draw(isDark);
+
+                            let dx = mouse.x - p.x;
+                            let dy = mouse.y - p.y;
+                            let distance = Math.sqrt(dx * dx + dy * dy);
+
+                            if (distance < mouseDistance) {
+                                bCtx.strokeStyle = `rgba(249, 115, 22, ${0.4 * (1 - distance / mouseDistance)})`;
+                                bCtx.lineWidth = 1;
+                                bCtx.beginPath();
+                                bCtx.moveTo(p.x, p.y);
+                                bCtx.lineTo(mouse.x, mouse.y);
+                                bCtx.stroke();
+                            }
+
+                            for (let j = index + 1; j < particles.length; j++) {
+                                let p2 = particles[j];
+                                let dx2 = p.x - p2.x;
+                                let dy2 = p.y - p2.y;
+                                let dist2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
+
+                                if (dist2 < connectionDistance) {
+                                    bCtx.strokeStyle = isDark ? 
+                                        `rgba(255, 255, 255, ${0.05 * (1 - dist2 / connectionDistance)})` : 
+                                        `rgba(0, 0, 0, ${0.05 * (1 - dist2 / connectionDistance)})`;
+                                    bCtx.lineWidth = 0.5;
+                                    bCtx.beginPath();
+                                    bCtx.moveTo(p.x, p.y);
+                                    bCtx.lineTo(p2.x, p2.y);
+                                    bCtx.stroke();
+                                }
+                            }
+                        });
+                        requestAnimationFrame(animate);
+                    };
+                    animate();
+                },
+                init() {
+                    // Start the constellation canvas hook directly upon component load
+                    this.initConstellation();
                 }
             }));
         });

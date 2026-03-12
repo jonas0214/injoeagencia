@@ -76,7 +76,8 @@
                         $pendingTasksCount = $totalTasks - $completedTasks;
                     @endphp
                     
-                    <div class="group relative bg-white dark:bg-white/[0.03] backdrop-blur-md border border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/[0.08] hover:border-gray-300 dark:hover:border-white/20 transition-all duration-500 rounded-2xl p-8 flex flex-col h-full shadow-sm hover:shadow-2xl dark:hover:shadow-black/50">
+                    <!-- PROJECT CARD - GLASSMORPHISM -->
+                    <div class="group relative bg-white/70 dark:bg-[#1a1a1a]/60 backdrop-blur-xl border border-gray-200 dark:border-white/10 hover:bg-white/90 dark:hover:bg-[#1a1a1a]/80 hover:border-orange-500/30 transition-all duration-500 rounded-2xl p-8 flex flex-col h-full shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] hover:shadow-[0_8px_30px_rgb(249,115,22,0.1)]">
                         
                         @if(in_array(Auth::user()->role, ['admin', 'ceo']))
                         <div class="absolute top-5 right-5 z-30" x-data="{ open: false }">
