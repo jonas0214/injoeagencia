@@ -47,7 +47,7 @@
                     @if(Auth::user()->role === 'colaborador')
                         <div class="flex items-center gap-2 px-2 py-1.5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg">
                             <template x-if="currentTask.team_member_photo">
-                                <img :src="'/storage/' + currentTask.team_member_photo" class="w-5 h-5 rounded-full object-cover border border-white/10">
+                                <img :src="'{{ asset('storage') }}/' + currentTask.team_member_photo" class="w-5 h-5 rounded-full object-cover border border-white/10">
                             </template>
                             <template x-if="!currentTask.team_member_photo">
                                 <div class="w-5 h-5 rounded-full bg-orange-500 text-black flex items-center justify-center text-[8px] font-bold">
@@ -207,7 +207,7 @@
                 <template x-for="comment in (currentTask.comments || [])" :key="comment.id">
                     <div class="flex gap-3">
                         <template x-if="comment.user && comment.user.team_member && comment.user.team_member.photo">
-                            <img :src="'/storage/' + comment.user.team_member.photo" class="w-8 h-8 rounded-full object-cover border border-white/5">
+                            <img :src="'{{ asset('storage') }}/' + comment.user.team_member.photo" class="w-8 h-8 rounded-full object-cover border border-white/5">
                         </template>
                         <template x-if="!(comment.user && comment.user.team_member && comment.user.team_member.photo)">
                             <div class="w-8 h-8 rounded-full bg-gray-800 border border-white/5 flex items-center justify-center text-[10px] font-bold text-gray-400" x-text="comment.user ? comment.user.name.substring(0, 1) : '?'"></div>
