@@ -55,9 +55,12 @@
         <!-- Pestañas de Proyecto -->
         <div class="px-4 md:px-8 border-b border-gray-200 dark:border-white/5 bg-white dark:bg-[#0f1012] flex gap-8 shrink-0 overflow-x-auto scrollbar-hide">
             <button @click="currentTab = 'list'; $dispatch('tab-changed', 'list')" :class="currentTab === 'list' ? 'text-orange-500 border-b-2 border-orange-500' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'" class="pb-4 pt-2 text-xs font-bold uppercase tracking-widest transition-all">Listado de Tareas</button>
+            
+            @if(in_array(Auth::user()->role, ['admin', 'ceo']))
             <button @click="currentTab = 'brief'; $dispatch('tab-changed', 'brief')" :class="currentTab === 'brief' ? 'text-orange-500 border-b-2 border-orange-500' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'" class="pb-4 pt-2 text-xs font-bold uppercase tracking-widest transition-all flex items-center gap-2">
                 <i class="fas fa-file-alt"></i> Brief del Cliente
             </button>
+            @endif
         </div>
 
         <div x-show="currentTab === 'list'" class="flex-1 flex flex-col min-h-0">

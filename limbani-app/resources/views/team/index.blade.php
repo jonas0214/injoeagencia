@@ -156,7 +156,7 @@
                         </thead>
                         <tbody class="divide-y divide-white/5">
                             @forelse($team as $member)
-                                <tr onclick="window.open('{{ route('team.show', $member) }}', '_blank')" class="hover:bg-gray-50 dark:hover:bg-white/[0.05] transition-all group cursor-pointer">
+                                <tr @click="activeMember = {{ $member->toJson() }}; showMemberPanel = true" class="hover:bg-gray-50 dark:hover:bg-white/[0.05] transition-all group cursor-pointer">
                                     <td class="px-6 py-6 whitespace-nowrap">
                                         <div class="flex items-center">
                                             <div class="flex-shrink-0 h-10 w-10 border border-gray-200 dark:border-white/10 rounded-full overflow-hidden group-hover:scale-110 transition-transform bg-gray-50 dark:bg-white/5">
@@ -326,7 +326,7 @@
             <div class="flex flex-col items-center text-center space-y-4">
                 <div class="w-24 h-24 rounded-3xl border border-white/10 overflow-hidden shadow-2xl shadow-orange-500/10 bg-white/5">
                     <template x-if="activeMember.photo">
-                        <img :src="'/storage/' + activeMember.photo" class="w-full h-full object-cover">
+                        <img :src="'{{ asset('storage') }}/' + activeMember.photo" class="w-full h-full object-cover">
                     </template>
                     <template x-if="!activeMember.photo">
                         <div class="w-full h-full bg-orange-500/10 flex items-center justify-center text-orange-500 text-3xl font-bold uppercase">
@@ -356,6 +356,7 @@
                     </div>
                 </div>
 
+                @if(in_array(Auth::user()->role, ['admin', 'ceo', 'rrhh', 'contabilidad']))
                 <div class="space-y-2">
                     <label class="text-[10px] font-bold text-gray-600 uppercase tracking-widest">Datos Administrativos</label>
                     <div class="grid grid-cols-1 gap-3">
@@ -386,6 +387,7 @@
                         <p class="text-xs text-gray-700 dark:text-gray-300 leading-relaxed italic" x-text="activeMember.bank_details ? activeMember.bank_details : 'Información pendiente de registro'"></p>
                     </div>
                 </div>
+                @endif
             </div>
 
             <!-- Botones de Acción -->
