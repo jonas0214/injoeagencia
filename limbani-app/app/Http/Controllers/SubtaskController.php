@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Subtask;
 use App\Models\Task;
 use Illuminate\Http\Request;
+use App\Notifications\TaskAssigned;
+use App\Notifications\NewCommentNotification;
+use App\Models\User;
 
 class SubtaskController extends Controller
 {
@@ -54,7 +57,16 @@ class SubtaskController extends Controller
             $data['team_member_id'] = empty($request->team_member_id) ? null : $request->team_member_id;
         }
 
+        $oldMemberId = $subtask->team_member_id;
         $subtask->update($data);
+
+        // Notificar si hay un nuevo responsable asignado
+        if (isset($data['team_member_id']) && $data['team_member_id'] != $oldMemberId) {
+            $member = \App\Models\TeamMember::find($data['team_member_id']);
+            if ($member && $member->user) {
+                $member->user->notify(new TaskAssigned($subtask, auth()->user()));
+            }
+        }
 
         if ($request->wantsJson()) {
             return response()->json([

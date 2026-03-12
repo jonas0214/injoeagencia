@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Comment;
 use App\Models\Subtask;
 use Illuminate\Http\Request;
+use App\Notifications\NewCommentNotification;
+use App\Models\User;
 
 class CommentController extends Controller
 {
@@ -43,6 +45,20 @@ class CommentController extends Controller
             'content' => $request->content ?? '',
             'image_path' => $imagePath
         ]);
+
+        // Notificar al responsable de la tarea
+        if ($subtask->teamMember && $subtask->teamMember->user_id && $subtask->teamMember->user_id !== auth()->id()) {
+            $subtask->teamMember->user->notify(new NewCommentNotification($comment, $subtask));
+        }
+
+        // Notificar a Administrativos (opcional, pero útil para CEO)
+        $admins = User::whereIn('role', ['admin', 'ceo'])->where('id', '!=', auth()->id())->get();
+        foreach($admins as $admin) {
+             // Solo notificar si no es el responsable ya notificado
+             if (!$subtask->teamMember || $admin->id !== $subtask->teamMember->user_id) {
+                 $admin->notify(new NewCommentNotification($comment, $subtask));
+             }
+        }
 
         return response()->json($comment->load('user'));
     }

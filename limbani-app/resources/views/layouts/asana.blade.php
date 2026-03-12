@@ -113,6 +113,35 @@
                         @endif
                     </div>
                 </div>
+
+                <!-- Notificaciones Panel -->
+                <div x-data="notificationsHandler()" x-init="init()" class="px-3 pt-4 border-t border-black/5 dark:border-white/5">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-[10px] font-bold text-gray-600 uppercase tracking-widest">Centro de Control</h3>
+                        <span x-show="unreadCount > 0" class="flex h-5 w-5 items-center justify-center rounded-full bg-orange-500 text-[10px] font-bold text-white shadow-lg animate-pulse" x-text="unreadCount"></span>
+                    </div>
+                    
+                    <div class="space-y-2 max-h-[300px] overflow-y-auto custom-scroll pr-2">
+                        <template x-for="notif in notifications" :key="notif.id">
+                            <div @click="handleNotificationClick(notif)" class="p-3 rounded-xl bg-white dark:bg-white/5 border border-transparent hover:border-orange-500/30 cursor-pointer transition-all group">
+                                <div class="flex gap-3">
+                                    <div class="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-500 text-xs shrink-0">
+                                        <i class="fas" :class="notif.data.type === 'task_assigned' ? 'fa-tasks' : 'fa-comment-dots'"></i>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <p class="text-[11px] font-bold text-gray-900 dark:text-white truncate" x-text="notif.data.title"></p>
+                                        <p class="text-[10px] text-gray-500 truncate" x-text="notif.data.message"></p>
+                                        <p class="text-[8px] text-gray-400 mt-1 uppercase" x-text="formatDate(notif.created_at)"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                        <div x-show="notifications.length === 0" class="py-10 text-center">
+                            <i class="fas fa-check-circle text-gray-300 dark:text-gray-800 text-3xl mb-3"></i>
+                            <p class="text-[10px] text-gray-500 italic">Todo al día, Manada. 🐵</p>
+                        </div>
+                    </div>
+                </div>
             </nav>
 
             <div class="border-t border-black/5 dark:border-white/5 p-4 bg-gray-100 dark:bg-white/[0.02]">
@@ -460,6 +489,46 @@
                 init() {
                     // Start the constellation canvas hook directly upon component load
                     this.initConstellation();
+                }
+            }));
+
+            // Dashboard Notifications Handler
+            Alpine.data('notificationsHandler', () => ({
+                notifications: [],
+                unreadCount: 0,
+                async init() {
+                    await this.fetchNotifications();
+                    // Polling opcional cada 60 segundos
+                    setInterval(() => this.fetchNotifications(), 60000);
+                },
+                async fetchNotifications() {
+                    try {
+                        const res = await fetch('{{ route("notifications.index") }}');
+                        if (res.ok) {
+                            this.notifications = await res.json();
+                            this.unreadCount = this.notifications.length;
+                        }
+                    } catch (e) { console.error('Error fetching notifications:', e); }
+                },
+                async handleNotificationClick(notif) {
+                    try {
+                        // Marcar como leída
+                        await fetch(`{{ url('/notifications') }}/${notif.id}/read`, {
+                            method: 'POST',
+                            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+                        });
+                        
+                        // Ir al link
+                        if (notif.data.link) {
+                            window.location.href = notif.data.link;
+                        }
+                        
+                        await this.fetchNotifications();
+                    } catch (e) { console.error(e); }
+                },
+                formatDate(dateString) {
+                    const date = new Date(dateString);
+                    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 }
             }));
         });
