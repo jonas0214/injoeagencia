@@ -76,8 +76,8 @@
                         $pendingTasksCount = $totalTasks - $completedTasks;
                     @endphp
                     
-                    <!-- PROJECT CARD - GLASSMORPHISM -->
-                    <div class="group relative bg-white/70 dark:bg-[#1a1a1a]/60 backdrop-blur-xl border border-gray-200 dark:border-white/10 hover:bg-white/90 dark:hover:bg-[#1a1a1a]/80 hover:border-orange-500/30 transition-all duration-500 rounded-2xl p-8 flex flex-col h-full shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] hover:shadow-[0_8px_30px_rgb(249,115,22,0.1)]">
+                    <!-- PROJECT CARD - GLASSMORPHISM (HIGH CONTRAST) -->
+                    <div class="group relative bg-white/80 dark:bg-[#1a1a1a]/70 backdrop-blur-2xl border border-gray-200/50 dark:border-white/20 hover:bg-white/95 dark:hover:bg-[#1a1a1a]/90 hover:border-orange-500/50 transition-all duration-500 rounded-2xl p-8 flex flex-col h-full shadow-[0_20px_50px_rgba(0,0,0,0.08)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.4)] hover:shadow-[0_25px_60px_rgba(249,115,22,0.15)] transform hover:-translate-y-2 ring-1 ring-inset ring-white/20 dark:ring-white/5">
                         
                         @if(in_array(Auth::user()->role, ['admin', 'ceo']))
                         <div class="absolute top-5 right-5 z-30" x-data="{ open: false }">

@@ -54,7 +54,7 @@
                 </a>
             </div>
 
-            <div x-show="tab === 'team'" class="bg-white/70 dark:bg-[#1a1a1a]/60 backdrop-blur-xl border border-gray-200 dark:border-white/10 rounded-2xl p-4 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] transition-all duration-300 relative z-10" :class="showMemberPanel ? 'md:mr-[400px]' : ''">
+            <div x-show="tab === 'team'" class="bg-white/80 dark:bg-[#1a1a1a]/70 backdrop-blur-2xl border border-gray-200/50 dark:border-white/20 rounded-2xl p-4 md:p-8 shadow-[0_20px_50px_rgba(0,0,0,0.08)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.4)] transition-all duration-300 relative z-10 ring-1 ring-inset ring-white/10 dark:ring-white/5" :class="showMemberPanel ? 'md:mr-[400px]' : ''">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
                     <div>
                         <h3 class="text-xl font-light text-gray-800 dark:text-white tracking-wide">Colaboradores Activos</h3>
@@ -212,7 +212,7 @@
             </div>
 
             <!-- CONTENIDO DE ASISTENCIA (Integrado con AlpineJS) -->
-            <div x-show="tab === 'attendance'" style="display: none;" class="bg-white/70 dark:bg-[#1a1a1a]/60 backdrop-blur-xl border border-gray-200 dark:border-white/10 rounded-2xl p-4 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] relative z-10">
+            <div x-show="tab === 'attendance'" style="display: none;" class="bg-white/80 dark:bg-[#1a1a1a]/70 backdrop-blur-2xl border border-gray-200/50 dark:border-white/20 rounded-2xl p-4 md:p-8 shadow-[0_20px_50px_rgba(0,0,0,0.08)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.4)] relative z-10 ring-1 ring-inset ring-white/10 dark:ring-white/5">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
                     <div>
                         <h3 class="text-xl font-light text-white tracking-wide">Registro de Asistencia</h3>
