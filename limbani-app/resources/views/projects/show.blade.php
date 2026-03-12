@@ -164,72 +164,63 @@
                 </div>
 
                 @if($hasBrief)
-                <!-- Resumen del Brief -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-                    <div class="bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/10 rounded-2xl p-6">
+                <!-- Resumen del Brief (20 Preguntas) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/10 rounded-3xl p-6">
                         <div class="flex items-center gap-3 mb-4">
-                            <div class="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-500">
+                            <div class="w-8 h-8 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-500 text-sm">
                                 <i class="fas fa-bullseye"></i>
                             </div>
-                            <div>
-                                <h4 class="text-lg font-medium text-gray-900 dark:text-white">Objetivos</h4>
-                                <p class="text-sm text-gray-500 dark:text-gray-400">Metas del mes</p>
-                            </div>
+                            <h4 class="text-xs font-bold uppercase tracking-widest text-gray-400">Objetivo Principal</h4>
                         </div>
-                        @if($brief->objectives)
-                            <p class="text-gray-600 dark:text-gray-300 text-sm">{{ Str::limit($brief->objectives, 200) }}</p>
-                        @else
-                            <p class="text-gray-500 dark:text-gray-400 text-sm italic">No se han definido objetivos</p>
-                        @endif
+                        <p class="text-sm font-medium text-gray-900 dark:text-gray-200">
+                            {{ $brief->answers['q3'] ?? 'No definido' }}
+                        </p>
                     </div>
                     
-                    <div class="bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/10 rounded-2xl p-6">
+                    <div class="bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/10 rounded-3xl p-6">
                         <div class="flex items-center gap-3 mb-4">
-                            <div class="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500">
+                            <div class="w-8 h-8 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500 text-sm">
+                                <i class="fas fa-comment"></i>
+                            </div>
+                            <h4 class="text-xs font-bold uppercase tracking-widest text-gray-400">Mensaje Clave</h4>
+                        </div>
+                        <p class="text-sm font-medium text-gray-900 dark:text-gray-200 truncate">
+                            {{ Str::limit($brief->answers['q4'] ?? 'No definido', 60) }}
+                        </p>
+                    </div>
+
+                    <div class="bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/10 rounded-3xl p-6">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-8 h-8 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-500 text-sm">
                                 <i class="fas fa-calendar-alt"></i>
                             </div>
-                            <div>
-                                <h4 class="text-lg font-medium text-gray-900 dark:text-white">Fechas Clave</h4>
-                                <p class="text-sm text-gray-500 dark:text-gray-400">Eventos importantes</p>
-                            </div>
+                            <h4 class="text-xs font-bold uppercase tracking-widest text-gray-400">Prioridad Máxima</h4>
                         </div>
-                        @if($brief->key_dates)
-                            <p class="text-gray-600 dark:text-gray-300 text-sm">{{ Str::limit($brief->key_dates, 200) }}</p>
-                        @else
-                            <p class="text-gray-500 dark:text-gray-400 text-sm italic">No hay fechas especiales definidas</p>
-                        @endif
+                        <p class="text-sm font-medium text-gray-900 dark:text-gray-200 truncate">
+                            {{ Str::limit($brief->answers['q7'] ?? 'No definida', 60) }}
+                        </p>
                     </div>
                 </div>
 
-                <!-- Detalles adicionales -->
-                <div class="bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/10 rounded-2xl p-6 mb-8">
-                    <h4 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Información del Brief</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/10 rounded-3xl p-8 mb-8">
+                    <h4 class="text-xs font-bold uppercase tracking-[0.2em] text-gray-500 mb-6">Prioridades del Mes</h4>
+                    <div class="text-lg font-medium text-gray-900 dark:text-white leading-relaxed">
+                        @if($brief->answers['q1'])
+                            {!! nl2br(e($brief->answers['q1'])) !!}
+                        @else
+                            <span class="text-gray-500 italic">Cliente no ha especificado prioridades aún.</span>
+                        @endif
+                    </div>
+                    
+                    <div class="mt-8 pt-8 border-t border-gray-200 dark:border-white/5 flex flex-wrap gap-8">
                         <div>
-                            <p class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2">Audiencia Objetivo</p>
-                            <p class="text-sm text-gray-700 dark:text-gray-300">
-                                @if($brief->target_audience)
-                                    {{ Str::limit($brief->target_audience, 100) }}
-                                @else
-                                    <span class="text-gray-500 italic">No definida</span>
-                                @endif
-                            </p>
+                            <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Presupuesto Pauta</p>
+                            <p class="text-sm font-bold text-orange-500">${{ number_format($brief->answers['q17'] ?? 0, 2) }}</p>
                         </div>
                         <div>
-                            <p class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2">Presupuesto</p>
-                            <p class="text-sm text-gray-700 dark:text-gray-300">
-                                @if($brief->budget)
-                                    ${{ number_format($brief->budget, 2) }}
-                                @else
-                                    <span class="text-gray-500 italic">No definido</span>
-                                @endif
-                            </p>
-                        </div>
-                        <div>
-                            <p class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2">Última Actualización</p>
-                            <p class="text-sm text-gray-700 dark:text-gray-300">
-                                {{ $brief->updated_at->diffForHumans() }}
-                            </p>
+                            <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Última edicion</p>
+                            <p class="text-sm font-medium">{{ $brief->updated_at->diffForHumans() }}</p>
                         </div>
                     </div>
                 </div>

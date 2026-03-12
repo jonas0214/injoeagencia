@@ -23,6 +23,8 @@ class Project extends Model
      */
     public function getOrCreateBrief(): Brief
     {
-        return $this->brief()->firstOrCreate([]);
+        return $this->brief()->firstOrCreate([], [
+            'answers' => array_fill_keys(array_map(fn($i) => "q$i", range(1, 20)), '')
+        ]);
     }
 }
