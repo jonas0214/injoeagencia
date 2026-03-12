@@ -30,6 +30,7 @@ class BriefController extends Controller
         $brief = $project->getOrCreateBrief();
         
         $validated = $request->validate([
+            'answers' => 'nullable|array',
             'objectives' => 'nullable|string|max:2000',
             'target_audience' => 'nullable|string|max:1000',
             'key_dates' => 'nullable|string|max:1000',

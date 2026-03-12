@@ -17,6 +17,7 @@ class Brief extends Model
      */
     protected $fillable = [
         'project_id',
+        'answers',
         'objectives',
         'target_audience',
         'key_dates',
@@ -39,6 +40,7 @@ class Brief extends Model
      * @var array<string, string>
      */
     protected $casts = [
+        'answers' => 'array',
         'budget' => 'decimal:2',
         'submitted_at' => 'datetime',
         'reviewed_at' => 'datetime',
