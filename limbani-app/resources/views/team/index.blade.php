@@ -301,7 +301,6 @@
                 </div>
             </div>
         </div>
-    </div>
 
     <!-- PANEL LATERAL DE DETALLE (Asana Style) -->
     <div x-show="showMemberPanel"
@@ -399,5 +398,6 @@
                 </button>
             </div>
         </div>
+    </div>
     </div>
 @endsection
