@@ -2,24 +2,27 @@
 
 @section('content')
 <style>
-    body {
-        background: #0f1012 !important;
-        min-height: 100vh;
-        color: white;
-    }
     .profile-card {
-        background: rgba(255, 255, 255, 0.03);
+        background: rgba(255, 255, 255, 0.8);
         backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    .dark .profile-card {
+        background: rgba(25, 25, 25, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.1);
     }
     .data-box {
-        background: rgba(255, 255, 255, 0.02);
-        border: 1px solid rgba(255, 255, 255, 0.05);
+        background: rgba(0, 0, 0, 0.02);
+        border: 1px solid rgba(0, 0, 0, 0.05);
         transition: all 0.3s ease;
     }
+    .dark .data-box {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
     .data-box:hover {
-        background: rgba(255, 255, 255, 0.05);
-        border-color: rgba(255, 170, 0, 0.2);
+        background: rgba(249, 115, 22, 0.05);
+        border-color: rgba(249, 115, 22, 0.3);
     }
 </style>
 
@@ -47,10 +50,10 @@
                         </div>
                     @endif
                 </div>
-                <h1 class="text-2xl font-medium text-white mb-1">{{ $teamMember->name }}</h1>
+                <h1 class="text-2xl font-medium text-gray-900 dark:text-white mb-1">{{ $teamMember->name }}</h1>
                 <p class="text-orange-500 text-xs font-bold uppercase tracking-widest">{{ $teamMember->position }}</p>
                 
-                <div class="mt-8 pt-8 border-t border-white/5 w-full space-y-4">
+                <div class="mt-8 pt-8 border-t border-gray-200 dark:border-white/5 w-full space-y-4">
                     <div class="flex justify-between items-center text-xs">
                         <span class="text-gray-500 font-bold uppercase tracking-widest">Estado</span>
                         <span class="flex items-center gap-2 text-green-500 font-bold uppercase">
@@ -59,7 +62,7 @@
                     </div>
                     <div class="flex justify-between items-center text-xs">
                         <span class="text-gray-500 font-bold uppercase tracking-widest">Ingreso</span>
-                        <span class="text-gray-300">{{ $teamMember->created_at->format('M d, Y') }}</span>
+                        <span class="text-gray-700 dark:text-gray-300">{{ $teamMember->created_at->format('M d, Y') }}</span>
                     </div>
                 </div>
             </div>
@@ -84,58 +87,58 @@
             
             <!-- Bloque Personal -->
             <div class="profile-card rounded-3xl p-8">
-                <h3 class="text-sm font-bold text-white uppercase tracking-widest mb-8 flex items-center gap-3">
+                <h3 class="text-sm font-bold text-gray-800 dark:text-white uppercase tracking-widest mb-8 flex items-center gap-3">
                     <i class="fas fa-user-circle text-orange-500/50"></i> Información Personal
                 </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="data-box p-5 rounded-2xl">
-                        <p class="text-[10px] text-gray-600 font-bold uppercase tracking-widest mb-1">Cédula / Identificación</p>
-                        <p class="text-sm text-gray-200">{{ $teamMember->cedula }}</p>
+                        <p class="text-[10px] text-gray-500 dark:text-gray-400 font-bold uppercase tracking-widest mb-1">Cédula / Identificación</p>
+                        <p class="text-sm text-gray-800 dark:text-gray-200">{{ $teamMember->cedula }}</p>
                     </div>
                     <div class="data-box p-5 rounded-2xl">
-                        <p class="text-[10px] text-gray-600 font-bold uppercase tracking-widest mb-1">Correo Electrónico</p>
-                        <p class="text-sm text-gray-200">{{ $teamMember->email ?? 'No registrado' }}</p>
+                        <p class="text-[10px] text-gray-500 dark:text-gray-400 font-bold uppercase tracking-widest mb-1">Correo Electrónico</p>
+                        <p class="text-sm text-gray-800 dark:text-gray-200">{{ $teamMember->email ?? 'No registrado' }}</p>
                     </div>
                     <div class="data-box p-5 rounded-2xl">
-                        <p class="text-[10px] text-gray-600 font-bold uppercase tracking-widest mb-1">Teléfono de Contacto</p>
-                        <p class="text-sm text-gray-200">{{ $teamMember->phone }}</p>
+                        <p class="text-[10px] text-gray-500 dark:text-gray-400 font-bold uppercase tracking-widest mb-1">Teléfono de Contacto</p>
+                        <p class="text-sm text-gray-800 dark:text-gray-200">{{ $teamMember->phone }}</p>
                     </div>
                     <div class="data-box p-5 rounded-2xl">
-                        <p class="text-[10px] text-gray-600 font-bold uppercase tracking-widest mb-1">Cargo Actual</p>
-                        <p class="text-sm text-gray-200">{{ $teamMember->position }}</p>
+                        <p class="text-[10px] text-gray-500 dark:text-gray-400 font-bold uppercase tracking-widest mb-1">Cargo Actual</p>
+                        <p class="text-sm text-gray-800 dark:text-gray-200">{{ $teamMember->position }}</p>
                     </div>
                     <div class="data-box p-5 rounded-2xl">
-                        <p class="text-[10px] text-gray-600 font-bold uppercase tracking-widest mb-1">Rol de Sistema</p>
-                        <p class="text-sm text-orange-500 font-black uppercase tracking-tighter">
+                        <p class="text-[10px] text-gray-500 dark:text-gray-400 font-bold uppercase tracking-widest mb-1">Rol de Sistema</p>
+                        <p class="text-sm text-orange-600 dark:text-orange-500 font-black uppercase tracking-tighter">
                             <i class="fas fa-shield-alt mr-1"></i> {{ $teamMember->user->role ?? 'Sin usuario vinculado' }}
                         </p>
                     </div>
                     <div class="data-box p-5 rounded-2xl">
-                        <p class="text-[10px] text-gray-600 font-bold uppercase tracking-widest mb-1">Fecha de Nacimiento</p>
-                        <p class="text-sm text-gray-200">{{ $teamMember->birth_date ? $teamMember->birth_date->format('d/m/Y') : 'No registrada' }}</p>
+                        <p class="text-[10px] text-gray-500 dark:text-gray-400 font-bold uppercase tracking-widest mb-1">Fecha de Nacimiento</p>
+                        <p class="text-sm text-gray-800 dark:text-gray-200">{{ $teamMember->birth_date ? $teamMember->birth_date->format('d/m/Y') : 'No registrada' }}</p>
                     </div>
                     <div class="data-box p-5 rounded-2xl md:col-span-2">
-                        <p class="text-[10px] text-gray-600 font-bold uppercase tracking-widest mb-1">Dirección de Residencia</p>
-                        <p class="text-sm text-gray-200">{{ $teamMember->address ?? 'No registrada' }}</p>
+                        <p class="text-[10px] text-gray-500 dark:text-gray-400 font-bold uppercase tracking-widest mb-1">Dirección de Residencia</p>
+                        <p class="text-sm text-gray-800 dark:text-gray-200">{{ $teamMember->address ?? 'No registrada' }}</p>
                     </div>
                 </div>
             </div>
 
             <!-- Bloque Financiero -->
             <div class="profile-card rounded-3xl p-8 border-orange-500/20 shadow-orange-500/5 shadow-2xl">
-                <h3 class="text-sm font-bold text-white uppercase tracking-widest mb-8 flex items-center gap-3">
+                <h3 class="text-sm font-bold text-gray-800 dark:text-white uppercase tracking-widest mb-8 flex items-center gap-3">
                     <i class="fas fa-wallet text-orange-500/50"></i> Nómina & Tesorería
                 </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="data-box p-6 rounded-2xl bg-orange-500/[0.03] border-orange-500/10">
-                        <p class="text-[10px] text-gray-600 font-bold uppercase tracking-widest mb-2">Asignación Mensual</p>
-                        <p class="text-3xl font-medium text-white">
+                        <p class="text-[10px] text-gray-500 dark:text-gray-400 font-bold uppercase tracking-widest mb-2">Asignación Mensual</p>
+                        <p class="text-3xl font-medium text-gray-900 dark:text-white">
                             <span class="text-orange-500 mr-2">$</span>{{ number_format($teamMember->salary, 2) }}
                         </p>
                     </div>
                     <div class="data-box p-6 rounded-2xl">
-                        <p class="text-[10px] text-gray-600 font-bold uppercase tracking-widest mb-2">Información Bancaria</p>
-                        <p class="text-sm text-gray-300 leading-relaxed">{{ $teamMember->bank_details ?? 'Pendiente de asignar datos de pago.' }}</p>
+                        <p class="text-[10px] text-gray-500 dark:text-gray-400 font-bold uppercase tracking-widest mb-2">Información Bancaria</p>
+                        <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{{ $teamMember->bank_details ?? 'Pendiente de asignar datos de pago.' }}</p>
                     </div>
                 </div>
             </div>
