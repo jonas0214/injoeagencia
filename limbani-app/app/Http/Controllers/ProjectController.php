@@ -45,7 +45,7 @@ class ProjectController extends Controller
                 $q->with(['subtasks' => function($sq) {
                     $sq->with(['children', 'teamMember', 'attachments', 'comments.user', 'task.project', 'parent']);
                 }]);
-            }])->latest()->get();
+            }])->orderBy('position')->latest()->get();
             $team = \App\Models\TeamMember::all();
         }
 
@@ -221,6 +221,19 @@ class ProjectController extends Controller
                 'project_name' => $project->name,
             ]);
         } catch (\Exception $e) {}
+
+        return response()->json(['success' => true]);
+    }
+    public function reorder(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'exists:projects,id'
+        ]);
+
+        foreach ($request->ids as $index => $id) {
+            Project::where('id', $id)->update(['position' => $index]);
+        }
 
         return response()->json(['success' => true]);
     }

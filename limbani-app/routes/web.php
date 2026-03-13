@@ -33,6 +33,7 @@ Route::middleware('auth')->group(function () {
 
     // 2. Rutas de la Agencia (Proyectos)
     Route::resource('projects', ProjectController::class);
+    Route::post('/projects/reorder', [ProjectController::class, 'reorder'])->name('projects.reorder');
     Route::post('/projects/{project}/generate-meta-strategy', [ProjectController::class, 'generateMetaStrategy'])->name('projects.generate-meta-strategy');
 
     // 3. Rutas de Tareas

@@ -22,6 +22,7 @@
         .custom-scroll::-webkit-scrollbar-thumb:hover { background: #ffaa00; }
         #drawingCanvas { cursor: crosshair; touch-action: none; background-color: #000; }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 </head>
 <body class="text-gray-800 dark:text-gray-300 antialiased selection:bg-orange-500 selection:text-white overflow-x-hidden md:overflow-hidden transition-colors duration-300"
       x-data="asanaHandler()"
