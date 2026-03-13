@@ -391,14 +391,29 @@
             </div>
 
             <!-- Botones de Acción -->
-            <div class="pt-6 border-t border-white/5 grid grid-cols-2 gap-4">
-                <button class="py-3 rounded-xl bg-white/5 border border-white/10 text-xs font-bold text-gray-400 hover:bg-white/10 transition-colors uppercase tracking-widest">
-                    Editar Ficha
-                </button>
-                <button class="py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-xs font-bold text-red-500 hover:bg-red-500/20 transition-colors uppercase tracking-widest">
-                    Dar de Baja
-                </button>
+            @if(in_array(Auth::user()->role, ['admin', 'ceo', 'rrhh', 'contabilidad']))
+            <div class="pt-6 border-t border-white/5 space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <a :href="'{{ url('team') }}/' + activeMember.id + '/edit'" class="py-3 rounded-xl bg-white/5 border border-white/10 text-xs font-bold text-gray-400 hover:bg-white/10 transition-colors uppercase tracking-widest text-center">
+                        Editar Ficha
+                    </a>
+                    <button @click="if(confirm('¿Estás seguro de dar de baja a este colaborador?')) { 
+                        fetch('{{ url('team') }}/' + activeMember.id, { 
+                            method: 'DELETE', 
+                            headers: { 
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json'
+                            } 
+                        }).then(() => window.location.reload()) 
+                    }" class="py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-xs font-bold text-red-500 hover:bg-red-500/20 transition-colors uppercase tracking-widest">
+                        Dar de Baja
+                    </button>
+                </div>
+                <a :href="'{{ url('team') }}/' + activeMember.id" class="w-full block py-3 rounded-xl bg-orange-500/10 border border-orange-500/20 text-xs font-bold text-orange-500 hover:bg-orange-500/20 transition-colors uppercase tracking-widest text-center">
+                    Ver Perfil Completo
+                </a>
             </div>
+            @endif
         </div>
     </div>
     </div>
