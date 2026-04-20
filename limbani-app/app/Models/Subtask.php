@@ -21,7 +21,8 @@ class Subtask extends Model
         'is_approved',
         'approved_at',
         'approved_by',
-        'position'
+        'position',
+        'start_date'
     ];
 
     /**
@@ -31,7 +32,8 @@ class Subtask extends Model
         'due_date' => 'datetime',
         'is_completed' => 'boolean',
         'is_approved' => 'boolean',
-        'approved_at' => 'datetime'
+        'approved_at' => 'datetime',
+        'start_date' => 'datetime'
     ];
 
     /**

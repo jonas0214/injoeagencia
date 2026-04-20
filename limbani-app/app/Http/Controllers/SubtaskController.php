@@ -38,7 +38,7 @@ class SubtaskController extends Controller
             'is_approved' => 'nullable'
         ]);
 
-        $data = $request->only(['title', 'description', 'due_date', 'team_member_id']);
+        $data = $request->only(['title', 'description', 'due_date', 'start_date', 'team_member_id']);
 
         if ($request->has('is_completed')) {
             $data['is_completed'] = filter_var($request->is_completed, FILTER_VALIDATE_BOOLEAN);

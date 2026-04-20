@@ -83,6 +83,24 @@
             </div>
 
             <div class="flex items-center gap-12">
+                <label class="w-32 text-xs font-medium text-gray-500 uppercase tracking-wider">Inicio</label>
+                <div class="flex-1">
+                    <template x-if="'{{ Auth::user()->role }}' === 'colaborador'">
+                        <div class="flex items-center gap-2 px-1 py-1">
+                            <i class="far fa-calendar text-gray-500"></i>
+                            <span class="text-sm text-gray-700 dark:text-gray-300" x-text="currentTask.start_date ? new Date(currentTask.start_date).toLocaleString('es-ES', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : 'Sin fecha de inicio'"></span>
+                        </div>
+                    </template>
+                    <template x-if="'{{ Auth::user()->role }}' !== 'colaborador'">
+                        <div class="relative flex items-center group">
+                            <i class="far fa-calendar absolute left-0 text-gray-500 group-hover:text-orange-500 transition-colors"></i>
+                            <input type="datetime-local" x-model="currentTask.start_date" class="bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/10 rounded-lg pl-8 pr-2 py-1 text-sm text-gray-700 dark:text-gray-300 focus:ring-1 focus:ring-orange-500 outline-none cursor-pointer hover:text-black dark:hover:text-white transition-colors">
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-12">
                 <label class="w-32 text-xs font-medium text-gray-500 uppercase tracking-wider">Vencimiento</label>
                 <div class="flex-1 flex flex-col gap-1">
                     <template x-if="'{{ Auth::user()->role }}' === 'colaborador'">
@@ -146,6 +164,10 @@
                                                     <option value="{{ $m->id }}" :selected="child.team_member_id == {{ $m->id }}">{{ $m->name }}</option>
                                                 @endforeach
                                             </select>
+                                        </div>
+                                        <div class="flex items-center gap-1.5">
+                                            <i class="far fa-clock text-[8px] text-gray-600"></i>
+                                            <input type="datetime-local" :value="child.start_date ? child.start_date.substring(0, 16).replace(' ', 'T') : ''" @change="fetch('{{ url('/subtasks') }}/'+child.id, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: JSON.stringify({ start_date: $event.target.value }) }).then(() => window.location.reload())" class="bg-transparent border-none text-[10px] text-gray-500 focus:ring-0 p-0 cursor-pointer hover:text-orange-500 transition-colors">
                                         </div>
                                         <div class="flex items-center gap-1.5">
                                             <i class="far fa-calendar text-[8px] text-gray-600"></i>
