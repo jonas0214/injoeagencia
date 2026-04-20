@@ -253,15 +253,17 @@
                                             @endif
                                         </div>
                                         <p class="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">{{ $task->title }}</p>
-                                        <div class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1">
+                                        <div class="flex flex-col items-start gap-1 mt-2 mb-1">
                                             @if($task->start_date)
-                                                <span class="text-[9px] font-bold uppercase text-orange-500/80">
-                                                    <i class="fas fa-play text-[7px] mr-1"></i> Ini: {{ \Carbon\Carbon::parse($task->start_date)->format('d M, h:i A') }}
+                                                <span class="text-[9px] font-bold uppercase text-orange-500/90 flex items-center gap-1.5">
+                                                    <span class="w-1 h-1 rounded-full bg-orange-500"></span>
+                                                    Ini: {{ \Carbon\Carbon::parse($task->start_date)->format('d M, h:i A') }}
                                                 </span>
                                             @endif
                                             @if($task->due_date)
-                                                <span class="text-[9px] font-bold uppercase {{ \Carbon\Carbon::parse($task->due_date)->isPast() ? 'text-red-500' : 'text-gray-500' }}">
-                                                    <i class="fas fa-calendar-check text-[7px] mr-1"></i> Fin: {{ \Carbon\Carbon::parse($task->due_date)->format('d M, h:i A') }}
+                                                <span class="text-[9px] font-bold uppercase {{ \Carbon\Carbon::parse($task->due_date)->isPast() ? 'text-red-500' : 'text-gray-500' }} flex items-center gap-1.5">
+                                                    <span class="w-1 h-1 rounded-full {{ \Carbon\Carbon::parse($task->due_date)->isPast() ? 'bg-red-500' : 'bg-gray-500' }}"></span>
+                                                    Fin: {{ \Carbon\Carbon::parse($task->due_date)->format('d M, h:i A') }}
                                                 </span>
                                             @endif
                                         </div>
