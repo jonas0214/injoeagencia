@@ -94,7 +94,18 @@
                     <template x-if="'{{ Auth::user()->role }}' !== 'colaborador'">
                         <div class="relative flex items-center group">
                             <i class="far fa-calendar absolute left-0 text-gray-500 group-hover:text-orange-500 transition-colors"></i>
-                            <input type="datetime-local" x-model="currentTask.start_date" class="bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/10 rounded-lg pl-8 pr-2 py-1 text-sm text-gray-700 dark:text-gray-300 focus:ring-1 focus:ring-orange-500 outline-none cursor-pointer hover:text-black dark:hover:text-white transition-colors">
+                            <input type="text" 
+                                   x-model="currentTask.start_date" 
+                                   x-init="flatpickr($el, { 
+                                        enableTime: true, 
+                                        dateFormat: 'Y-m-d H:i:S',
+                                        altInput: true,
+                                        altFormat: 'd M, h:i K',
+                                        locale: 'es',
+                                        theme: 'dark',
+                                        onChange: (selectedDates, dateStr) => { currentTask.start_date = dateStr; updateTask(); }
+                                   })"
+                                   class="bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/10 rounded-lg pl-8 pr-2 py-1 text-sm text-gray-700 dark:text-gray-300 focus:ring-1 focus:ring-orange-500 outline-none cursor-pointer hover:text-black dark:hover:text-white transition-colors">
                         </div>
                     </template>
                 </div>
@@ -112,7 +123,18 @@
                     <template x-if="'{{ Auth::user()->role }}' !== 'colaborador'">
                         <div class="relative flex items-center group">
                             <i class="far fa-calendar-alt absolute left-0 text-gray-500 group-hover:text-orange-500 transition-colors"></i>
-                            <input type="datetime-local" x-model="currentTask.due_date" class="bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/10 rounded-lg pl-8 pr-2 py-1 text-sm text-gray-700 dark:text-gray-300 focus:ring-1 focus:ring-orange-500 outline-none cursor-pointer hover:text-black dark:hover:text-white transition-colors">
+                            <input type="text" 
+                                   x-model="currentTask.due_date" 
+                                   x-init="flatpickr($el, { 
+                                        enableTime: true, 
+                                        dateFormat: 'Y-m-d H:i:S',
+                                        altInput: true,
+                                        altFormat: 'd M, h:i K',
+                                        locale: 'es',
+                                        theme: 'dark',
+                                        onChange: (selectedDates, dateStr) => { currentTask.due_date = dateStr; updateTask(); }
+                                   })"
+                                   class="bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/10 rounded-lg pl-8 pr-2 py-1 text-sm text-gray-700 dark:text-gray-300 focus:ring-1 focus:ring-orange-500 outline-none cursor-pointer hover:text-black dark:hover:text-white transition-colors">
                         </div>
                     </template>
                     <template x-if="currentTask.due_date">
@@ -142,7 +164,11 @@
                         let order = Array.from($refs.subtaskList.querySelectorAll('[data-id]')).map(el => el.dataset.id);
                         fetch('{{ route('subtasks.reorder') }}', {
                             method: 'POST',
-                            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                            headers: { 
+                                'Content-Type': 'application/json', 
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}' 
+                            },
                             body: JSON.stringify({ order: order })
                         });
                     }
@@ -201,7 +227,11 @@
                                                     onChange: function(selectedDates, dateStr) {
                                                         fetch('{{ url('/subtasks') }}/'+child.id, { 
                                                             method: 'PUT', 
-                                                            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, 
+                                                            headers: { 
+                                                                'Content-Type': 'application/json', 
+                                                                'Accept': 'application/json',
+                                                                'X-CSRF-TOKEN': '{{ csrf_token() }}' 
+                                                            }, 
                                                             body: JSON.stringify({ start_date: dateStr }) 
                                                         });
                                                     }
@@ -219,7 +249,11 @@
                                                     onChange: function(selectedDates, dateStr) {
                                                         fetch('{{ url('/subtasks') }}/'+child.id, { 
                                                             method: 'PUT', 
-                                                            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, 
+                                                            headers: { 
+                                                                'Content-Type': 'application/json', 
+                                                                'Accept': 'application/json',
+                                                                'X-CSRF-TOKEN': '{{ csrf_token() }}' 
+                                                            }, 
                                                             body: JSON.stringify({ due_date: dateStr }) 
                                                         });
                                                     }

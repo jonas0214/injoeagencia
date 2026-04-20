@@ -277,7 +277,11 @@
                     };
                     return fetch(`{{ url('/subtasks') }}/${this.currentTask.id}`, {
                         method: 'PUT',
-                        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                        headers: { 
+                            'Content-Type': 'application/json', 
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}' 
+                        },
                         body: JSON.stringify(body)
                     }).then(res => res.json());
                 },
