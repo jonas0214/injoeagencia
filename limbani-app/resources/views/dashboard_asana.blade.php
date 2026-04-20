@@ -240,41 +240,29 @@
 
                         <div class="p-6 space-y-3">
                             @php
-                                // Todas las tareas asignadas, ordenadas por estado (pendientes arriba)
-                                $allTasks = $mySubtasks->sortBy([
-                                    ['is_completed', 'asc'],
-                                    ['due_date', 'asc']
-                                ]);
+                                // Mostrar solo tareas pendientes para colaborador, ordenadas por fecha
+                                $dashboardTasks = $mySubtasks->where('is_completed', false)->sortBy('due_date');
                             @endphp
-                            @forelse($allTasks as $task)
+                            @forelse($dashboardTasks as $task)
                                 <div @click="$dispatch('open-task', { task: @js($task), sectionTitle: @js($task->task->title ?? 'General'), parentTitle: @js($task->parent->title ?? '') })" 
                                      class="flex items-start gap-4 p-4 rounded-2xl bg-gray-50/50 dark:bg-white/[0.03] border border-gray-100 dark:border-white/5 hover:border-gray-200 dark:hover:border-white/10 hover:bg-gray-100 dark:hover:bg-white/[0.05] transition-all cursor-pointer group/task shadow-sm">
                                     
                                     <div class="mt-1 shrink-0">
-                                        <div class="w-5 h-5 rounded-lg border-2 {{ $task->is_completed ? 'border-green-500 bg-green-500 text-white' : 'border-orange-500/30' }} flex items-center justify-center group-hover/task:border-orange-500 transition-colors">
-                                            @if($task->is_completed)
-                                                <i class="fas fa-check text-[10px]"></i>
-                                            @else
-                                                <div class="w-2 h-2 rounded-full bg-orange-500 opacity-0 group-hover/task:opacity-100 transition-opacity"></div>
-                                            @endif
+                                        <div class="w-5 h-5 rounded-lg border-2 border-orange-500/30 flex items-center justify-center group-hover/task:border-orange-500 transition-colors">
+                                            <div class="w-2 h-2 rounded-full bg-orange-500 opacity-0 group-hover/task:opacity-100 transition-opacity"></div>
                                         </div>
                                     </div>
 
                                     <div class="flex-1 min-w-0">
-                                        <div class="flex items-center justify-between gap-2 mb-1">
-                                            <div class="flex items-center gap-2">
-                                                <span class="text-[10px] font-bold text-orange-500/80 uppercase tracking-tighter">{{ $task->task->title ?? 'General' }}</span>
-                                                @if($task->parent)
-                                                    <i class="fas fa-chevron-right text-[7px] text-gray-600"></i>
-                                                    <span class="text-[10px] font-bold text-gray-500 uppercase tracking-tighter">{{ $task->parent->title }}</span>
-                                                @endif
-                                            </div>
-                                            @if($task->is_completed)
-                                                <span class="text-[8px] font-black uppercase text-green-500 tracking-widest px-2 py-0.5 rounded-full bg-green-500/10 border border-green-500/20">Finalizada</span>
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <span class="text-[10px] font-bold text-orange-500/80 uppercase tracking-tighter">{{ $task->task->title ?? 'General' }}</span>
+                                            @if($task->parent)
+                                                <i class="fas fa-chevron-right text-[7px] text-gray-600"></i>
+                                                <span class="text-[10px] font-bold text-gray-500 uppercase tracking-tighter">{{ $task->parent->title }}</span>
                                             @endif
                                         </div>
                                         
-                                        <p class="text-sm font-medium {{ $task->is_completed ? 'text-gray-400 line-through' : 'text-gray-800 dark:text-gray-200' }} break-words leading-snug">{{ $task->title }}</p>
+                                        <p class="text-sm font-medium text-gray-800 dark:text-gray-200 break-words leading-snug">{{ $task->title }}</p>
                                         
                                         <div class="flex flex-col items-start gap-1 mt-3">
                                             @if($task->start_date)
@@ -284,8 +272,8 @@
                                                 </div>
                                             @endif
                                             @if($task->due_date)
-                                                <div class="flex items-center gap-2 text-[9px] font-bold uppercase {{ \Carbon\Carbon::parse($task->due_date)->isPast() && !$task->is_completed ? 'text-red-500' : 'text-gray-500' }}">
-                                                    <span class="w-1 h-1 rounded-full {{ \Carbon\Carbon::parse($task->due_date)->isPast() && !$task->is_completed ? 'bg-red-500' : 'bg-gray-500' }}"></span>
+                                                <div class="flex items-center gap-2 text-[9px] font-bold uppercase {{ \Carbon\Carbon::parse($task->due_date)->isPast() ? 'text-red-500' : 'text-gray-500' }}">
+                                                    <span class="w-1 h-1 rounded-full {{ \Carbon\Carbon::parse($task->due_date)->isPast() ? 'bg-red-500' : 'bg-gray-500' }}"></span>
                                                     <span>Termina: {{ \Carbon\Carbon::parse($task->due_date)->format('d M, h:i A') }}</span>
                                                 </div>
                                             @endif
@@ -306,7 +294,7 @@
                                 </div>
                             @empty
                                 <div class="py-4 text-center">
-                                    <p class="text-[10px] text-gray-600 uppercase tracking-widest italic">No tienes tareas asignadas en este proyecto</p>
+                                    <p class="text-[10px] text-gray-600 uppercase tracking-widest italic">No tienes tareas pendientes en este proyecto</p>
                                 </div>
                             @endforelse
                         </div>
