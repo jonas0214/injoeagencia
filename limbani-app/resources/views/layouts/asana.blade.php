@@ -9,6 +9,8 @@
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -21,8 +23,22 @@
         .custom-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
         .custom-scroll::-webkit-scrollbar-thumb:hover { background: #ffaa00; }
         #drawingCanvas { cursor: crosshair; touch-action: none; background-color: #000; }
+        
+        /* Estilos Flatpickr Personalizados */
+        .flatpickr-calendar {
+            background: #1a1a1a !important;
+            border: 1px solid rgba(255,255,255,0.1) !important;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5) !important;
+            border-radius: 12px !important;
+        }
+        .flatpickr-day.selected {
+            background: #f97316 !important;
+            border-color: #f97316 !important;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
 </head>
 <body class="text-gray-800 dark:text-gray-300 antialiased selection:bg-orange-500 selection:text-white overflow-x-hidden md:overflow-hidden transition-colors duration-300"
       x-data="asanaHandler()"
@@ -363,6 +379,11 @@
                         this.currentTask.comments.push(data);
                         this.newComment = ''; this.pastedImage = null;
                     } catch (e) { console.error(e); }
+                },
+                deleteSubtask(id) {
+                    if (this.currentTask.children) {
+                        this.currentTask.children = this.currentTask.children.filter(c => c.id !== id);
+                    }
                 },
 
                 // Lógica del Canva de Estrellas (Constelación)

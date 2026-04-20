@@ -127,18 +127,41 @@
             <textarea x-model="currentTask.description" rows="4" class="w-full bg-gray-50 dark:bg-white/[0.02] border border-gray-200 dark:border-white/5 rounded-xl p-4 text-sm text-gray-700 dark:text-gray-300 placeholder-gray-400 dark:placeholder-gray-600 focus:ring-1 focus:ring-orange-500 transition-all resize-none"></textarea>
         </div>
 
-        <!-- SUBTAREAS -->
         <div class="space-y-4 pt-6 border-t border-white/5">
-            <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Subtareas</label>
-            <div class="space-y-2">
+            <div class="flex justify-between items-center">
+                <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Subtareas</label>
+                <div x-show="currentTask.children && currentTask.children.length > 1" class="text-[9px] font-bold text-gray-600 uppercase tracking-widest">Arrastra para reordenar</div>
+            </div>
+            
+            <div class="space-y-2" x-ref="subtaskList" x-init="
+                new Sortable($refs.subtaskList, {
+                    animation: 150,
+                    handle: '.drag-handle',
+                    ghostClass: 'bg-orange-500/10',
+                    onEnd: (evt) => {
+                        let order = Array.from($refs.subtaskList.querySelectorAll('[data-id]')).map(el => el.dataset.id);
+                        fetch('{{ route('subtasks.reorder') }}', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                            body: JSON.stringify({ order: order })
+                        });
+                    }
+                })
+            ">
                 <template x-for="child in (currentTask.children || [])" :key="child.id">
-                    <div class="group flex items-center gap-3 p-2 rounded-lg bg-gray-50 dark:bg-white/[0.02] border border-gray-100 dark:border-white/5 hover:border-gray-200 dark:hover:border-white/10 transition-all">
-                        <input type="checkbox" :checked="child.is_completed" @change="fetch('{{ url('/subtasks') }}/'+child.id, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: JSON.stringify({ is_completed: $event.target.checked }) })" class="w-4 h-4 border-gray-600 rounded bg-transparent checked:bg-green-500">
+                    <div :data-id="child.id" class="group flex items-start gap-3 p-3 rounded-xl bg-gray-50 dark:bg-white/[0.02] border border-gray-100 dark:border-white/5 hover:border-orange-500/20 transition-all">
+                        <template x-if="'{{ Auth::user()->role }}' !== 'colaborador'">
+                            <div class="drag-handle mt-1 cursor-grab active:cursor-grabbing text-gray-600 hover:text-orange-500 transition-colors">
+                                <i class="fas fa-grip-vertical text-xs"></i>
+                            </div>
+                        </template>
+                        
+                        <input type="checkbox" :checked="child.is_completed" @change="fetch('{{ url('/subtasks') }}/'+child.id, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: JSON.stringify({ is_completed: $event.target.checked }) })" class="mt-1 w-4 h-4 border-gray-600 rounded bg-transparent checked:bg-green-500">
                         
                         <div class="flex-1 flex flex-col min-w-0">
-                            <input type="text" :value="child.title" @change="fetch('{{ url('/subtasks') }}/'+child.id, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: JSON.stringify({ title: $event.target.value }) })" class="bg-transparent border-none text-sm text-gray-700 dark:text-gray-300 focus:ring-0 p-0 w-full" :class="child.is_completed ? 'line-through opacity-40' : ''">
+                            <input type="text" :value="child.title" @change="fetch('{{ url('/subtasks') }}/'+child.id, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: JSON.stringify({ title: $event.target.value }) })" class="bg-transparent border-none text-sm font-medium text-gray-700 dark:text-gray-300 focus:ring-0 p-0 w-full" :class="child.is_completed ? 'line-through opacity-40' : ''">
                             
-                            <div class="flex items-center gap-4 mt-1">
+                            <div class="flex flex-wrap items-center gap-4 mt-2">
                                 <template x-if="'{{ Auth::user()->role }}' === 'colaborador'">
                                     <div class="flex gap-4">
                                         <div class="flex items-center gap-1.5">
@@ -152,12 +175,13 @@
                                     </div>
                                 </template>
                                 <template x-if="'{{ Auth::user()->role }}' !== 'colaborador'">
-                                    <div class="flex gap-4">
-                                        <div class="flex items-center gap-1.5">
-                                            <i class="fas fa-user text-[8px] text-gray-600"></i>
+                                    <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
+                                        <!-- Responsable -->
+                                        <div class="flex items-center gap-1.5 group/select">
+                                            <i class="fas fa-user-circle text-[10px] text-gray-600 group-hover/select:text-orange-500"></i>
                                             <select
-                                                @change="fetch('{{ url('/subtasks') }}/'+child.id, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: JSON.stringify({ team_member_id: $event.target.value }) }).then(() => window.location.reload())"
-                                                class="bg-transparent border-none text-[10px] text-gray-500 focus:ring-0 p-0 cursor-pointer hover:text-orange-500 transition-colors outline-none"
+                                                @change="fetch('{{ url('/subtasks') }}/'+child.id, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: JSON.stringify({ team_member_id: $event.target.value }) })"
+                                                class="bg-transparent border-none text-[10px] font-bold text-gray-500 focus:ring-0 p-0 cursor-pointer hover:text-orange-500 transition-colors outline-none uppercase tracking-tighter"
                                             >
                                                 <option value="">Sin asignar</option>
                                                 @foreach(\App\Models\TeamMember::orderBy('name')->get() as $m)
@@ -165,29 +189,60 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="flex items-center gap-1.5">
-                                            <i class="far fa-clock text-[8px] text-gray-600"></i>
-                                            <input type="datetime-local" :value="child.start_date ? child.start_date.substring(0, 16).replace(' ', 'T') : ''" @change="fetch('{{ url('/subtasks') }}/'+child.id, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: JSON.stringify({ start_date: $event.target.value }) }).then(() => window.location.reload())" class="bg-transparent border-none text-[10px] text-gray-500 focus:ring-0 p-0 cursor-pointer hover:text-orange-500 transition-colors">
-                                        </div>
-                                        <div class="flex items-center gap-1.5">
-                                            <i class="far fa-calendar text-[8px] text-gray-600"></i>
-                                            <input type="datetime-local" :value="child.due_date ? child.due_date.substring(0, 16).replace(' ', 'T') : ''" @change="fetch('{{ url('/subtasks') }}/'+child.id, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: JSON.stringify({ due_date: $event.target.value }) }).then(() => window.location.reload())" class="bg-transparent border-none text-[10px] text-gray-500 focus:ring-0 p-0 cursor-pointer hover:text-orange-500 transition-colors">
+
+                                        <!-- Fechas con Flatpickr -->
+                                        <div class="flex items-center gap-3">
+                                            <div class="flex items-center gap-1.5 py-0.5 px-2 rounded-lg bg-orange-500/5 border border-orange-500/10 cursor-pointer hover:bg-orange-500/10 transition-all"
+                                                 x-init="flatpickr($el, { 
+                                                    enableTime: true, 
+                                                    dateFormat: 'Y-m-d H:i:S',
+                                                    defaultDate: child.start_date,
+                                                    locale: 'es',
+                                                    onChange: function(selectedDates, dateStr) {
+                                                        fetch('{{ url('/subtasks') }}/'+child.id, { 
+                                                            method: 'PUT', 
+                                                            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, 
+                                                            body: JSON.stringify({ start_date: dateStr }) 
+                                                        });
+                                                    }
+                                                 })">
+                                                <i class="far fa-clock text-[9px] text-orange-500"></i>
+                                                <span class="text-[9px] font-bold text-orange-500/80 uppercase" x-text="child.start_date ? new Date(child.start_date).toLocaleString('es-ES', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : 'Inicio'"></span>
+                                            </div>
+
+                                            <div class="flex items-center gap-1.5 py-0.5 px-2 rounded-lg bg-gray-500/5 border border-gray-500/10 cursor-pointer hover:bg-gray-500/10 transition-all"
+                                                 x-init="flatpickr($el, { 
+                                                    enableTime: true, 
+                                                    dateFormat: 'Y-m-d H:i:S',
+                                                    defaultDate: child.due_date,
+                                                    locale: 'es',
+                                                    onChange: function(selectedDates, dateStr) {
+                                                        fetch('{{ url('/subtasks') }}/'+child.id, { 
+                                                            method: 'PUT', 
+                                                            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, 
+                                                            body: JSON.stringify({ due_date: dateStr }) 
+                                                        });
+                                                    }
+                                                 })">
+                                                <i class="far fa-calendar-check text-[9px] text-gray-500"></i>
+                                                <span class="text-[9px] font-bold text-gray-500/80 uppercase" x-text="child.due_date ? new Date(child.due_date).toLocaleString('es-ES', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : 'Vencimiento'"></span>
+                                            </div>
                                         </div>
                                     </div>
                                 </template>
                             </div>
                         </div>
                         
-                        <div class="flex items-center gap-2">
-                            <button type="button" @click="openTaskPanel(child, currentTask.section_title, currentTask.title)" class="p-2 text-gray-400 hover:text-orange-500 transition-all"><i class="fas fa-external-link-alt text-[10px]"></i></button>
+                        <div class="flex items-center gap-1">
+                            <button type="button" @click="openTaskPanel(child, currentTask.section_title, currentTask.title)" class="p-2 text-gray-400 hover:text-orange-500 transition-all" title="Ver detalle"><i class="fas fa-external-link-alt text-[10px]"></i></button>
                             <template x-if="'{{ Auth::user()->role }}' !== 'colaborador'">
-                                <button type="button" @click="if(confirm('¿Eliminar subtarea?')) fetch('{{ url('/subtasks') }}/'+child.id, { method: 'DELETE', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' } }).then(() => window.location.reload())" class="opacity-0 group-hover:opacity-100 p-2 text-gray-600 hover:text-red-500 transition-all"><i class="fas fa-trash-alt text-[10px]"></i></button>
+                                <button type="button" @click="if(confirm('¿Eliminar subtarea?')) fetch('{{ url('/subtasks') }}/'+child.id, { method: 'DELETE', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' } }).then(() => deleteSubtask(child.id))" class="opacity-0 group-hover:opacity-100 p-2 text-gray-600 hover:text-red-500 transition-all" title="Eliminar"><i class="fas fa-trash-alt text-[10px]"></i></button>
                             </template>
                         </div>
                     </div>
                 </template>
                 <template x-if="'{{ Auth::user()->role }}' !== 'colaborador'">
-                    <div class="pt-2 flex items-center gap-3 p-3 rounded-xl border border-dashed border-white/10 group focus-within:border-orange-500/50 transition-all">
+                    <div class="pt-2 flex items-center gap-3 p-4 rounded-xl border border-dashed border-white/10 group focus-within:border-orange-500/50 transition-all bg-white/[0.01]">
                         <i class="fas fa-plus text-[10px] text-gray-600 group-focus-within:text-orange-500"></i>
                         <input type="text" x-model="newSubtaskTitle" @keydown.enter.prevent="createChildSubtask()" placeholder="Presiona Enter para agregar una subtarea..." class="flex-1 bg-transparent border-none text-sm text-gray-700 dark:text-gray-300 placeholder-gray-500 focus:ring-0 p-0 transition-colors">
                     </div>

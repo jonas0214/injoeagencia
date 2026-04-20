@@ -50,7 +50,7 @@ class Subtask extends Model
      */
     public function children()
     {
-        return $this->hasMany(Subtask::class, 'parent_id');
+        return $this->hasMany(Subtask::class, 'parent_id')->orderBy('position');
     }
 
     /**

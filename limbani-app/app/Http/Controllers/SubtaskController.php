@@ -119,4 +119,18 @@ class SubtaskController extends Controller
         }
         return back()->with('success', 'Subtarea agregada.');
     }
+    // Reordenar subtareas
+    public function reorder(Request $request)
+    {
+        $request->validate([
+            'order' => 'required|array',
+            'order.*' => 'exists:subtasks,id'
+        ]);
+
+        foreach ($request->order as $index => $id) {
+            Subtask::where('id', $id)->update(['position' => $index]);
+        }
+
+        return response()->json(['success' => true]);
+    }
 }

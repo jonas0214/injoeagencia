@@ -49,6 +49,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/subtasks/{subtask}', [SubtaskController::class, 'destroy'])->name('subtasks.destroy');
     Route::post('/subtasks/{subtask}/duplicate', [SubtaskController::class, 'duplicate'])->name('subtasks.duplicate');
     Route::post('/subtasks/{subtask}/subtasks', [SubtaskController::class, 'storeChild'])->name('subtasks.children.store');
+    Route::post('/subtasks/reorder', [SubtaskController::class, 'reorder'])->name('subtasks.reorder');
 
     Route::post('/subtasks/{subtask}/comments', [CommentController::class, 'store'])->name('subtasks.comments.store');
     Route::get('/subtasks-detail/{subtask}', function(\App\Models\Subtask $subtask) {
