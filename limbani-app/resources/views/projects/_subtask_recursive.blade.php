@@ -76,43 +76,28 @@
                     $now = now();
                     $start = $subtask->start_date;
                     $due = $subtask->due_date;
-                    
-                    $statusColor = 'bg-gray-500/20 text-gray-500 border-gray-500/30';
-                    $statusText = 'Pendiente';
-                    $dotColor = 'bg-gray-500';
-                    
-                    if ($subtask->is_completed) {
-                        $statusColor = 'bg-green-500/20 text-green-500 border-green-500/30';
-                        $statusText = 'Listo';
-                        $dotColor = 'bg-green-500';
-                    } elseif ($due && $now > $due) {
-                        $statusColor = 'bg-red-500/20 text-red-500 border-red-500/30 animate-pulse';
-                        $statusText = 'Vencida';
-                        $dotColor = 'bg-red-500';
-                    } elseif ($start && $now >= $start) {
-                        $statusColor = 'bg-orange-500/20 text-orange-500 border-orange-500/30';
-                        $statusText = 'En curso';
-                        $dotColor = 'bg-orange-500';
-                    } elseif ($start && $now < $start) {
-                        $statusColor = 'bg-blue-500/20 text-blue-500 border-blue-500/30';
-                        $statusText = 'Programada';
-                        $dotColor = 'bg-blue-500';
-                    }
+                    $isOverdue = $due && $now > $due && !$subtask->is_completed;
                 @endphp
 
-                <!-- Semáforo Vibrante -->
-                <div class="flex items-center px-2 py-0.5 rounded-full border {{ $statusColor }} text-[8px] font-black uppercase tracking-tighter shrink-0 shadow-lg shadow-black/20">
-                    <div class="w-1.5 h-1.5 rounded-full {{ $dotColor }} mr-1.5 shadow-[0_0_5px_rgba(0,0,0,0.5)]"></div>
-                    {{ $statusText }}
-                </div>
+                <!-- Indicador de Vencida (Solo si aplica) -->
+                @if($isOverdue)
+                    <div class="flex items-center px-2 py-0.5 rounded-full border border-red-500/30 bg-red-500/20 text-red-500 text-[8px] font-black uppercase tracking-tighter shrink-0 animate-pulse">
+                        <div class="w-1.5 h-1.5 rounded-full bg-red-500 mr-1.5 shadow-[0_0_5px_rgba(255,0,0,0.5)]"></div>
+                        Vencida
+                    </div>
+                @endif
 
-                <div class="flex flex-col items-end min-w-[70px]">
-                    <div class="flex flex-col items-end leading-tight">
-                        @if($subtask->start_date)
-                            <span class="text-[9px] font-bold text-orange-500/70 uppercase">Inicia: {{ $subtask->start_date->format('d M, h:i A') }}</span>
-                        @endif
+                <div class="flex flex-col items-end min-w-[100px] leading-none gap-1">
+                    @if($start)
+                        <div class="flex items-center gap-1">
+                            <span class="text-[8px] font-bold text-gray-500 uppercase">Inicia:</span>
+                            <span class="text-[9px] font-bold text-orange-500/80">{{ $start->format('d M, h:i A') }}</span>
+                        </div>
+                    @endif
+                    <div class="flex items-center gap-1">
+                        <span class="text-[8px] font-bold text-gray-500 uppercase">Fin:</span>
                         <span class="{{ $level == 0 ? 'text-[11px]' : 'text-[9px]' }} font-black text-gray-400 dark:text-gray-300">
-                            {{ $subtask->due_date ? $subtask->due_date->format('d M, h:i A') : '--' }}
+                            {{ $due ? $due->format('d M, h:i A') : '--' }}
                         </span>
                     </div>
                 </div>
