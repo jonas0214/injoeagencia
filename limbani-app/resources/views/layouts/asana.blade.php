@@ -229,6 +229,7 @@
                         team_member_photo: task.team_member ? task.team_member.photo : null,
                         ai_suggestion: task.ai_suggestion || null,
                         due_date: task.due_date ? task.due_date.substring(0, 16).replace(' ', 'T') : '',
+                        start_date: task.start_date ? task.start_date.substring(0, 16).replace(' ', 'T') : '',
                         description: task.description || '',
                         attachments: task.attachments || [],
                         comments: (task.comments || []).sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
@@ -253,6 +254,7 @@
                         title: this.currentTask.title,
                         description: this.currentTask.description,
                         due_date: this.currentTask.due_date,
+                        start_date: this.currentTask.start_date,
                         team_member_id: this.currentTask.team_member_id || null,
                         is_completed: !!this.currentTask.is_completed,
                         is_approved: !!this.currentTask.is_approved

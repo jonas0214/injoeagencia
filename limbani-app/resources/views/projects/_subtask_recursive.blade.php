@@ -28,7 +28,7 @@
         <div @click="openTaskPanel(@js($subtask), @js($section->title), @js($subtask->parent ? $subtask->parent->title : ''))" 
              class="group grid grid-cols-12 gap-4 {{ $level == 0 ? 'py-2 px-4' : 'py-1.5 px-4' }} hover:bg-gray-50 dark:hover:bg-white/[0.03] transition-all cursor-pointer items-center">
             
-            <div class="col-span-7 flex items-center gap-3" style="padding-left: {{ $level * 20 }}px">
+            <div class="col-span-6 flex items-center gap-3" style="padding-left: {{ $level * 20 }}px">
                 @if($subtask->children->count() > 0)
                     <button @click.stop="toggleChildren()" class="w-4 h-4 flex items-center justify-center text-gray-600 hover:text-white transition-colors">
                         <i class="fas fa-caret-right text-[10px] transition-transform" :class="showChildren ? 'rotate-90' : ''"></i>
@@ -47,7 +47,7 @@
                 </span>
             </div>
 
-            <div class="col-span-3">
+            <div class="col-span-2">
                 @if($subtask->team_member_id)
                     <div class="flex items-center gap-2.5">
                         @if($subtask->teamMember && $subtask->teamMember->photo)
@@ -57,7 +57,7 @@
                                 {{ substr($subtask->teamMember->name ?? '?', 0, 1) }}
                             </div>
                         @endif
-                        <span class="{{ $level == 0 ? 'text-[13px]' : 'text-[9px]' }} text-gray-400 font-medium truncate max-w-[100px]">
+                        <span class="{{ $level == 0 ? 'text-[13px]' : 'text-[9px]' }} text-gray-400 font-medium truncate max-w-[80px]">
                             {{ $subtask->teamMember->name ?? '' }}
                         </span>
                     </div>
@@ -71,7 +71,7 @@
                 @endif
             </div>
 
-            <div class="col-span-2 text-right flex items-center justify-end gap-3">
+            <div class="col-span-4 text-right flex items-center justify-end gap-3">
                 @php
                     $now = now();
                     $start = $subtask->start_date;
@@ -79,7 +79,7 @@
                     $isOverdue = $due && $now > $due && !$subtask->is_completed;
                 @endphp
 
-                <!-- Indicador de Vencida (Solo si aplica) -->
+                <!-- Indicador de Vencida -->
                 @if($isOverdue)
                     <div class="flex items-center px-2 py-0.5 rounded-full border border-red-500/30 bg-red-500/20 text-red-500 text-[8px] font-black uppercase tracking-tighter shrink-0 animate-pulse">
                         <div class="w-1.5 h-1.5 rounded-full bg-red-500 mr-1.5 shadow-[0_0_5px_rgba(255,0,0,0.5)]"></div>
@@ -87,17 +87,17 @@
                     </div>
                 @endif
 
-                <div class="flex flex-col items-end min-w-[100px] leading-none gap-1">
+                <div class="flex flex-col items-end min-w-[120px] leading-tight">
                     @if($start)
-                        <div class="flex items-center gap-1">
-                            <span class="text-[8px] font-bold text-gray-500 uppercase">Inicia:</span>
-                            <span class="text-[9px] font-bold text-orange-500/80">{{ $start->format('d M, h:i A') }}</span>
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-[8px] font-bold text-gray-500 uppercase tracking-widest opacity-60">Inicio:</span>
+                            <span class="text-[10px] font-bold text-orange-500/90 whitespace-nowrap">{{ $start->format('d M, h:i A') }}</span>
                         </div>
                     @endif
-                    <div class="flex items-center gap-1">
-                        <span class="text-[8px] font-bold text-gray-500 uppercase">Fin:</span>
-                        <span class="{{ $level == 0 ? 'text-[11px]' : 'text-[9px]' }} font-black text-gray-400 dark:text-gray-300">
-                            {{ $due ? $due->format('d M, h:i A') : '--' }}
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-[8px] font-bold text-gray-500 uppercase tracking-widest opacity-60">Fin:</span>
+                        <span class="{{ $level == 0 ? 'text-[12px]' : 'text-[10px]' }} font-black text-gray-400 dark:text-gray-200 whitespace-nowrap">
+                            {{ $due ? $due->format('d M, h:i A') : '--:--' }}
                         </span>
                     </div>
                 </div>
