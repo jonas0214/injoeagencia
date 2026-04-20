@@ -239,47 +239,74 @@
                         </div>
 
                         <div class="p-6 space-y-3">
-                            @forelse($pendingTasks as $task)
-                                <div @click="$dispatch('open-task', { task: @js($task), sectionTitle: @js($task->task->title ?? 'General'), parentTitle: @js($task->parent->title ?? '') })" class="flex items-center gap-4 p-4 rounded-2xl bg-gray-50/50 dark:bg-white/[0.03] border border-gray-100 dark:border-white/5 hover:border-gray-200 dark:hover:border-white/10 hover:bg-gray-100 dark:hover:bg-white/[0.05] transition-all cursor-pointer group/task shadow-sm">
-                                    <div class="w-5 h-5 rounded-lg border-2 border-orange-500/30 flex items-center justify-center group-hover/task:border-orange-500 transition-colors">
-                                        <div class="w-2 h-2 rounded-full bg-orange-500 opacity-0 group-hover/task:opacity-100 transition-opacity"></div>
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <div class="flex items-center gap-2">
-                                            <span class="text-[10px] font-bold text-orange-500/80 uppercase tracking-tighter">{{ $task->task->title ?? 'General' }}</span>
-                                            @if($task->parent)
-                                                <i class="fas fa-chevron-right text-[7px] text-gray-600"></i>
-                                                <span class="text-[10px] font-bold text-gray-500 uppercase tracking-tighter">{{ $task->parent->title }}</span>
+                            @php
+                                // Todas las tareas asignadas, ordenadas por estado (pendientes arriba)
+                                $allTasks = $mySubtasks->sortBy([
+                                    ['is_completed', 'asc'],
+                                    ['due_date', 'asc']
+                                ]);
+                            @endphp
+                            @forelse($allTasks as $task)
+                                <div @click="$dispatch('open-task', { task: @js($task), sectionTitle: @js($task->task->title ?? 'General'), parentTitle: @js($task->parent->title ?? '') })" 
+                                     class="flex items-start gap-4 p-4 rounded-2xl bg-gray-50/50 dark:bg-white/[0.03] border border-gray-100 dark:border-white/5 hover:border-gray-200 dark:hover:border-white/10 hover:bg-gray-100 dark:hover:bg-white/[0.05] transition-all cursor-pointer group/task shadow-sm">
+                                    
+                                    <div class="mt-1 shrink-0">
+                                        <div class="w-5 h-5 rounded-lg border-2 {{ $task->is_completed ? 'border-green-500 bg-green-500 text-white' : 'border-orange-500/30' }} flex items-center justify-center group-hover/task:border-orange-500 transition-colors">
+                                            @if($task->is_completed)
+                                                <i class="fas fa-check text-[10px]"></i>
+                                            @else
+                                                <div class="w-2 h-2 rounded-full bg-orange-500 opacity-0 group-hover/task:opacity-100 transition-opacity"></div>
                                             @endif
                                         </div>
-                                        <p class="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">{{ $task->title }}</p>
-                                        <div class="flex flex-col items-start gap-1 mt-2 mb-1">
+                                    </div>
+
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-center justify-between gap-2 mb-1">
+                                            <div class="flex items-center gap-2">
+                                                <span class="text-[10px] font-bold text-orange-500/80 uppercase tracking-tighter">{{ $task->task->title ?? 'General' }}</span>
+                                                @if($task->parent)
+                                                    <i class="fas fa-chevron-right text-[7px] text-gray-600"></i>
+                                                    <span class="text-[10px] font-bold text-gray-500 uppercase tracking-tighter">{{ $task->parent->title }}</span>
+                                                @endif
+                                            </div>
+                                            @if($task->is_completed)
+                                                <span class="text-[8px] font-black uppercase text-green-500 tracking-widest px-2 py-0.5 rounded-full bg-green-500/10 border border-green-500/20">Finalizada</span>
+                                            @endif
+                                        </div>
+                                        
+                                        <p class="text-sm font-medium {{ $task->is_completed ? 'text-gray-400 line-through' : 'text-gray-800 dark:text-gray-200' }} break-words leading-snug">{{ $task->title }}</p>
+                                        
+                                        <div class="flex flex-col items-start gap-1 mt-3">
                                             @if($task->start_date)
-                                                <span class="text-[9px] font-bold uppercase text-orange-500/90 flex items-center gap-1.5">
+                                                <div class="flex items-center gap-2 text-[9px] font-bold uppercase text-orange-500/90">
                                                     <span class="w-1 h-1 rounded-full bg-orange-500"></span>
-                                                    Ini: {{ \Carbon\Carbon::parse($task->start_date)->format('d M, h:i A') }}
-                                                </span>
+                                                    <span>Inicia: {{ \Carbon\Carbon::parse($task->start_date)->format('d M, h:i A') }}</span>
+                                                </div>
                                             @endif
                                             @if($task->due_date)
-                                                <span class="text-[9px] font-bold uppercase {{ \Carbon\Carbon::parse($task->due_date)->isPast() ? 'text-red-500' : 'text-gray-500' }} flex items-center gap-1.5">
-                                                    <span class="w-1 h-1 rounded-full {{ \Carbon\Carbon::parse($task->due_date)->isPast() ? 'bg-red-500' : 'bg-gray-500' }}"></span>
-                                                    Fin: {{ \Carbon\Carbon::parse($task->due_date)->format('d M, h:i A') }}
-                                                </span>
+                                                <div class="flex items-center gap-2 text-[9px] font-bold uppercase {{ \Carbon\Carbon::parse($task->due_date)->isPast() && !$task->is_completed ? 'text-red-500' : 'text-gray-500' }}">
+                                                    <span class="w-1 h-1 rounded-full {{ \Carbon\Carbon::parse($task->due_date)->isPast() && !$task->is_completed ? 'bg-red-500' : 'bg-gray-500' }}"></span>
+                                                    <span>Termina: {{ \Carbon\Carbon::parse($task->due_date)->format('d M, h:i A') }}</span>
+                                                </div>
                                             @endif
                                         </div>
+
+                                        <div class="flex items-center gap-4 mt-3 opacity-60">
                                             @if($task->comments->count() > 0)
-                                                <span class="text-[9px] font-bold text-gray-600 uppercase"><i class="far fa-comment-alt mr-1"></i> {{ $task->comments->count() }}</span>
+                                                <span class="text-[9px] font-bold text-gray-600 uppercase flex items-center gap-1.5"><i class="far fa-comment-alt"></i> {{ $task->comments->count() }}</span>
                                             @endif
                                             @if($task->attachments->count() > 0)
-                                                <span class="text-[9px] font-bold text-gray-600 uppercase"><i class="fas fa-paperclip mr-1"></i> {{ $task->attachments->count() }}</span>
+                                                <span class="text-[9px] font-bold text-gray-600 uppercase flex items-center gap-1.5"><i class="fas fa-paperclip"></i> {{ $task->attachments->count() }}</span>
                                             @endif
                                         </div>
                                     </div>
-                                    <i class="fas fa-chevron-right text-[10px] text-gray-700 group-hover/task:text-gray-400 group-hover/task:translate-x-1 transition-all"></i>
+                                    <div class="mt-1 shrink-0">
+                                        <i class="fas fa-chevron-right text-[10px] text-gray-700 group-hover/task:text-gray-400 group-hover/task:translate-x-1 transition-all"></i>
+                                    </div>
                                 </div>
                             @empty
                                 <div class="py-4 text-center">
-                                    <p class="text-[10px] text-gray-600 uppercase tracking-widest italic">No tienes tareas pendientes en este proyecto</p>
+                                    <p class="text-[10px] text-gray-600 uppercase tracking-widest italic">No tienes tareas asignadas en este proyecto</p>
                                 </div>
                             @endforelse
                         </div>
