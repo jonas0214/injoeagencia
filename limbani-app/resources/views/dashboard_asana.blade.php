@@ -253,12 +253,18 @@
                                             @endif
                                         </div>
                                         <p class="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">{{ $task->title }}</p>
-                                        <div class="flex items-center gap-4 mt-1">
-                                            @if($task->due_date)
-                                                <span class="text-[9px] font-bold uppercase {{ \Carbon\Carbon::parse($task->due_date)->isPast() ? 'text-red-500' : 'text-gray-500' }}">
-                                                    <i class="far fa-calendar-alt mr-1"></i> {{ \Carbon\Carbon::parse($task->due_date)->format('d M, h:i A') }}
+                                        <div class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1">
+                                            @if($task->start_date)
+                                                <span class="text-[9px] font-bold uppercase text-orange-500/80">
+                                                    <i class="fas fa-play text-[7px] mr-1"></i> Ini: {{ \Carbon\Carbon::parse($task->start_date)->format('d M, h:i A') }}
                                                 </span>
                                             @endif
+                                            @if($task->due_date)
+                                                <span class="text-[9px] font-bold uppercase {{ \Carbon\Carbon::parse($task->due_date)->isPast() ? 'text-red-500' : 'text-gray-500' }}">
+                                                    <i class="fas fa-calendar-check text-[7px] mr-1"></i> Fin: {{ \Carbon\Carbon::parse($task->due_date)->format('d M, h:i A') }}
+                                                </span>
+                                            @endif
+                                        </div>
                                             @if($task->comments->count() > 0)
                                                 <span class="text-[9px] font-bold text-gray-600 uppercase"><i class="far fa-comment-alt mr-1"></i> {{ $task->comments->count() }}</span>
                                             @endif
