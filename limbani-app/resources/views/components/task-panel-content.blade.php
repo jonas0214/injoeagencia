@@ -88,7 +88,7 @@
                     <template x-if="'{{ Auth::user()->role }}' === 'colaborador'">
                         <div class="flex items-center gap-2 px-1 py-1">
                             <i class="far fa-calendar text-gray-500"></i>
-                            <span class="text-sm text-gray-700 dark:text-gray-300" x-text="currentTask.start_date ? new Date(currentTask.start_date).toLocaleString('es-ES', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : 'Sin fecha de inicio'"></span>
+                            <span class="text-sm text-gray-700 dark:text-gray-300" x-text="currentTask.start_date ? new Date(currentTask.start_date).toLocaleString('es-ES', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', hour12: true }) : 'Sin fecha de inicio'"></span>
                         </div>
                     </template>
                     <template x-if="'{{ Auth::user()->role }}' !== 'colaborador'">
@@ -99,7 +99,7 @@
                                    x-init="flatpickr($el, { 
                                         enableTime: true, 
                                         time_24hr: false,
-                                        dateFormat: 'Y-m-d H:i',
+                                        dateFormat: 'Y-m-d h:i K',
                                         altInput: true,
                                         altFormat: 'd M, h:i K',
                                         locale: 'es',
@@ -118,7 +118,7 @@
                     <template x-if="'{{ Auth::user()->role }}' === 'colaborador'">
                         <div class="flex items-center gap-2 px-1 py-1">
                             <i class="far fa-calendar-alt text-gray-500"></i>
-                            <span class="text-sm text-gray-700 dark:text-gray-300" x-text="currentTask.due_date ? new Date(currentTask.due_date).toLocaleString('es-ES', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : 'Sin fecha'"></span>
+                            <span class="text-sm text-gray-700 dark:text-gray-300" x-text="currentTask.due_date ? new Date(currentTask.due_date).toLocaleString('es-ES', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', hour12: true }) : 'Sin fecha'"></span>
                         </div>
                     </template>
                     <template x-if="'{{ Auth::user()->role }}' !== 'colaborador'">
@@ -129,7 +129,7 @@
                                    x-init="flatpickr($el, { 
                                         enableTime: true, 
                                         time_24hr: false,
-                                        dateFormat: 'Y-m-d H:i',
+                                        dateFormat: 'Y-m-d h:i K',
                                         altInput: true,
                                         altFormat: 'd M, h:i K',
                                         locale: 'es',
@@ -224,7 +224,7 @@
                                                  x-init="flatpickr($el, { 
                                                     enableTime: true, 
                                                     time_24hr: false,
-                                                    dateFormat: 'Y-m-d H:i',
+                                                    dateFormat: 'Y-m-d h:i K',
                                                     defaultDate: child.start_date,
                                                     locale: 'es',
                                                     onChange: function(selectedDates, dateStr) {
@@ -241,13 +241,14 @@
                                                     }
                                                  })">
                                                 <i class="far fa-clock text-[9px] text-orange-500"></i>
-                                                <span class="text-[9px] font-bold text-orange-500/80 uppercase" x-text="child.start_date ? new Date(child.start_date).toLocaleString('es-ES', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : 'Inicio'"></span>
+                                                <span class="text-[9px] font-bold text-orange-500/80 uppercase" x-text="child.start_date ? new Date(child.start_date).toLocaleString('es-ES', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', hour12: true }) : 'Inicio'"></span>
                                             </div>
 
                                             <div class="flex items-center gap-1.5 py-0.5 px-2 rounded-lg bg-gray-500/5 border border-gray-500/10 cursor-pointer hover:bg-gray-500/10 transition-all"
                                                  x-init="flatpickr($el, { 
                                                     enableTime: true, 
-                                                    dateFormat: 'Y-m-d H:i',
+                                                    time_24hr: false,
+                                                    dateFormat: 'Y-m-d h:i K',
                                                     defaultDate: child.due_date,
                                                     locale: 'es',
                                                     onChange: function(selectedDates, dateStr) {
@@ -264,7 +265,7 @@
                                                     }
                                                  })">
                                                 <i class="far fa-calendar-check text-[9px] text-gray-500"></i>
-                                                <span class="text-[9px] font-bold text-gray-500/80 uppercase" x-text="child.due_date ? new Date(child.due_date).toLocaleString('es-ES', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : 'Vencimiento'"></span>
+                                                <span class="text-[9px] font-bold text-gray-500/80 uppercase" x-text="child.due_date ? new Date(child.due_date).toLocaleString('es-ES', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', hour12: true }) : 'Vencimiento'"></span>
                                             </div>
                                         </div>
                                     </div>
