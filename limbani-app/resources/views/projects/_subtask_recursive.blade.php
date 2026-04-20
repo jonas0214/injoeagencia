@@ -71,26 +71,59 @@
                 @endif
             </div>
 
-            <div class="col-span-2 text-right">
-                <div class="flex items-center justify-end gap-2">
-                    <div class="flex flex-col items-end">
-                        <span class="{{ $level == 0 ? 'text-[13px]' : 'text-[10px]' }} font-medium text-gray-400">
-                            {{ $subtask->due_date ? \Carbon\Carbon::parse($subtask->due_date)->format('d M, h:i A') : '--' }}
-                        </span>
-                        @if($subtask->due_date && $level == 0)
-                            <span class="text-[9px] font-bold uppercase tracking-tight {{ \Carbon\Carbon::parse($subtask->due_date)->isPast() ? 'text-red-500' : 'text-green-500' }}">
-                                {{ \Carbon\Carbon::parse($subtask->due_date)->isPast() ? 'Vencida' : 'Pendiente' }}
-                            </span>
-                        @endif
-                    </div>
-                    @if($level > 0 && Auth::user()->role !== 'colaborador')
-                        <button type="button" 
-                                @click.stop="if(confirm('¿Borrar?')) fetch('{{ url('/subtasks') }}/{{ $subtask->id }}', { method: 'DELETE', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' } }).then(() => window.location.reload())" 
-                                class="opacity-0 group-hover:opacity-100 text-gray-600 hover:text-red-500 p-1 transition-opacity">
-                            <i class="fas fa-trash-alt text-[10px]"></i>
-                        </button>
-                    @endif
+            <div class="col-span-2 text-right flex items-center justify-end gap-3">
+                @php
+                    $now = now();
+                    $start = $subtask->start_date;
+                    $due = $subtask->due_date;
+                    
+                    $statusColor = 'bg-gray-500/20 text-gray-500 border-gray-500/30';
+                    $statusText = 'Pendiente';
+                    $dotColor = 'bg-gray-500';
+                    
+                    if ($subtask->is_completed) {
+                        $statusColor = 'bg-green-500/20 text-green-500 border-green-500/30';
+                        $statusText = 'Listo';
+                        $dotColor = 'bg-green-500';
+                    } elseif ($due && $now > $due) {
+                        $statusColor = 'bg-red-500/20 text-red-500 border-red-500/30 animate-pulse';
+                        $statusText = 'Vencida';
+                        $dotColor = 'bg-red-500';
+                    } elseif ($start && $now >= $start) {
+                        $statusColor = 'bg-orange-500/20 text-orange-500 border-orange-500/30';
+                        $statusText = 'En curso';
+                        $dotColor = 'bg-orange-500';
+                    } elseif ($start && $now < $start) {
+                        $statusColor = 'bg-blue-500/20 text-blue-500 border-blue-500/30';
+                        $statusText = 'Programada';
+                        $dotColor = 'bg-blue-500';
+                    }
+                @endphp
+
+                <!-- Semáforo Vibrante -->
+                <div class="flex items-center px-2 py-0.5 rounded-full border {{ $statusColor }} text-[8px] font-black uppercase tracking-tighter shrink-0 shadow-lg shadow-black/20">
+                    <div class="w-1.5 h-1.5 rounded-full {{ $dotColor }} mr-1.5 shadow-[0_0_5px_rgba(0,0,0,0.5)]"></div>
+                    {{ $statusText }}
                 </div>
+
+                <div class="flex flex-col items-end min-w-[70px]">
+                    <div class="flex flex-col items-end leading-tight">
+                        @if($subtask->start_date)
+                            <span class="text-[9px] font-bold text-orange-500/70 uppercase">Inicia: {{ $subtask->start_date->format('d M, h:i A') }}</span>
+                        @endif
+                        <span class="{{ $level == 0 ? 'text-[11px]' : 'text-[9px]' }} font-black text-gray-400 dark:text-gray-300">
+                            {{ $subtask->due_date ? $subtask->due_date->format('d M, h:i A') : '--' }}
+                        </span>
+                    </div>
+                </div>
+                
+                @if($level > 0 && Auth::user()->role !== 'colaborador')
+                    <button type="button" 
+                            @click.stop="if(confirm('¿Borrar?')) fetch('{{ url('/subtasks') }}/{{ $subtask->id }}', { method: 'DELETE', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' } }).then(() => window.location.reload())" 
+                            class="opacity-0 group-hover:opacity-100 text-gray-600 hover:text-red-500 p-1 transition-opacity">
+                        <i class="fas fa-trash-alt text-[10px]"></i>
+                    </button>
+                @endif
             </div>
         </div>
 
