@@ -1,5 +1,26 @@
+@php
+    $teamMemberId = Auth::user()->teamMember ? Auth::user()->teamMember->id : null;
+    $isCollab = Auth::user()->role === 'colaborador';
+    
+    // Función recursiva para verificar si la tarea debe ser visible
+    if (!isset($shouldShow)) {
+        $shouldShow = function($s, $tmId) use (&$shouldShow) {
+            if ($s->team_member_id == $tmId) return true;
+            foreach ($s->children as $child) {
+                if ($shouldShow($child, $tmId)) return true;
+            }
+            return false;
+        };
+    }
+@endphp
+
 @foreach($subtasks as $subtask)
-    @php $level = $level ?? 0; @endphp
+    @php 
+        $level = $level ?? 0;
+        $isVisible = !$isCollab || $shouldShow($subtask, $teamMemberId);
+    @endphp
+
+    @if($isVisible)
     <div x-data="{
         showChildren: localStorage.getItem('task_children_{{ $subtask->id }}') === 'true' ? true : false,
         toggleChildren() { this.showChildren = !this.showChildren; localStorage.setItem('task_children_{{ $subtask->id }}', this.showChildren); }
@@ -79,4 +100,5 @@
             </div>
         @endif
     </div>
+    @endif
 @endforeach
