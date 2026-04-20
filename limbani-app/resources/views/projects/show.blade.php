@@ -65,9 +65,9 @@
 
         <div x-show="currentTab === 'list'" class="flex-1 flex flex-col min-h-0">
         <div class="hidden md:grid grid-cols-12 gap-4 px-8 py-3 border-b border-gray-200 dark:border-white/10 text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest bg-gray-50 dark:bg-[#111] shrink-0">
-            <div class="col-span-6">Nombre de la Tarea</div>
+            <div class="col-span-7">Nombre de la Tarea</div>
             <div class="col-span-2">Responsable</div>
-            <div class="col-span-4 text-right">Cronograma</div>
+            <div class="col-span-3 text-right">Cronograma</div>
         </div>
 
         <div class="flex-1 overflow-y-auto custom-scroll p-4 md:p-8 space-y-4">
