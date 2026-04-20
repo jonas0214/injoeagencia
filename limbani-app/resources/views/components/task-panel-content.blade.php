@@ -221,10 +221,11 @@
                                             <div class="flex items-center gap-1.5 py-0.5 px-2 rounded-lg bg-orange-500/5 border border-orange-500/10 cursor-pointer hover:bg-orange-500/10 transition-all"
                                                  x-init="flatpickr($el, { 
                                                     enableTime: true, 
-                                                    dateFormat: 'Y-m-d H:i:S',
+                                                    dateFormat: 'Y-m-d H:i',
                                                     defaultDate: child.start_date,
                                                     locale: 'es',
                                                     onChange: function(selectedDates, dateStr) {
+                                                        child.start_date = dateStr;
                                                         fetch('{{ url('/subtasks') }}/'+child.id, { 
                                                             method: 'PUT', 
                                                             headers: { 
@@ -243,10 +244,11 @@
                                             <div class="flex items-center gap-1.5 py-0.5 px-2 rounded-lg bg-gray-500/5 border border-gray-500/10 cursor-pointer hover:bg-gray-500/10 transition-all"
                                                  x-init="flatpickr($el, { 
                                                     enableTime: true, 
-                                                    dateFormat: 'Y-m-d H:i:S',
+                                                    dateFormat: 'Y-m-d H:i',
                                                     defaultDate: child.due_date,
                                                     locale: 'es',
                                                     onChange: function(selectedDates, dateStr) {
+                                                        child.due_date = dateStr;
                                                         fetch('{{ url('/subtasks') }}/'+child.id, { 
                                                             method: 'PUT', 
                                                             headers: { 

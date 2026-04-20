@@ -33,6 +33,7 @@ class SubtaskController extends Controller
             'title' => 'sometimes|required|string|max:255',
             'team_member_id' => 'nullable',
             'due_date' => 'nullable',
+            'start_date' => 'nullable',
             'description' => 'nullable|string',
             'is_completed' => 'nullable',
             'is_approved' => 'nullable'
