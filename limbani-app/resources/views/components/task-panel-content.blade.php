@@ -98,7 +98,8 @@
                                    x-model="currentTask.start_date" 
                                    x-init="flatpickr($el, { 
                                         enableTime: true, 
-                                        dateFormat: 'Y-m-d H:i:S',
+                                        time_24hr: false,
+                                        dateFormat: 'Y-m-d H:i',
                                         altInput: true,
                                         altFormat: 'd M, h:i K',
                                         locale: 'es',
@@ -127,7 +128,8 @@
                                    x-model="currentTask.due_date" 
                                    x-init="flatpickr($el, { 
                                         enableTime: true, 
-                                        dateFormat: 'Y-m-d H:i:S',
+                                        time_24hr: false,
+                                        dateFormat: 'Y-m-d H:i',
                                         altInput: true,
                                         altFormat: 'd M, h:i K',
                                         locale: 'es',
@@ -221,6 +223,7 @@
                                             <div class="flex items-center gap-1.5 py-0.5 px-2 rounded-lg bg-orange-500/5 border border-orange-500/10 cursor-pointer hover:bg-orange-500/10 transition-all"
                                                  x-init="flatpickr($el, { 
                                                     enableTime: true, 
+                                                    time_24hr: false,
                                                     dateFormat: 'Y-m-d H:i',
                                                     defaultDate: child.start_date,
                                                     locale: 'es',
