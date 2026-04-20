@@ -137,9 +137,8 @@ class ProjectController extends Controller
             $project->load(['tasks' => function($query) use ($teamMemberId) {
                 $query->whereHas('subtasks', function($q) use ($teamMemberId) {
                     $q->where('team_member_id', $teamMemberId);
-                })->with(['subtasks' => function($q) use ($teamMemberId) {
-                    $q->where('team_member_id', $teamMemberId)
-                      ->with(['children', 'teamMember', 'attachments', 'comments.user', 'task', 'parent', 'task.project']);
+                })->with(['subtasks' => function($q) {
+                    $q->with(['children', 'teamMember', 'attachments', 'comments.user', 'task', 'parent', 'task.project']);
                 }]);
             }]);
         } else {

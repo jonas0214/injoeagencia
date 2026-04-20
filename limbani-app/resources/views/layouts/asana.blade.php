@@ -460,6 +460,16 @@
                 init() {
                     // Start the constellation canvas hook directly upon component load
                     this.initConstellation();
+
+                    // Auto-abrir tarea si viene task_id en la URL
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const taskId = urlParams.get('task_id');
+                    if (taskId) {
+                        // Esperar un poco a que todo cargue
+                        setTimeout(async () => {
+                            await this.openTaskPanel({ id: taskId });
+                        }, 500);
+                    }
                 }
             }));
 
