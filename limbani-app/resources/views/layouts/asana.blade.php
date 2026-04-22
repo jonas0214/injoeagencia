@@ -120,38 +120,51 @@
                 </div>
 
                 <!-- 2. OPERACIÓN & PRODUCCIÓN -->
-                <div>
-                    <h3 class="px-3 text-[10px] font-bold text-gray-600 dark:text-gray-500 uppercase tracking-widest mb-4">Operación & Producción</h3>
-                    <div class="space-y-2">
+                <div class="pt-4 mt-4 border-t border-white/5">
+                    <div class="flex items-center justify-between px-3 mb-4">
+                        <h3 class="text-[10px] font-bold text-gray-600 dark:text-gray-500 uppercase tracking-widest">Operación & Producción</h3>
+                        @if(in_array(Auth::user()->role, ['admin', 'ceo']))
+                        <a href="{{ route('projects.create') }}" class="text-orange-500 hover:text-orange-400 transition-colors" title="Nuevo Proyecto">
+                            <i class="fas fa-plus-circle text-lg"></i>
+                        </a>
+                        @endif
+                    </div>
+                    
+                    <div class="space-y-4">
                         @php
                             $opGroups = [
                                 'produccion_av' => ['label' => 'Producción Audiovisual', 'icon' => 'fa-video'],
                                 'postproduccion' => ['label' => 'Postproducción', 'icon' => 'fa-film'],
                                 'diseno_grafico' => ['label' => 'Diseño Gráfico', 'icon' => 'fa-palette'],
                                 'desarrollo_web' => ['label' => 'Desarrollo Web', 'icon' => 'fa-code'],
+                                'agencia' => ['label' => 'Proyectos Generales', 'icon' => 'fa-layer-group'],
                             ];
                         @endphp
 
                         @foreach($opGroups as $cat => $info)
-                            <div x-data="{ open: {{ (request('category') === $cat || $allProjects->where('category', $cat)->count() > 0) ? 'true' : 'false' }} }">
+                            @php 
+                                $catProjects = $allProjects->where('category', $cat);
+                                if ($catProjects->isEmpty() && $cat === 'agencia') continue; // No mostrar generales si está vacío
+                            @endphp
+                            <div x-data="{ open: {{ (request('category') === $cat || $catProjects->count() > 0) ? 'true' : 'false' }} }">
                                 <div class="flex items-center group">
                                     <a href="{{ route('admin-projects.index', ['category' => $cat]) }}" class="flex-1 flex items-center px-3 py-2 text-sm font-medium rounded-xl hover:bg-white dark:hover:bg-white/5 transition-all {{ request('category') === $cat ? 'text-orange-500 bg-white/5' : 'text-gray-600 dark:text-gray-400 hover:text-white' }}">
                                         <i class="fas {{ $info['icon'] }} w-6 text-center mr-2"></i>
                                         {{ $info['label'] }}
                                     </a>
-                                    <button @click="open = !open" class="p-2 text-gray-500 hover:text-white">
+                                    @if($catProjects->count() > 0)
+                                    <button @click="open = !open" class="p-2 text-gray-500 hover:text-white transition-colors">
                                         <i class="fas fa-chevron-down text-[8px] transition-transform" :class="open ? 'rotate-0' : '-rotate-90'"></i>
                                     </button>
+                                    @endif
                                 </div>
                                 <div x-show="open" x-collapse class="mt-1 space-y-1 pl-10">
-                                    @foreach($allProjects->where('category', $cat) as $proj)
+                                    @foreach($catProjects as $proj)
                                         <a href="{{ route('projects.show', $proj) }}" class="group flex items-center py-1.5 text-xs text-gray-500 hover:text-orange-500 transition-colors">
+                                            <span class="w-1 h-1 rounded-full bg-orange-500/40 group-hover:bg-orange-500 mr-2"></span>
                                             {{ $proj->name }}
                                         </a>
                                     @endforeach
-                                    @if($allProjects->where('category', $cat)->isEmpty())
-                                        <p class="py-1 text-[9px] text-gray-600 italic">Sin proyectos</p>
-                                    @endif
                                 </div>
                             </div>
                         @endforeach
