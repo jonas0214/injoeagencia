@@ -81,6 +81,16 @@
                     </button>
                 </div>
             <nav class="flex-1 px-3 space-y-6 overflow-y-auto mt-6 custom-scrollbar">
+                @php
+                    $allProjects = \App\Models\Project::with('tasks.subtasks')->orderBy('position')->get();
+                    
+                    if(Auth::user()->role === 'colaborador') {
+                        $teamMemberId = Auth::user()->teamMember ? Auth::user()->teamMember->id : null;
+                        $allProjects = $allProjects->filter(function($p) use ($teamMemberId) {
+                            return $p->tasks->flatMap->subtasks->where('team_member_id', $teamMemberId)->count() > 0;
+                        });
+                    }
+                @endphp
                 
                 <!-- 1. DIRECCIÓN GENERAL -->
                 <div class="space-y-1">
