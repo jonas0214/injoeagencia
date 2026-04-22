@@ -81,37 +81,66 @@
                     </button>
                 </div>
 
+                @php
+                    $allProjects = \App\Models\Project::with('tasks.subtasks')->orderBy('position')->get();
+                    
+                    if(Auth::user()->role === 'colaborador') {
+                        $teamMemberId = Auth::user()->teamMember ? Auth::user()->teamMember->id : null;
+                        $allProjects = $allProjects->filter(function($p) use ($teamMemberId) {
+                            return $p->tasks->flatMap->subtasks->where('team_member_id', $teamMemberId)->count() > 0;
+                        });
+                    }
+                @endphp
+
                 <!-- 1. DIRECCIÓN GENERAL -->
                 <div>
                     <h3 class="px-3 text-[10px] font-bold text-gray-600 dark:text-gray-500 uppercase tracking-widest mb-4">Dirección General</h3>
                     <div class="space-y-1">
-                        <a href="{{ route('admin-projects.index', ['category' => 'ceo_direccion']) }}" class="group flex items-center px-3 py-2 text-sm font-medium rounded-xl hover:bg-white dark:hover:bg-white/5 transition-all {{ request('category') === 'ceo_direccion' ? 'text-orange-500 bg-white/5' : 'text-gray-600 dark:text-gray-400 hover:text-white' }}">
-                            <i class="fas fa-user-tie w-6 text-center mr-2"></i>
-                            CEO / Dirección
-                        </a>
+                        @php $dgProjects = $allProjects->where('category', 'ceo_direccion'); @endphp
+                        @foreach($dgProjects as $proj)
+                            <a href="{{ route('projects.show', $proj) }}" class="group flex items-center px-3 py-2 text-sm font-medium rounded-xl hover:bg-white dark:hover:bg-white/5 transition-all text-gray-600 dark:text-gray-400 hover:text-white">
+                                <span class="w-1.5 h-1.5 rounded-full bg-orange-500 mr-3"></span>
+                                {{ $proj->name }}
+                            </a>
+                        @endforeach
                     </div>
                 </div>
 
                 <!-- 2. OPERACIÓN & PRODUCCIÓN -->
                 <div>
                     <h3 class="px-3 text-[10px] font-bold text-gray-600 dark:text-gray-500 uppercase tracking-widest mb-4">Operación & Producción</h3>
-                    <div class="space-y-1">
-                        <a href="{{ route('admin-projects.index', ['category' => 'produccion_av']) }}" class="group flex items-center px-3 py-2 text-sm font-medium rounded-xl hover:bg-white dark:hover:bg-white/5 transition-all {{ request('category') === 'produccion_av' ? 'text-orange-500 bg-white/5' : 'text-gray-600 dark:text-gray-400 hover:text-white' }}">
-                            <i class="fas fa-video w-6 text-center mr-2"></i>
-                            Producción Audiovisual
-                        </a>
-                        <a href="{{ route('admin-projects.index', ['category' => 'postproduccion']) }}" class="group flex items-center px-3 py-2 text-sm font-medium rounded-xl hover:bg-white dark:hover:bg-white/5 transition-all {{ request('category') === 'postproduccion' ? 'text-orange-500 bg-white/5' : 'text-gray-600 dark:text-gray-400 hover:text-white' }}">
-                            <i class="fas fa-film w-6 text-center mr-2"></i>
-                            Postproducción
-                        </a>
-                        <a href="{{ route('admin-projects.index', ['category' => 'diseno_grafico']) }}" class="group flex items-center px-3 py-2 text-sm font-medium rounded-xl hover:bg-white dark:hover:bg-white/5 transition-all {{ request('category') === 'diseno_grafico' ? 'text-orange-500 bg-white/5' : 'text-gray-600 dark:text-gray-400 hover:text-white' }}">
-                            <i class="fas fa-palette w-6 text-center mr-2"></i>
-                            Diseño Gráfico
-                        </a>
-                        <a href="{{ route('admin-projects.index', ['category' => 'desarrollo_web']) }}" class="group flex items-center px-3 py-2 text-sm font-medium rounded-xl hover:bg-white dark:hover:bg-white/5 transition-all {{ request('category') === 'desarrollo_web' ? 'text-orange-500 bg-white/5' : 'text-gray-600 dark:text-gray-400 hover:text-white' }}">
-                            <i class="fas fa-code w-6 text-center mr-2"></i>
-                            Desarrollo Web
-                        </a>
+                    <div class="space-y-4">
+                        @php
+                            $opGroups = [
+                                'produccion_av' => ['label' => 'Producción Audiovisual', 'icon' => 'fa-video'],
+                                'postproduccion' => ['label' => 'Postproducción', 'icon' => 'fa-film'],
+                                'diseno_grafico' => ['label' => 'Diseño Gráfico', 'icon' => 'fa-palette'],
+                                'desarrollo_web' => ['label' => 'Desarrollo Web', 'icon' => 'fa-code'],
+                            ];
+                        @endphp
+
+                        @foreach($opGroups as $cat => $info)
+                            <div x-data="{ open: true }">
+                                <button @click="open = !open" class="w-full flex items-center justify-between px-3 py-1.5 text-[11px] font-bold text-gray-500 hover:text-gray-900 dark:hover:text-white uppercase tracking-wider transition-colors">
+                                    <span class="flex items-center">
+                                        <i class="fas {{ $info['icon'] }} w-5 text-center mr-2"></i>
+                                        {{ $info['label'] }}
+                                    </span>
+                                    <i class="fas fa-chevron-down text-[8px] transition-transform" :class="open ? 'rotate-0' : '-rotate-90'"></i>
+                                </button>
+                                <div x-show="open" x-collapse class="mt-1 space-y-1 pl-6">
+                                    @foreach($allProjects->where('category', $cat) as $proj)
+                                        <a href="{{ route('projects.show', $proj) }}" class="group flex items-center px-3 py-1.5 text-sm font-medium rounded-lg hover:bg-white dark:hover:bg-white/5 transition-all text-gray-600 dark:text-gray-400 hover:text-orange-500">
+                                            <span class="w-1 h-1 rounded-full bg-gray-400 group-hover:bg-orange-500 mr-2"></span>
+                                            {{ $proj->name }}
+                                        </a>
+                                    @endforeach
+                                    @if($allProjects->where('category', $cat)->isEmpty())
+                                        <p class="px-3 py-1 text-[9px] text-gray-500 italic">Sin proyectos</p>
+                                    @endif
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
                 </div>
 
@@ -119,25 +148,14 @@
                 <div>
                     <h3 class="px-3 text-[10px] font-bold text-gray-600 dark:text-gray-500 uppercase tracking-widest mb-4">Admón & Talento Humano</h3>
                     <div class="space-y-1">
-                        <a href="{{ route('admin-projects.index', ['category' => 'rrhh']) }}" class="group flex items-center px-3 py-2 text-sm font-medium rounded-xl hover:bg-white dark:hover:bg-white/5 transition-all {{ request('category') === 'rrhh' ? 'text-orange-500 bg-white/5' : 'text-gray-600 dark:text-gray-400 hover:text-white' }}">
-                            <i class="fas fa-users w-6 text-center mr-2"></i>
-                            Recursos Humanos
+                        <a href="{{ route('team.index') }}" class="group flex items-center px-3 py-2 text-sm font-medium rounded-xl hover:bg-white dark:hover:bg-white/5 transition-all {{ request()->routeIs('team.*') ? 'text-orange-500 bg-white/5' : 'text-gray-600 dark:text-gray-400 hover:text-white' }}">
+                            <i class="fas fa-users-cog w-6 text-center mr-2"></i>
+                            Gestión de Equipo
                         </a>
-                        <a href="{{ route('admin-projects.index', ['category' => 'direccion_admin']) }}" class="group flex items-center px-3 py-2 text-sm font-medium rounded-xl hover:bg-white dark:hover:bg-white/5 transition-all {{ request('category') === 'direccion_admin' ? 'text-orange-500 bg-white/5' : 'text-gray-600 dark:text-gray-400 hover:text-white' }}">
-                            <i class="fas fa-file-invoice w-6 text-center mr-2"></i>
-                            Dirección Admin
+                        <a href="{{ route('billing.index') }}" class="group flex items-center px-3 py-2 text-sm font-medium rounded-xl hover:bg-white dark:hover:bg-white/5 transition-all {{ request()->routeIs('billing.*') ? 'text-orange-500 bg-white/5' : 'text-gray-600 dark:text-gray-400 hover:text-white' }}">
+                            <i class="fas fa-money-check-alt w-6 text-center mr-2"></i>
+                            Nómina & Pagos
                         </a>
-                        
-                        <div class="pt-4 border-t border-white/5 mt-2 space-y-1">
-                            <a href="{{ route('team.index') }}" class="group flex items-center px-3 py-2 text-[11px] font-bold text-gray-500 hover:text-white transition-colors uppercase tracking-widest">
-                                <i class="fas fa-users-cog w-6 text-center mr-2"></i>
-                                Gestión de Equipo
-                            </a>
-                            <a href="{{ route('billing.index') }}" class="group flex items-center px-3 py-2 text-[11px] font-bold text-gray-500 hover:text-white transition-colors uppercase tracking-widest">
-                                <i class="fas fa-money-check-alt w-6 text-center mr-2"></i>
-                                Nómina & Pagos
-                            </a>
-                        </div>
                     </div>
                 </div>
 
