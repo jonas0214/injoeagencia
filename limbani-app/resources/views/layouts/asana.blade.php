@@ -120,9 +120,12 @@
                 </div>
 
                 <!-- 2. OPERACIÓN & PRODUCCIÓN -->
-                <div class="pt-4 mt-4 border-t border-white/5">
-                    <div class="flex items-center justify-between px-3 mb-4">
-                        <h3 class="text-[10px] font-bold text-gray-600 dark:text-gray-500 uppercase tracking-widest">Operación & Producción</h3>
+                <div class="pt-4 mt-4 border-t border-white/5" x-data="{ open: true }">
+                    <div class="flex items-center justify-between px-3 mb-2">
+                        <button @click="open = !open" class="flex items-center group text-[10px] font-bold text-gray-600 dark:text-gray-500 uppercase tracking-widest hover:text-white transition-colors">
+                            <i class="fas fa-chevron-down mr-2 text-[8px] transition-transform" :class="open ? 'rotate-0' : '-rotate-90'"></i>
+                            Operación & Producción
+                        </button>
                         @if(in_array(Auth::user()->role, ['admin', 'ceo']))
                         <a href="{{ route('projects.create') }}" class="text-orange-500 hover:text-orange-400 transition-colors" title="Nuevo Proyecto">
                             <i class="fas fa-plus-circle text-lg"></i>
@@ -130,44 +133,22 @@
                         @endif
                     </div>
                     
-                    <div class="space-y-4">
+                    <div x-show="open" x-collapse class="space-y-1 mt-2">
                         @php
-                            $opGroups = [
-                                'produccion_av' => ['label' => 'Producción Audiovisual', 'icon' => 'fa-video'],
-                                'postproduccion' => ['label' => 'Postproducción', 'icon' => 'fa-film'],
-                                'diseno_grafico' => ['label' => 'Diseño Gráfico', 'icon' => 'fa-palette'],
-                                'desarrollo_web' => ['label' => 'Desarrollo Web', 'icon' => 'fa-code'],
-                                'agencia' => ['label' => 'Proyectos Generales', 'icon' => 'fa-layer-group'],
-                            ];
+                            $opCategories = ['agencia', 'produccion_av', 'postproduccion', 'diseno_grafico', 'desarrollo_web'];
+                            $opProjects = $allProjects->whereIn('category', $opCategories);
                         @endphp
 
-                        @foreach($opGroups as $cat => $info)
-                            @php 
-                                $catProjects = $allProjects->where('category', $cat);
-                                if ($catProjects->isEmpty() && $cat === 'agencia') continue; // No mostrar generales si está vacío
-                            @endphp
-                            <div x-data="{ open: {{ (request('category') === $cat || $catProjects->count() > 0) ? 'true' : 'false' }} }">
-                                <div class="flex items-center group">
-                                    <a href="{{ route('admin-projects.index', ['category' => $cat]) }}" class="flex-1 flex items-center px-3 py-2 text-sm font-medium rounded-xl hover:bg-white dark:hover:bg-white/5 transition-all {{ request('category') === $cat ? 'text-orange-500 bg-white/5' : 'text-gray-600 dark:text-gray-400 hover:text-white' }}">
-                                        <i class="fas {{ $info['icon'] }} w-6 text-center mr-2"></i>
-                                        {{ $info['label'] }}
-                                    </a>
-                                    @if($catProjects->count() > 0)
-                                    <button @click="open = !open" class="p-2 text-gray-500 hover:text-white transition-colors">
-                                        <i class="fas fa-chevron-down text-[8px] transition-transform" :class="open ? 'rotate-0' : '-rotate-90'"></i>
-                                    </button>
-                                    @endif
-                                </div>
-                                <div x-show="open" x-collapse class="mt-1 space-y-1 pl-10">
-                                    @foreach($catProjects as $proj)
-                                        <a href="{{ route('projects.show', $proj) }}" class="group flex items-center py-1.5 text-xs text-gray-500 hover:text-orange-500 transition-colors">
-                                            <span class="w-1 h-1 rounded-full bg-orange-500/40 group-hover:bg-orange-500 mr-2"></span>
-                                            {{ $proj->name }}
-                                        </a>
-                                    @endforeach
-                                </div>
-                            </div>
+                        @foreach($opProjects as $proj)
+                            <a href="{{ route('projects.show', $proj) }}" class="group flex items-center px-6 py-2 text-sm font-medium rounded-xl hover:bg-white dark:hover:bg-white/5 transition-all text-gray-600 dark:text-gray-400 hover:text-white">
+                                <span class="w-1.5 h-1.5 rounded-full bg-orange-500 mr-3 shadow-[0_0_8px_rgba(249,115,22,0.4)]"></span>
+                                <span class="truncate">{{ $proj->name }}</span>
+                            </a>
                         @endforeach
+                        
+                        @if($opProjects->isEmpty())
+                            <p class="px-10 py-2 text-[10px] text-gray-600 italic">No hay proyectos activos</p>
+                        @endif
                     </div>
                 </div>
 
