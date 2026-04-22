@@ -86,9 +86,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/billing', [\App\Http\Controllers\BillingController::class, 'store'])->name('billing.store');
     Route::delete('/billing/{billing}', [\App\Http\Controllers\BillingController::class, 'destroy'])->name('billing.destroy');
 
-    // 7. Gestión Administrativa (RRHH, Admin, Contaduría)
+    // 7. Gestión Administrativa & Contratos
     Route::get('/admin-projects', [\App\Http\Controllers\AdministrativeProjectController::class, 'index'])->name('admin-projects.index');
     Route::post('/admin-projects', [\App\Http\Controllers\AdministrativeProjectController::class, 'store'])->name('admin-projects.store');
+    Route::post('/contracts', [\App\Http\Controllers\ContractController::class, 'store'])->name('contracts.store');
+    Route::get('/contracts/{contract}/print', [\App\Http\Controllers\ContractController::class, 'print'])->name('contracts.print');
 
     // 8. Gestion de Usuarios (Admin/CEO)
     Route::resource('users', UserController::class)->except(['show', 'edit', 'update']);

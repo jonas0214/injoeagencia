@@ -409,12 +409,83 @@
                         Dar de Baja
                     </button>
                 </div>
-                <a :href="'{{ url('team') }}/' + activeMember.id" class="w-full block py-3 rounded-xl bg-orange-500/10 border border-orange-500/20 text-xs font-bold text-orange-500 hover:bg-orange-500/20 transition-colors uppercase tracking-widest text-center">
-                    Ver Perfil Completo
-                </a>
+                <button @click="document.getElementById('modal-contract-' + activeMember.id).classList.remove('hidden')" class="w-full block py-3 rounded-xl bg-orange-500/10 border border-orange-500/20 text-xs font-bold text-orange-500 hover:bg-orange-500/20 transition-colors uppercase tracking-widest text-center">
+                    <i class="fas fa-file-signature mr-2"></i> Generar Contrato
+                </button>
             </div>
             @endif
+
+            <!-- Lista de Contratos Generados (Opcional) -->
+            <div x-show="activeMember.contracts && activeMember.contracts.length > 0" class="pt-6 border-t border-white/5">
+                <label class="text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-4 block">Historial de Contratos</label>
+                <div class="space-y-2">
+                    <template x-for="contract in activeMember.contracts" :key="contract.id">
+                        <a :href="'{{ url('contracts') }}/' + contract.id + '/print'" target="_blank" class="flex justify-between items-center p-3 rounded-xl bg-white/5 border border-white/10 hover:border-orange-500/50 transition-all">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-file-pdf text-orange-500"></i>
+                                <div>
+                                    <p class="text-[10px] font-bold text-white uppercase" x-text="contract.type"></p>
+                                    <p class="text-[9px] text-gray-500" x-text="'Desde: ' + contract.start_date"></p>
+                                </div>
+                            </div>
+                            <i class="fas fa-chevron-right text-[10px] text-gray-700"></i>
+                        </a>
+                    </template>
+                </div>
+            </div>
         </div>
     </div>
+
+    <!-- Modales de Contrato (Generados dinámicamente o uno solo con JS) -->
+    @foreach($team as $member)
+    <div id="modal-contract-{{ $member->id }}" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-md" onclick="this.parentElement.classList.add('hidden')"></div>
+        <div class="relative w-full max-w-lg p-8 bg-white dark:bg-[#1a1a1a] rounded-3xl shadow-2xl border border-white/10 z-10">
+            <h2 class="text-2xl font-light text-gray-900 dark:text-white mb-6">Generar Contrato para <span class="font-medium text-orange-500">{{ $member->name }}</span></h2>
+            
+            <form action="{{ route('contracts.store') }}" method="POST">
+                @csrf
+                <input type="hidden" name="team_member_id" value="{{ $member->id }}">
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="col-span-2">
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Tipo de Contrato</label>
+                        <select name="type" required class="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm focus:ring-1 focus:ring-orange-500 outline-none dark:text-white">
+                            <option value="Prestación de Servicios">Prestación de Servicios</option>
+                            <option value="Término Fijo">Término Fijo</option>
+                            <option value="Término Indefinido">Término Indefinido</option>
+                            <option value="Contrato de Aprendizaje">Contrato de Aprendizaje</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Fecha de Inicio</label>
+                        <input type="date" name="start_date" required value="{{ date('Y-m-d') }}" class="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm focus:ring-1 focus:ring-orange-500 outline-none dark:text-white">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Fecha Fin (Opcional)</label>
+                        <input type="date" name="end_date" class="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm focus:ring-1 focus:ring-orange-500 outline-none dark:text-white">
+                    </div>
+                    
+                    <div class="col-span-2">
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Cargo</label>
+                        <input type="text" name="position" required value="{{ $member->position }}" class="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm focus:ring-1 focus:ring-orange-500 outline-none dark:text-white">
+                    </div>
+                    
+                    <div class="col-span-2">
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Salario Mensual (COP)</label>
+                        <input type="number" name="salary" required value="{{ $member->salary }}" class="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm focus:ring-1 focus:ring-orange-500 outline-none dark:text-white">
+                    </div>
+                </div>
+
+                <div class="mt-8 flex gap-3">
+                    <button type="button" onclick="this.closest('[id^=modal-contract]').classList.add('hidden')" class="flex-1 px-6 py-3 rounded-xl border border-gray-200 dark:border-white/10 text-xs font-bold text-gray-500 uppercase tracking-widest hover:bg-gray-50 dark:hover:bg-white/5 transition-all">Cancelar</button>
+                    <button type="submit" class="flex-1 px-6 py-3 rounded-xl bg-orange-600 text-white text-xs font-bold uppercase tracking-widest hover:bg-orange-700 shadow-lg shadow-orange-900/40 transition-all">Crear y Previsualizar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    @endforeach
     </div>
 @endsection
