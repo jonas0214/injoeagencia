@@ -88,7 +88,7 @@
                                 <div class="flex items-center gap-2">
                                     <i class="fas fa-tasks text-orange-500/50 text-[10px]"></i>
                                     <span class="text-[11px] font-bold text-gray-600 dark:text-gray-300 uppercase tracking-widest">
-                                        {{ $project->tasks_count }} pendientes
+                                        {{ $project->subtasks_count }} pendientes
                                     </span>
                                 </div>
                                 <i class="fas fa-arrow-right text-gray-400 text-xs group-hover:translate-x-1 transition-transform"></i>

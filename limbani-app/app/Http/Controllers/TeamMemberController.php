@@ -14,7 +14,7 @@ class TeamMemberController extends Controller
     {
         $team = TeamMember::with('user')->orderBy('name')->get();
         $adminProjects = \App\Models\Project::whereIn('category', [\App\Models\Project::CAT_RRHH, \App\Models\Project::CAT_ADMIN])
-            ->withCount(['tasks' => function($q) {
+            ->withCount(['subtasks' => function($q) {
                 $q->where('is_completed', false);
             }])
             ->orderBy('position')

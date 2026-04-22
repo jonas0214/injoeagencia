@@ -42,6 +42,11 @@ class Project extends Model
         return $this->hasOne(Brief::class);
     }
 
+    public function subtasks()
+    {
+        return $this->hasManyThrough(Subtask::class, Task::class);
+    }
+
     /**
      * Get or create brief for this project
      */
