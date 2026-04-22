@@ -207,26 +207,29 @@
                 </div>
             </nav>
 
-            <div class="border-t border-black/5 dark:border-white/5 p-4 bg-gray-100 dark:bg-white/[0.02]">
-                <div class="flex items-center justify-between gap-3">
-                    <div class="flex items-center gap-3">
-                        @if(Auth::user()->teamMember && Auth::user()->teamMember->photo)
-                            <img src="{{ asset('storage/' . Auth::user()->teamMember->photo) }}" class="h-10 w-10 rounded-full object-cover border-2 border-orange-500 shadow-lg shadow-orange-900/50">
-                        @else
-                            <div class="h-10 w-10 rounded-full bg-gradient-to-br from-orange-500 to-orange-700 flex items-center justify-center text-white font-bold shadow-lg shadow-orange-900/50">
-                                {{ substr(Auth::user()->name ?? 'U', 0, 1) }}
-                            </div>
-                        @endif
-                        <div>
-                            <p class="text-sm font-bold text-gray-900 dark:text-white tracking-tight leading-none">{{ Auth::user()->name ?? 'Usuario' }}</p>
-                            <p class="text-[10px] text-gray-500 mt-1 uppercase tracking-wider">{{ strtoupper(Auth::user()->role ?? 'Invitado') }}</p>
+            <div class="border-t border-black/5 dark:border-white/5 bg-gray-100 dark:bg-white/[0.02]">
+                <!-- Perfil -->
+                <div class="p-4 flex items-center gap-3">
+                    @if(Auth::user()->teamMember && Auth::user()->teamMember->photo)
+                        <img src="{{ asset('storage/' . Auth::user()->teamMember->photo) }}" class="h-10 w-10 rounded-full object-cover border-2 border-orange-500 shadow-lg shadow-orange-900/50">
+                    @else
+                        <div class="h-10 w-10 rounded-full bg-gradient-to-br from-orange-500 to-orange-700 flex items-center justify-center text-white font-bold shadow-lg shadow-orange-900/50">
+                            {{ substr(Auth::user()->name ?? 'U', 0, 1) }}
                         </div>
+                    @endif
+                    <div>
+                        <p class="text-sm font-bold text-gray-900 dark:text-white tracking-tight leading-none">{{ Auth::user()->name ?? 'Usuario' }}</p>
+                        <p class="text-[10px] text-gray-500 mt-1 uppercase tracking-wider">{{ strtoupper(Auth::user()->role ?? 'Invitado') }}</p>
                     </div>
-                    
+                </div>
+
+                <!-- Botón Cerrar Sesión al Final -->
+                <div class="px-4 pb-4">
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="text-gray-500 hover:text-red-500 transition-colors p-2" title="Cerrar Sesión">
-                            <i class="fas fa-power-off"></i>
+                        <button type="submit" class="w-full flex items-center justify-center gap-2 py-2 text-xs font-bold text-gray-400 hover:text-red-500 transition-colors uppercase tracking-widest border border-gray-200 dark:border-white/10 rounded-xl hover:bg-red-500/5">
+                            <i class="fas fa-power-off text-[10px]"></i>
+                            Cerrar Sesión
                         </button>
                     </form>
                 </div>
