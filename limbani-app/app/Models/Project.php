@@ -10,9 +10,19 @@ class Project extends Model
 
     // Categorías de Proyectos
     const CAT_AGENCIA = 'agencia';
+    
+    // 1. DIRECCIÓN GENERAL
+    const CAT_CEO = 'ceo_direccion';
+    
+    // 2. OPERACIÓN & PRODUCCIÓN
+    const CAT_PROD_AV = 'produccion_av';
+    const CAT_POSTPROD = 'postproduccion';
+    const CAT_DISENO = 'diseno_grafico';
+    const CAT_WEB = 'desarrollo_web';
+    
+    // 3. ADMINISTRACIÓN & TALENTO HUMANO
     const CAT_RRHH = 'rrhh';
-    const CAT_ADMIN = 'administrativo';
-    const CAT_CONTABILIDAD = 'contabilidad';
+    const CAT_ADMIN = 'direccion_admin';
 
     /**
      * Scope para filtrar por categoría

@@ -39,7 +39,7 @@ class AdministrativeProjectController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'category' => 'required|string|in:rrhh,administrativo,contabilidad',
+            'category' => 'required|string|in:rrhh,direccion_admin,ceo_direccion,produccion_av,postproduccion,diseno_grafico,desarrollo_web',
             'description' => 'nullable|string',
         ]);
 

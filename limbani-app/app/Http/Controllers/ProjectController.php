@@ -20,7 +20,8 @@ class ProjectController extends Controller
             $teamMemberId = $teamMember ? $teamMember->id : null;
 
             // Un colaborador solo ve los proyectos donde tiene subtareas asignadas
-            $projects = Project::where('category', 'agencia')
+            $categories = ['agencia', 'produccion_av', 'postproduccion', 'diseno_grafico', 'desarrollo_web'];
+            $projects = Project::whereIn('category', $categories)
                 ->whereHas('tasks.subtasks', function($query) use ($teamMemberId) {
                     $query->where('team_member_id', $teamMemberId);
                 })->with(['tasks' => function($query) use ($teamMemberId) {
@@ -41,8 +42,9 @@ class ProjectController extends Controller
                     });
             })->get();
         } else {
-            // Administradores y otros roles ven todo (filtrado por agencia para el dashboard principal)
-            $projects = Project::where('category', 'agencia')
+            // Administradores y otros roles ven todo (filtrado por operacion para el dashboard principal)
+            $categories = ['agencia', 'produccion_av', 'postproduccion', 'diseno_grafico', 'desarrollo_web'];
+            $projects = Project::whereIn('category', $categories)
                 ->with(['tasks' => function($q) {
                     $q->with(['subtasks' => function($sq) {
                         $sq->with(['children', 'teamMember', 'attachments', 'comments.user', 'task.project', 'parent']);
