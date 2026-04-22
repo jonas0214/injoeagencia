@@ -96,20 +96,33 @@
                 <div>
                     <h3 class="px-3 text-[10px] font-bold text-gray-600 dark:text-gray-500 uppercase tracking-widest mb-4">Dirección General</h3>
                     <div class="space-y-1">
-                        @php $dgProjects = $allProjects->where('category', 'ceo_direccion'); @endphp
-                        @foreach($dgProjects as $proj)
-                            <a href="{{ route('projects.show', $proj) }}" class="group flex items-center px-3 py-2 text-sm font-medium rounded-xl hover:bg-white dark:hover:bg-white/5 transition-all text-gray-600 dark:text-gray-400 hover:text-white">
-                                <span class="w-1.5 h-1.5 rounded-full bg-orange-500 mr-3"></span>
-                                {{ $proj->name }}
-                            </a>
-                        @endforeach
+                        <div x-data="{ open: true }">
+                            <div class="flex items-center group">
+                                <a href="{{ route('admin-projects.index', ['category' => 'ceo_direccion']) }}" class="flex-1 flex items-center px-3 py-2 text-sm font-medium rounded-xl hover:bg-white dark:hover:bg-white/5 transition-all {{ request('category') === 'ceo_direccion' ? 'text-orange-500 bg-white/5' : 'text-gray-600 dark:text-gray-400 hover:text-white' }}">
+                                    <i class="fas fa-user-tie w-6 text-center mr-2"></i>
+                                    CEO / Dirección
+                                </a>
+                                @if($allProjects->where('category', 'ceo_direccion')->count() > 0)
+                                <button @click="open = !open" class="p-2 text-gray-500 hover:text-white">
+                                    <i class="fas fa-chevron-down text-[8px] transition-transform" :class="open ? 'rotate-0' : '-rotate-90'"></i>
+                                </button>
+                                @endif
+                            </div>
+                            <div x-show="open" x-collapse class="mt-1 space-y-1 pl-10">
+                                @foreach($allProjects->where('category', 'ceo_direccion') as $proj)
+                                    <a href="{{ route('projects.show', $proj) }}" class="group flex items-center py-1.5 text-xs text-gray-500 hover:text-orange-500 transition-colors">
+                                        {{ $proj->name }}
+                                    </a>
+                                @endforeach
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- 2. OPERACIÓN & PRODUCCIÓN -->
                 <div>
                     <h3 class="px-3 text-[10px] font-bold text-gray-600 dark:text-gray-500 uppercase tracking-widest mb-4">Operación & Producción</h3>
-                    <div class="space-y-4">
+                    <div class="space-y-2">
                         @php
                             $opGroups = [
                                 'produccion_av' => ['label' => 'Producción Audiovisual', 'icon' => 'fa-video'],
@@ -120,23 +133,24 @@
                         @endphp
 
                         @foreach($opGroups as $cat => $info)
-                            <div x-data="{ open: true }">
-                                <button @click="open = !open" class="w-full flex items-center justify-between px-3 py-1.5 text-[11px] font-bold text-gray-500 hover:text-gray-900 dark:hover:text-white uppercase tracking-wider transition-colors">
-                                    <span class="flex items-center">
-                                        <i class="fas {{ $info['icon'] }} w-5 text-center mr-2"></i>
+                            <div x-data="{ open: {{ (request('category') === $cat || $allProjects->where('category', $cat)->count() > 0) ? 'true' : 'false' }} }">
+                                <div class="flex items-center group">
+                                    <a href="{{ route('admin-projects.index', ['category' => $cat]) }}" class="flex-1 flex items-center px-3 py-2 text-sm font-medium rounded-xl hover:bg-white dark:hover:bg-white/5 transition-all {{ request('category') === $cat ? 'text-orange-500 bg-white/5' : 'text-gray-600 dark:text-gray-400 hover:text-white' }}">
+                                        <i class="fas {{ $info['icon'] }} w-6 text-center mr-2"></i>
                                         {{ $info['label'] }}
-                                    </span>
-                                    <i class="fas fa-chevron-down text-[8px] transition-transform" :class="open ? 'rotate-0' : '-rotate-90'"></i>
-                                </button>
-                                <div x-show="open" x-collapse class="mt-1 space-y-1 pl-6">
+                                    </a>
+                                    <button @click="open = !open" class="p-2 text-gray-500 hover:text-white">
+                                        <i class="fas fa-chevron-down text-[8px] transition-transform" :class="open ? 'rotate-0' : '-rotate-90'"></i>
+                                    </button>
+                                </div>
+                                <div x-show="open" x-collapse class="mt-1 space-y-1 pl-10">
                                     @foreach($allProjects->where('category', $cat) as $proj)
-                                        <a href="{{ route('projects.show', $proj) }}" class="group flex items-center px-3 py-1.5 text-sm font-medium rounded-lg hover:bg-white dark:hover:bg-white/5 transition-all text-gray-600 dark:text-gray-400 hover:text-orange-500">
-                                            <span class="w-1 h-1 rounded-full bg-gray-400 group-hover:bg-orange-500 mr-2"></span>
+                                        <a href="{{ route('projects.show', $proj) }}" class="group flex items-center py-1.5 text-xs text-gray-500 hover:text-orange-500 transition-colors">
                                             {{ $proj->name }}
                                         </a>
                                     @endforeach
                                     @if($allProjects->where('category', $cat)->isEmpty())
-                                        <p class="px-3 py-1 text-[9px] text-gray-500 italic">Sin proyectos</p>
+                                        <p class="py-1 text-[9px] text-gray-600 italic">Sin proyectos</p>
                                     @endif
                                 </div>
                             </div>
