@@ -80,7 +80,8 @@
                         </div>
                     </button>
                 </div>
-            <nav class="flex-1 px-3 space-y-6 overflow-y-auto mt-6 custom-scrollbar">
+            <nav class="flex-1 px-3 space-y-8 overflow-y-auto mt-6 custom-scrollbar">
+                
                 @php
                     $allProjects = \App\Models\Project::with('tasks.subtasks')->orderBy('position')->get();
                     
@@ -91,13 +92,13 @@
                         });
                     }
                 @endphp
-                
+
                 <!-- 1. DIRECCIÓN GENERAL -->
                 <div class="space-y-1">
-                    <h3 class="px-4 text-[10px] font-bold text-gray-500 dark:text-gray-600 uppercase tracking-widest mb-2">Dirección General</h3>
+                    <h3 class="px-4 text-[10px] font-bold text-gray-500 dark:text-gray-600 uppercase tracking-widest mb-3">Dirección General</h3>
                     <div x-data="{ open: true }">
                         <div class="flex items-center group">
-                            <a href="{{ route('admin-projects.index', ['category' => 'ceo_direccion']) }}" class="flex-1 flex items-center px-4 py-2 text-sm font-medium rounded-xl transition-all {{ request('category') === 'ceo_direccion' ? 'text-orange-500 bg-orange-500/5' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white' }}">
+                            <a href="{{ route('admin-projects.index', ['category' => 'ceo_direccion']) }}" class="flex-1 flex items-center px-4 py-2 text-sm font-medium rounded-xl transition-all {{ request('category') === 'ceo_direccion' ? 'text-orange-500 bg-orange-500/5 shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white' }}">
                                 <i class="fas fa-user-tie w-6 text-center mr-2 opacity-70 group-hover:opacity-100 {{ request('category') === 'ceo_direccion' ? 'text-orange-500' : '' }}"></i>
                                 CEO / Dirección
                             </a>
@@ -118,45 +119,50 @@
                 </div>
 
                 <!-- 2. OPERACIÓN & PRODUCCIÓN -->
-                <div class="pt-4 border-t border-gray-100 dark:border-white/5" x-data="{ open: true }">
-                    <div class="flex items-center justify-between px-4 mb-2">
-                        <button @click="open = !open" class="flex items-center group text-[10px] font-bold text-gray-500 dark:text-gray-600 uppercase tracking-widest hover:text-orange-500 transition-colors">
-                            <i class="fas fa-chevron-down mr-2 text-[8px] transition-transform" :class="open ? 'rotate-0' : '-rotate-90'"></i>
-                            Operación & Producción
-                        </button>
+                <div class="space-y-1">
+                    <div class="flex items-center justify-between px-4 mb-3">
+                        <h3 class="text-[10px] font-bold text-gray-500 dark:text-gray-600 uppercase tracking-widest">Operación & Producción</h3>
                         @if(in_array(Auth::user()->role, ['admin', 'ceo']))
-                        <a href="{{ route('projects.create') }}" class="text-gray-400 hover:text-orange-500 transition-colors" title="Nuevo Proyecto">
-                            <i class="fas fa-plus text-xs"></i>
+                        <a href="{{ route('projects.create') }}" class="w-6 h-6 rounded-lg bg-orange-500/10 text-orange-500 flex items-center justify-center hover:bg-orange-500 hover:text-white transition-all shadow-sm" title="Nuevo Proyecto">
+                            <i class="fas fa-plus text-[10px]"></i>
                         </a>
                         @endif
                     </div>
                     
-                    <div x-show="open" x-collapse class="space-y-1 mt-2">
-                        @php
-                            $opCategories = ['agencia', 'produccion_av', 'postproduccion', 'diseno_grafico', 'desarrollo_web'];
-                            $opProjects = $allProjects->whereIn('category', $opCategories);
-                        @endphp
+                    <div x-data="{ open: true }">
+                        <button @click="open = !open" class="w-full flex items-center px-4 py-2 text-sm font-medium rounded-xl text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white transition-all">
+                            <i class="fas fa-tasks w-6 text-center mr-2"></i>
+                            <span class="flex-1 text-left">Lista de Proyectos</span>
+                            <i class="fas fa-chevron-down text-[8px] transition-transform" :class="open ? 'rotate-0' : '-rotate-90'"></i>
+                        </button>
 
-                        @foreach($opProjects as $proj)
-                            <a href="{{ route('projects.show', $proj) }}" class="group flex items-center px-6 py-2 text-sm font-medium rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 transition-all text-gray-600 dark:text-gray-400 hover:text-orange-500">
-                                <span class="w-1.5 h-1.5 rounded-full bg-gray-400 group-hover:bg-orange-500 mr-3 transition-colors"></span>
-                                <span class="truncate">{{ $proj->name }}</span>
-                            </a>
-                        @endforeach
-                        
-                        @if($opProjects->isEmpty())
-                            <p class="px-10 py-2 text-[10px] text-gray-600 italic">No hay proyectos activos</p>
-                        @endif
+                        <div x-show="open" x-collapse class="space-y-1 mt-2">
+                            @php
+                                $opCategories = ['agencia', 'produccion_av', 'postproduccion', 'diseno_grafico', 'desarrollo_web'];
+                                $opProjects = $allProjects->whereIn('category', $opCategories);
+                            @endphp
+
+                            @foreach($opProjects as $proj)
+                                <a href="{{ route('projects.show', $proj) }}" class="group flex items-center px-6 py-2 text-sm font-medium rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 transition-all text-gray-600 dark:text-gray-400 hover:text-orange-500">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-gray-400 group-hover:bg-orange-500 mr-3 transition-colors"></span>
+                                    <span class="truncate">{{ $proj->name }}</span>
+                                </a>
+                            @endforeach
+                            
+                            @if($opProjects->isEmpty())
+                                <p class="px-10 py-2 text-[10px] text-gray-600 italic">No hay proyectos activos</p>
+                            @endif
+                        </div>
                     </div>
                 </div>
 
                 <!-- 3. ADMINISTRACIÓN & TALENTO HUMANO -->
-                <div class="pt-4 border-t border-gray-100 dark:border-white/5">
-                    <h3 class="px-4 text-[10px] font-bold text-gray-500 dark:text-gray-600 uppercase tracking-widest mb-4">Talento Humano</h3>
+                <div class="space-y-1">
+                    <h3 class="px-4 text-[10px] font-bold text-gray-500 dark:text-gray-600 uppercase tracking-widest mb-3">Talento Humano</h3>
                     <div class="space-y-1">
                         <div x-data="{ showTeam: true }">
                             <div class="flex items-center group">
-                                <a href="{{ route('team.index') }}" class="flex-1 flex items-center px-4 py-2 text-sm font-medium rounded-xl transition-all {{ request()->routeIs('team.*') ? 'text-orange-500 bg-orange-500/5' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white' }}">
+                                <a href="{{ route('team.index') }}" class="flex-1 flex items-center px-4 py-2 text-sm font-medium rounded-xl transition-all {{ request()->routeIs('team.*') ? 'text-orange-500 bg-orange-500/5 shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white' }}">
                                     <i class="fas fa-users-cog w-6 text-center mr-2 opacity-70 group-hover:opacity-100 {{ request()->routeIs('team.*') ? 'text-orange-500' : '' }}"></i>
                                     Gestión de Equipo
                                 </a>
@@ -191,21 +197,12 @@
                             </div>
                         </div>
 
-                        <a href="{{ route('billing.index') }}" class="group flex items-center px-4 py-2 text-sm font-medium rounded-xl transition-all {{ request()->routeIs('billing.*') ? 'text-orange-500 bg-orange-500/5' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white' }}">
+                        <a href="{{ route('billing.index') }}" class="group flex items-center px-4 py-2 text-sm font-medium rounded-xl transition-all {{ request()->routeIs('billing.*') ? 'text-orange-500 bg-orange-500/5 shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white' }}">
                             <i class="fas fa-money-check-alt w-6 text-center mr-2 opacity-70 group-hover:opacity-100 {{ request()->routeIs('billing.*') ? 'text-orange-500' : '' }}"></i>
                             Nómina & Pagos
                         </a>
                     </div>
                 </div>
-
-                @if(in_array(Auth::user()->role, ['admin', 'ceo']))
-                <div class="pt-8 px-4">
-                    <a href="{{ route('projects.create') }}" class="group flex items-center px-4 py-2 text-sm font-bold text-orange-500 hover:text-orange-600 transition-colors border border-dashed border-orange-500/30 rounded-xl hover:bg-orange-500/5 uppercase tracking-widest text-xs">
-                        <i class="fas fa-plus mr-3"></i>
-                        Nuevo Proyecto
-                    </a>
-                </div>
-                @endif
             </nav>
 
             <div class="border-t border-black/5 dark:border-white/5 p-4 bg-gray-100 dark:bg-white/[0.02]">
