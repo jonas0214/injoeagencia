@@ -82,7 +82,25 @@
                 </div>
 
                 <div>
-                    <h3 class="px-3 text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-4">Proyectos</h3>
+                    <h3 class="px-3 text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-4">Administración</h3>
+                    <div class="space-y-1">
+                        <a href="{{ route('admin-projects.index', ['category' => 'rrhh']) }}" class="group flex items-center px-3 py-2 text-sm font-medium rounded-xl hover:bg-white dark:hover:bg-white/5 transition-all {{ request('category') === 'rrhh' ? 'text-orange-500 bg-white/5' : 'text-gray-600 dark:text-gray-400 hover:text-white' }}">
+                            <i class="fas fa-users-cog w-6 text-center mr-2"></i>
+                            Recursos Humanos
+                        </a>
+                        <a href="{{ route('admin-projects.index', ['category' => 'administrativo']) }}" class="group flex items-center px-3 py-2 text-sm font-medium rounded-xl hover:bg-white dark:hover:bg-white/5 transition-all {{ request('category') === 'administrativo' ? 'text-orange-500 bg-white/5' : 'text-gray-600 dark:text-gray-400 hover:text-white' }}">
+                            <i class="fas fa-briefcase w-6 text-center mr-2"></i>
+                            Dirección Admin.
+                        </a>
+                        <a href="{{ route('admin-projects.index', ['category' => 'contabilidad']) }}" class="group flex items-center px-3 py-2 text-sm font-medium rounded-xl hover:bg-white dark:hover:bg-white/5 transition-all {{ request('category') === 'contabilidad' ? 'text-orange-500 bg-white/5' : 'text-gray-600 dark:text-gray-400 hover:text-white' }}">
+                            <i class="fas fa-calculator w-6 text-center mr-2"></i>
+                            Contaduría
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="px-3 text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-4">Proyectos Agencia</h3>
                     <div class="space-y-1">
                         @if(isset($projects))
                             @php

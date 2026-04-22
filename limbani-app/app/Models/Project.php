@@ -6,7 +6,21 @@ use Illuminate\Database\Eloquent\Model;
 
 class Project extends Model
 {
-    protected $fillable = ['name', 'description', 'logo', 'user_id', 'status', 'is_template', 'position'];
+    protected $fillable = ['name', 'description', 'logo', 'user_id', 'status', 'is_template', 'position', 'category'];
+
+    // Categorías de Proyectos
+    const CAT_AGENCIA = 'agencia';
+    const CAT_RRHH = 'rrhh';
+    const CAT_ADMIN = 'administrativo';
+    const CAT_CONTABILIDAD = 'contabilidad';
+
+    /**
+     * Scope para filtrar por categoría
+     */
+    public function scopeCategory($query, $category)
+    {
+        return $query->where('category', $category);
+    }
 
     public function tasks()
     {

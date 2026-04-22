@@ -20,16 +20,17 @@ class ProjectController extends Controller
             $teamMemberId = $teamMember ? $teamMember->id : null;
 
             // Un colaborador solo ve los proyectos donde tiene subtareas asignadas
-            $projects = Project::whereHas('tasks.subtasks', function($query) use ($teamMemberId) {
-                $query->where('team_member_id', $teamMemberId);
-            })->with(['tasks' => function($query) use ($teamMemberId) {
-                $query->whereHas('subtasks', function($q) use ($teamMemberId) {
-                    $q->where('team_member_id', $teamMemberId);
-                })->with(['subtasks' => function($q) use ($teamMemberId) {
-                    $q->where('team_member_id', $teamMemberId)
-                      ->with(['children', 'teamMember', 'attachments', 'comments.user', 'task.project', 'parent']);
-                }]);
-            }])->latest()->get();
+            $projects = Project::where('category', 'agencia')
+                ->whereHas('tasks.subtasks', function($query) use ($teamMemberId) {
+                    $query->where('team_member_id', $teamMemberId);
+                })->with(['tasks' => function($query) use ($teamMemberId) {
+                    $query->whereHas('subtasks', function($q) use ($teamMemberId) {
+                        $q->where('team_member_id', $teamMemberId);
+                    })->with(['subtasks' => function($q) use ($teamMemberId) {
+                        $q->where('team_member_id', $teamMemberId)
+                          ->with(['children', 'teamMember', 'attachments', 'comments.user', 'task.project', 'parent']);
+                    }]);
+                }])->latest()->get();
             
             // Solo ve a sus compañeros de equipo de los proyectos en los que participa
             $team = \App\Models\TeamMember::whereIn('id', function($query) use ($projects) {
@@ -40,12 +41,13 @@ class ProjectController extends Controller
                     });
             })->get();
         } else {
-            // Administradores y otros roles ven todo
-            $projects = Project::with(['tasks' => function($q) {
-                $q->with(['subtasks' => function($sq) {
-                    $sq->with(['children', 'teamMember', 'attachments', 'comments.user', 'task.project', 'parent']);
-                }]);
-            }])->orderBy('position')->latest()->get();
+            // Administradores y otros roles ven todo (filtrado por agencia para el dashboard principal)
+            $projects = Project::where('category', 'agencia')
+                ->with(['tasks' => function($q) {
+                    $q->with(['subtasks' => function($sq) {
+                        $sq->with(['children', 'teamMember', 'attachments', 'comments.user', 'task.project', 'parent']);
+                    }]);
+                }])->orderBy('position')->latest()->get();
             $team = \App\Models\TeamMember::all();
         }
 
