@@ -126,9 +126,9 @@
 </div>
 
 <!-- Modal Simple para crear proyecto Administrativo -->
-<div id="modal-create-admin" class="fixed inset-0 z-[100] hidden">
-    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="this.parentElement.classList.add('hidden')"></div>
-    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md p-8 bg-white dark:bg-[#1a1a1a] rounded-3xl shadow-2xl border border-white/10">
+<div id="modal-create-admin" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/40 backdrop-blur-md" onclick="document.getElementById('modal-create-admin').classList.add('hidden')"></div>
+    <div class="relative w-full max-w-md p-8 bg-white dark:bg-[#1a1a1a] rounded-3xl shadow-2xl border border-black/5 dark:border-white/10 z-10">
         <h2 class="text-2xl font-light text-gray-900 dark:text-white mb-6">Nuevo Proyecto <span class="font-medium text-orange-500">{{ ucfirst($category) }}</span></h2>
         <form action="{{ route('admin-projects.store') }}" method="POST">
             @csrf
