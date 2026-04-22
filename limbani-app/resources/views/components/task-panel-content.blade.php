@@ -15,7 +15,7 @@
                 <i class="fas fa-check-circle"></i><span x-text="currentTask.is_completed ? 'Finalizada' : 'Marcar Finalizada'"></span>
             </button>
             
-            <template x-if="'{{ Auth::user()->role }}' === 'admin' || '{{ Auth::user()->role }}' === 'ceo'">
+            <template x-if="'{{ Auth::user()->role }}' === 'admin' || '{{ Auth::user()->role }}' === 'ceo' || '{{ Auth::user()->role }}' === 'rrhh' || '{{ Auth::user()->role }}' === 'contabilidad'">
                 <button @click="currentTask.is_approved = !currentTask.is_approved; updateTask().then(() => window.location.reload())"
                         class="flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all text-[10px] font-bold uppercase tracking-widest"
                         :class="currentTask.is_approved ? 'bg-orange-500 text-black border-orange-600' : 'bg-white/5 border-white/10 text-gray-400 hover:text-white'">

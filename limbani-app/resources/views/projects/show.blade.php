@@ -36,7 +36,7 @@
             <div class="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
                 <x-notification-center />
                 
-                @if(in_array(Auth::user()->role, ['admin', 'ceo']))
+                @if(in_array(Auth::user()->role, ['admin', 'ceo', 'rrhh', 'contabilidad']))
                 <div x-data="{ addingSection: false }">
                     <button type="button" @click="addingSection = true; $nextTick(() => $refs.sectionInput.focus())" x-show="!addingSection" class="bg-gray-900 dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-colors shadow-lg">
                         <i class="fas fa-plus mr-2"></i> Nueva Sección
@@ -56,7 +56,7 @@
         <div class="px-4 md:px-8 border-b border-gray-200 dark:border-white/5 bg-white dark:bg-[#0f1012] flex gap-8 shrink-0 overflow-x-auto scrollbar-hide">
             <button @click="currentTab = 'list'; $dispatch('tab-changed', 'list')" :class="currentTab === 'list' ? 'text-orange-500 border-b-2 border-orange-500' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'" class="pb-4 pt-2 text-xs font-bold uppercase tracking-widest transition-all">Listado de Tareas</button>
             
-            @if(in_array(Auth::user()->role, ['admin', 'ceo']))
+            @if(in_array(Auth::user()->role, ['admin', 'ceo', 'rrhh', 'contabilidad']))
             <button @click="currentTab = 'brief'; $dispatch('tab-changed', 'brief')" :class="currentTab === 'brief' ? 'text-orange-500 border-b-2 border-orange-500' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'" class="pb-4 pt-2 text-xs font-bold uppercase tracking-widest transition-all flex items-center gap-2">
                 <i class="fas fa-file-alt"></i> Brief del Cliente
             </button>
@@ -99,7 +99,7 @@
                             </form>
                         </div>
 
-                        @if(in_array(Auth::user()->role, ['admin', 'ceo']))
+                        @if(in_array(Auth::user()->role, ['admin', 'ceo', 'rrhh', 'contabilidad']))
                         <div class="flex items-center gap-1 opacity-0 group-hover/sec:opacity-100 transition-opacity bg-[#1a1a1a] px-2 rounded-lg border border-white/5 shadow-xl">
                             <button type="button" @click="fetch('{{ route('tasks.move', $section) }}', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: JSON.stringify({ direction: 'up' }) }).then(() => window.location.reload())" class="text-gray-500 hover:text-white p-1.5" title="Subir"><i class="fas fa-chevron-up text-[9px]"></i></button>
                             <button type="button" @click="fetch('{{ route('tasks.move', $section) }}', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: JSON.stringify({ direction: 'down' }) }).then(() => window.location.reload())" class="text-gray-500 hover:text-white p-1.5" title="Bajar"><i class="fas fa-chevron-down text-[9px]"></i></button>
@@ -112,7 +112,7 @@
 
                     <div x-show="expanded" x-collapse class="space-y-[1px]">
                         @include('projects._subtask_recursive', ['subtasks' => $section->subtasks->whereNull('parent_id'), 'level' => 0, 'section' => $section])
-                        @if(in_array(Auth::user()->role, ['admin', 'ceo']))
+                        @if(in_array(Auth::user()->role, ['admin', 'ceo', 'rrhh', 'contabilidad']))
                         <form action="{{ route('subtasks.store', $section) }}" method="POST" class="pl-12 pt-2 flex items-center gap-4 opacity-40 hover:opacity-100 transition-opacity">@csrf<button type="submit" class="w-7 h-7 rounded-lg flex items-center justify-center bg-black/5 dark:bg-white/5 hover:bg-orange-500 hover:text-black transition-all" title="Añadir tarea"><i class="fas fa-plus text-xs"></i></button><input type="text" name="title" placeholder="Agregar tarea..." required class="bg-transparent border-none text-[14px] text-gray-800 dark:text-gray-400 focus:ring-0 w-full"></form>
                         @endif
                     </div>

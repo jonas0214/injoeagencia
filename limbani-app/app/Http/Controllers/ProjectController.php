@@ -101,9 +101,18 @@ class ProjectController extends Controller
                         'position' => $templateSection->position,
                     ]);
 
-                    foreach ($templateSection->subtasks->whereNull('parent_id') as $templateSubtask) {
-                        $this->cloneSubtask($templateSubtask, $newSection->id, null);
+                    // Clonar subtareas principales (las que no tienen padre)
+                    foreach ($templateSection->subtasks->where('parent_id', null) as $templateSubtask) {
+                        $this->cloneSubtask($templateSubtask, $newSection->id);
                     }
+                }
+            } else {
+                // Si NO hay plantilla, y es un proyecto administrativo, creamos una sección base obligatoria
+                if (in_array($project->category, [\App\Models\Project::CAT_RRHH, \App\Models\Project::CAT_ADMIN])) {
+                    $project->tasks()->create([
+                        'title' => 'GESTIÓN ADMINISTRATIVA',
+                        'position' => 0,
+                    ]);
                 }
             }
         });
