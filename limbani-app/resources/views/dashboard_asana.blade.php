@@ -29,18 +29,6 @@
         </div>
     </div>
 
-    <!-- Pestañas de Navegación Estilo Asana -->
-    <div class="flex items-center gap-8 border-b border-gray-200 dark:border-white/5 mb-10 text-sm font-medium">
-        <a href="{{ route('dashboard') }}" class="pb-4 {{ request()->routeIs('dashboard') ? 'text-gray-900 dark:text-white border-b-2 border-orange-500' : 'text-gray-500 hover:text-gray-300 transition-colors' }}">
-            Proyectos
-        </a>
-        <a href="#" class="pb-4 text-gray-500 hover:text-gray-300 transition-colors opacity-50 cursor-not-allowed">
-            Informes
-        </a>
-        <a href="{{ route('billing.index') }}" class="pb-4 {{ request()->routeIs('billing.index') ? 'text-gray-900 dark:text-white border-b-2 border-orange-500' : 'text-gray-500 hover:text-gray-300 transition-colors' }}">
-            Cuentas de Cobro
-        </a>
-    </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
         
