@@ -96,7 +96,7 @@
                 <!-- 1. DIRECCIÓN GENERAL -->
                 <div class="space-y-1">
                     <h3 class="px-4 text-[10px] font-bold text-gray-500 dark:text-gray-600 uppercase tracking-widest mb-3">Dirección General</h3>
-                    <div x-data="{ open: true }">
+                    <div x-data="{ open: false }">
                         <div class="flex items-center group">
                             <a href="{{ route('admin-projects.index', ['category' => 'ceo_direccion']) }}" class="flex-1 flex items-center px-4 py-2 text-sm font-medium rounded-xl transition-all {{ request('category') === 'ceo_direccion' ? 'text-orange-500 bg-orange-500/5 shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white' }}">
                                 <i class="fas fa-user-tie w-6 text-center mr-2 opacity-70 group-hover:opacity-100 {{ request('category') === 'ceo_direccion' ? 'text-orange-500' : '' }}"></i>
@@ -120,38 +120,40 @@
 
                 <!-- 2. OPERACIÓN & PRODUCCIÓN -->
                 <div class="space-y-1">
-                    <div class="flex items-center justify-between px-4 mb-3">
-                        <h3 class="text-[10px] font-bold text-gray-500 dark:text-gray-600 uppercase tracking-widest">Operación & Producción</h3>
+                    <h3 class="px-4 text-[10px] font-bold text-gray-500 dark:text-gray-600 uppercase tracking-widest mb-3">Operación & Producción</h3>
+                    
+                    <div class="space-y-1">
                         @if(in_array(Auth::user()->role, ['admin', 'ceo']))
-                        <a href="{{ route('projects.create') }}" class="w-6 h-6 rounded-lg bg-orange-500/10 text-orange-500 flex items-center justify-center hover:bg-orange-500 hover:text-white transition-all shadow-sm" title="Nuevo Proyecto">
-                            <i class="fas fa-plus text-[10px]"></i>
+                        <a href="{{ route('projects.create') }}" class="group flex items-center px-4 py-2 text-sm font-medium text-orange-500 hover:bg-orange-500/5 rounded-xl transition-all">
+                            <i class="fas fa-plus-circle w-6 text-center mr-2"></i>
+                            Nuevo Proyecto
                         </a>
                         @endif
-                    </div>
-                    
-                    <div x-data="{ open: true }">
-                        <button @click="open = !open" class="w-full flex items-center px-4 py-2 text-sm font-medium rounded-xl text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white transition-all">
-                            <i class="fas fa-tasks w-6 text-center mr-2"></i>
-                            <span class="flex-1 text-left">Lista de Proyectos</span>
-                            <i class="fas fa-chevron-down text-[8px] transition-transform" :class="open ? 'rotate-0' : '-rotate-90'"></i>
-                        </button>
 
-                        <div x-show="open" x-collapse class="space-y-1 mt-2">
-                            @php
-                                $opCategories = ['agencia', 'produccion_av', 'postproduccion', 'diseno_grafico', 'desarrollo_web'];
-                                $opProjects = $allProjects->whereIn('category', $opCategories);
-                            @endphp
+                        <div x-data="{ open: false }">
+                            <button @click="open = !open" class="w-full flex items-center px-4 py-2 text-sm font-medium rounded-xl text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white transition-all">
+                                <i class="fas fa-tasks w-6 text-center mr-2"></i>
+                                <span class="flex-1 text-left">Lista de Proyectos</span>
+                                <i class="fas fa-chevron-down text-[8px] transition-transform" :class="open ? 'rotate-0' : '-rotate-90'"></i>
+                            </button>
 
-                            @foreach($opProjects as $proj)
-                                <a href="{{ route('projects.show', $proj) }}" class="group flex items-center px-6 py-2 text-sm font-medium rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 transition-all text-gray-600 dark:text-gray-400 hover:text-orange-500">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-gray-400 group-hover:bg-orange-500 mr-3 transition-colors"></span>
-                                    <span class="truncate">{{ $proj->name }}</span>
-                                </a>
-                            @endforeach
-                            
-                            @if($opProjects->isEmpty())
-                                <p class="px-10 py-2 text-[10px] text-gray-600 italic">No hay proyectos activos</p>
-                            @endif
+                            <div x-show="open" x-collapse class="space-y-1 mt-2">
+                                @php
+                                    $opCategories = ['agencia', 'produccion_av', 'postproduccion', 'diseno_grafico', 'desarrollo_web'];
+                                    $opProjects = $allProjects->whereIn('category', $opCategories);
+                                @endphp
+
+                                @foreach($opProjects as $proj)
+                                    <a href="{{ route('projects.show', $proj) }}" class="group flex items-center px-6 py-2 text-sm font-medium rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 transition-all text-gray-600 dark:text-gray-400 hover:text-orange-500">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-gray-400 group-hover:bg-orange-500 mr-3 transition-colors"></span>
+                                        <span class="truncate">{{ $proj->name }}</span>
+                                    </a>
+                                @endforeach
+                                
+                                @if($opProjects->isEmpty())
+                                    <p class="px-10 py-2 text-[10px] text-gray-600 italic">No hay proyectos activos</p>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -160,7 +162,7 @@
                 <div class="space-y-1">
                     <h3 class="px-4 text-[10px] font-bold text-gray-500 dark:text-gray-600 uppercase tracking-widest mb-3">Talento Humano</h3>
                     <div class="space-y-1">
-                        <div x-data="{ showTeam: true }">
+                        <div x-data="{ showTeam: false }">
                             <div class="flex items-center group">
                                 <a href="{{ route('team.index') }}" class="flex-1 flex items-center px-4 py-2 text-sm font-medium rounded-xl transition-all {{ request()->routeIs('team.*') ? 'text-orange-500 bg-orange-500/5 shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white' }}">
                                     <i class="fas fa-users-cog w-6 text-center mr-2 opacity-70 group-hover:opacity-100 {{ request()->routeIs('team.*') ? 'text-orange-500' : '' }}"></i>
