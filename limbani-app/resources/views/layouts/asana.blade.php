@@ -159,6 +159,7 @@
                 </div>
 
                 <!-- 3. ADMINISTRACIÓN & TALENTO HUMANO -->
+                @if(in_array(Auth::user()->role, ['admin', 'ceo', 'rrhh', 'contabilidad']))
                 @php
                     $hrProjects = $allProjects->whereIn('category', [\App\Models\Project::CAT_RRHH, \App\Models\Project::CAT_ADMIN]);
                 @endphp
@@ -237,6 +238,7 @@
                         </a>
                     </div>
                 </div>
+                @endif
             </nav>
 
             <div class="border-t border-black/5 dark:border-white/5 bg-gray-100 dark:bg-white/[0.02]">
