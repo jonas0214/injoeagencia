@@ -57,7 +57,7 @@ class ProjectController extends Controller
     }
 
     // 2. Mostrar el formulario de nueva campaña
-    public function create()
+    public function create(Request $request)
     {
         $templates = Project::where('is_template', true)->get();
         return view('projects.create', compact('templates'));
@@ -70,6 +70,7 @@ class ProjectController extends Controller
             'name' => 'required|string|max:255',
             'template_id' => 'nullable|exists:projects,id',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'category' => 'nullable|string',
         ]);
 
         DB::transaction(function () use ($request) {
@@ -85,6 +86,7 @@ class ProjectController extends Controller
                 'user_id' => Auth::id(),
                 'status' => 'activo',
                 'is_template' => $request->has('is_template'),
+                'category' => $request->category ?? 'produccion_av',
             ]);
 
             // (Removido) Código que forzaba la creación de "PROGRAMACIÓN META ADS" y subtareas base.

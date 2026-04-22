@@ -159,13 +159,17 @@
                 </div>
 
                 <!-- 3. ADMINISTRACIÓN & TALENTO HUMANO -->
+                @php
+                    $hrProjects = $allProjects->whereIn('category', [\App\Models\Project::CAT_RRHH, \App\Models\Project::CAT_ADMIN]);
+                @endphp
                 <div class="space-y-1">
                     <h3 class="px-4 text-[10px] font-bold text-gray-500 dark:text-gray-600 uppercase tracking-widest mb-3">Talento Humano</h3>
                     <div class="space-y-1">
+                        <!-- Gestión de Equipo -->
                         <div x-data="{ showTeam: false }">
                             <div class="flex items-center group">
-                                <a href="{{ route('team.index') }}" class="flex-1 flex items-center px-4 py-2 text-sm font-medium rounded-xl transition-all {{ request()->routeIs('team.*') ? 'text-orange-500 bg-orange-500/5 shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white' }}">
-                                    <i class="fas fa-users-cog w-6 text-center mr-2 opacity-70 group-hover:opacity-100 {{ request()->routeIs('team.*') ? 'text-orange-500' : '' }}"></i>
+                                <a href="{{ route('team.index') }}" class="flex-1 flex items-center px-4 py-2 text-sm font-medium rounded-xl transition-all {{ request()->routeIs('team.index') ? 'text-orange-500 bg-orange-500/5 shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white' }}">
+                                    <i class="fas fa-users-cog w-6 text-center mr-2 opacity-70 group-hover:opacity-100 {{ request()->routeIs('team.index') ? 'text-orange-500' : '' }}"></i>
                                     Gestión de Equipo
                                 </a>
                                 @if(in_array(Auth::user()->role, ['admin', 'ceo']))
@@ -177,7 +181,6 @@
                                     <i class="fas fa-chevron-down text-[8px] transition-transform" :class="showTeam ? 'rotate-0' : '-rotate-90'"></i>
                                 </button>
                             </div>
-                            
                             <div x-show="showTeam" x-collapse class="mt-2 space-y-2 pl-4 pb-4">
                                 @if(isset($team))
                                     @foreach($team as $member)
@@ -195,6 +198,35 @@
                                         <span class="ml-3 text-[11px] font-medium text-gray-500 group-hover:text-orange-500 transition-colors uppercase tracking-widest">{{ $member->name }}</span>
                                     </div>
                                     @endforeach
+                                @endif
+                            </div>
+
+                        <!-- Proyectos Administrativos -->
+                        <div x-data="{ showAdminProjs: {{ request()->routeIs('team.index') ? 'true' : 'false' }} }">
+                            <div class="flex items-center group">
+                                <a @if($hrProjects->count() > 0) href="{{ route('team.index') }}" @endif class="flex-1 flex items-center px-4 py-2 text-sm font-medium rounded-xl transition-all {{ (request()->routeIs('team.index') && request('tab') === 'projects') ? 'text-orange-500 bg-orange-500/5 shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white' }}">
+                                    <i class="fas fa-folder-tree w-6 text-center mr-2 opacity-70 group-hover:opacity-100"></i>
+                                    Proyectos Admon
+                                </a>
+                                <button @click="showAdminProjs = !showAdminProjs" class="p-2 text-gray-400 hover:text-orange-500 transition-colors">
+                                    <i class="fas fa-chevron-down text-[8px] transition-transform" :class="showAdminProjs ? 'rotate-0' : '-rotate-90'"></i>
+                                </button>
+                            </div>
+                            
+                            <div x-show="showAdminProjs" x-collapse class="mt-2 space-y-1 pl-4 pb-4 border-l-2 border-orange-500/10 ml-6">
+                                @forelse($hrProjects as $p)
+                                    <a href="{{ route('projects.show', $p) }}" class="group flex items-center px-4 py-1.5 text-xs font-medium rounded-lg transition-all {{ (request()->is('projects/'.$p->id.'*')) ? 'text-orange-500 font-bold' : 'text-gray-500 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5' }}">
+                                        <i class="fas fa-circle text-[6px] mr-2 opacity-50 group-hover:opacity-100 {{ (request()->is('projects/'.$p->id.'*')) ? 'text-orange-500' : '' }}"></i>
+                                        <span class="truncate">{{ $p->name }}</span>
+                                    </a>
+                                @empty
+                                    <p class="px-4 py-2 text-[10px] text-gray-600 italic uppercase">Sin proyectos</p>
+                                @endforelse
+                                
+                                @if(in_array(Auth::user()->role, ['admin', 'ceo', 'rrhh']))
+                                <a href="{{ route('projects.create', ['category' => 'rrhh']) }}" class="flex items-center px-4 py-2 text-[9px] font-black text-orange-500 hover:bg-orange-500/5 rounded-lg transition-all uppercase tracking-widest mt-2 border border-orange-500/20 border-dashed">
+                                    <i class="fas fa-plus-circle mr-2"></i> Nuevo Técnico
+                                </a>
                                 @endif
                             </div>
                         </div>

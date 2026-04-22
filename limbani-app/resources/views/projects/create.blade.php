@@ -48,6 +48,26 @@
                     @endif
                 </div>
 
+                <!-- Categoría del Proyecto -->
+                <div class="space-y-2">
+                    <label for="category" class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Categoría / Pilar</label>
+                    <select name="category" id="category" class="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-white/10 rounded-xl p-4 text-sm text-gray-900 dark:text-white focus:ring-1 focus:ring-orange-500 outline-none">
+                        <optgroup label="1. DIRECCIÓN">
+                            <option value="ceo_direccion" {{ request('category') === 'ceo_direccion' ? 'selected' : '' }}>CEO / Dirección General</option>
+                        </optgroup>
+                        <optgroup label="2. OPERACIÓN & PRODUCCIÓN">
+                            <option value="produccion_av" {{ (request('category') === 'produccion_av' || !request('category')) ? 'selected' : '' }}>Producción Audiovisual</option>
+                            <option value="postproduccion" {{ request('category') === 'postproduccion' ? 'selected' : '' }}>Post-Producción</option>
+                            <option value="diseno_grafico" {{ request('category') === 'diseno_grafico' ? 'selected' : '' }}>Diseño Gráfico</option>
+                            <option value="desarrollo_web" {{ request('category') === 'desarrollo_web' ? 'selected' : '' }}>Desarrollo Web</option>
+                        </optgroup>
+                        <optgroup label="3. TALENTO HUMANO & ADMON">
+                            <option value="rrhh" {{ request('category') === 'rrhh' ? 'selected' : '' }}>Talento Humano (RRHH)</option>
+                            <option value="direccion_admin" {{ request('category') === 'direccion_admin' ? 'selected' : '' }}>Dirección Administrativa</option>
+                        </optgroup>
+                    </select>
+                </div>
+
                 <!-- Plantilla a usar (Solo creación) -->
                 @if(!isset($project))
                 <div class="space-y-2">

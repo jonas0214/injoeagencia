@@ -13,7 +13,14 @@ class TeamMemberController extends Controller
     public function index()
     {
         $team = TeamMember::with('user')->orderBy('name')->get();
-        return view('team.index', compact('team'));
+        $adminProjects = \App\Models\Project::whereIn('category', [\App\Models\Project::CAT_RRHH, \App\Models\Project::CAT_ADMIN])
+            ->withCount(['tasks' => function($q) {
+                $q->where('is_completed', false);
+            }])
+            ->orderBy('position')
+            ->get();
+            
+        return view('team.index', compact('team', 'adminProjects'));
     }
 
     public function store(Request $request)

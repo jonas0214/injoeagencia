@@ -21,7 +21,7 @@
         /* Forzar que el layout no imponga fondo blanco */
         main, .py-12 { background-color: transparent !important; }
     </style>
-    <div class="py-12 px-8 max-w-[1600px] mx-auto" x-data="{ showMemberPanel: false, activeMember: {}, tab: 'team' }">
+    <div class="py-12 px-8 max-w-[1600px] mx-auto" x-data="{ showMemberPanel: false, activeMember: {}, tab: 'projects' }">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             
             <!-- Header Minimalista -->
@@ -38,20 +38,71 @@
 
             <!-- Pestañas de Navegación Estilo Asana -->
             <div class="flex items-center gap-4 md:gap-8 border-b border-gray-200 dark:border-white/5 mb-10 text-xs md:text-sm font-medium overflow-x-auto scrollbar-hide whitespace-nowrap">
-                <a href="{{ route('dashboard') }}" class="pb-4 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
-                    Proyectos
-                </a>
+                <button @click="tab = 'projects'" :class="tab === 'projects' ? 'text-gray-900 dark:text-white border-b-2 border-orange-500' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'" class="pb-4 transition-all uppercase tracking-widest text-[10px] font-bold">
+                    Proyectos Administrativos
+                </button>
                 @if(in_array(Auth::user()->role, ['admin', 'ceo', 'rrhh', 'contabilidad']))
-                <button @click="tab = 'team'" :class="tab === 'team' ? 'text-gray-900 dark:text-white border-b-2 border-orange-500' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'" class="pb-4 transition-all">
+                <button @click="tab = 'team'" :class="tab === 'team' ? 'text-gray-900 dark:text-white border-b-2 border-orange-500' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'" class="pb-4 transition-all uppercase tracking-widest text-[10px] font-bold">
                     Equipo & Nómina
                 </button>
-                <button @click="tab = 'attendance'" :class="tab === 'attendance' ? 'text-white border-b-2 border-orange-500' : 'text-gray-500 hover:text-gray-300'" class="pb-4 transition-all flex items-center gap-2">
+                <button @click="tab = 'attendance'" :class="tab === 'attendance' ? 'text-gray-900 dark:text-white border-b-2 border-orange-500' : 'text-gray-500 hover:text-gray-300'" class="pb-4 transition-all flex items-center gap-2 uppercase tracking-widest text-[10px] font-bold">
                     Asistencia QR <span class="text-[9px] bg-orange-500/20 text-orange-500 px-2 py-0.5 rounded-full uppercase tracking-tighter">Live</span>
                 </button>
                 @endif
-                <a href="#" class="pb-4 text-gray-500 hover:text-gray-300 transition-colors opacity-50 cursor-not-allowed">
+                <a href="#" class="pb-4 text-gray-500 hover:text-gray-300 transition-colors opacity-50 cursor-not-allowed uppercase tracking-widest text-[10px] font-bold">
                     Informes
                 </a>
+            </div>
+
+            <!-- CONTENIDO DE PROYECTOS ADMINISTRATIVOS -->
+            <div x-show="tab === 'projects'" class="space-y-8">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+                    <div>
+                        <h3 class="text-xl font-light text-gray-800 dark:text-white tracking-wide">Proyectos Administrativos</h3>
+                        <p class="text-[10px] text-gray-500 uppercase tracking-widest mt-1">Gestión interna y procesos de la agencia</p>
+                    </div>
+                    
+                    @if(in_array(Auth::user()->role, ['admin', 'ceo', 'rrhh']))
+                    <a href="{{ route('projects.create', ['category' => 'rrhh']) }}" class="w-full md:w-auto bg-gray-900 dark:bg-[#1a1a1a] hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-full shadow-lg transition flex items-center justify-center gap-2 text-xs uppercase tracking-widest border border-gray-800 dark:border-white/10">
+                        <i class="fas fa-plus"></i> Nuevo Proyecto Técnico / Admon
+                    </a>
+                    @endif
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    @forelse($adminProjects as $project)
+                        <div class="bg-white/80 dark:bg-[#1a1a1a]/70 backdrop-blur-2xl border border-gray-200/50 dark:border-white/10 rounded-2xl p-6 shadow-xl hover:scale-[1.02] transition-all cursor-pointer group" onclick="window.location.href='{{ route('projects.show', $project) }}'">
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="w-12 h-12 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-500">
+                                    <i class="fas fa-folder-open text-xl opacity-70 group-hover:opacity-100 transition-opacity"></i>
+                                </div>
+                                <span class="px-2 py-0.5 rounded bg-orange-500/10 text-orange-500 text-[9px] font-black uppercase tracking-widest border border-orange-500/20">
+                                    {{ $project->category === 'rrhh' ? 'RRHH' : 'Gestión' }}
+                                </span>
+                            </div>
+                            
+                            <h4 class="text-lg font-bold text-gray-900 dark:text-white mb-2 group-hover:text-orange-500 transition-colors uppercase tracking-tighter">{{ $project->name }}</h4>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 line-clamp-1 mb-6 italic opacity-60">{{ $project->description }}</p>
+                            
+                            <div class="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-white/5">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-tasks text-orange-500/50 text-[10px]"></i>
+                                    <span class="text-[11px] font-bold text-gray-600 dark:text-gray-300 uppercase tracking-widest">
+                                        {{ $project->tasks_count }} pendientes
+                                    </span>
+                                </div>
+                                <i class="fas fa-arrow-right text-gray-400 text-xs group-hover:translate-x-1 transition-transform"></i>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="col-span-full py-16 text-center bg-white/5 border border-dashed border-white/10 rounded-3xl">
+                            <div class="w-16 h-16 bg-gray-800/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-folder-open text-2xl text-gray-600"></i>
+                            </div>
+                            <p class="text-gray-500 italic text-[11px] uppercase tracking-widest">No hay proyectos administrativos registrados aún.</p>
+                        </div>
+                    @endforelse
+                </div>
             </div>
 
             <div x-show="tab === 'team'" class="bg-white/80 dark:bg-[#1a1a1a]/70 backdrop-blur-2xl border border-gray-200/50 dark:border-white/20 rounded-2xl p-4 md:p-8 shadow-[0_20px_50px_rgba(0,0,0,0.08)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.4)] transition-all duration-300 relative z-10 ring-1 ring-inset ring-white/10 dark:ring-white/5" :class="showMemberPanel ? 'md:mr-[400px]' : ''">
