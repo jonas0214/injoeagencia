@@ -153,13 +153,46 @@
                 </div>
 
                 <!-- 3. ADMINISTRACIÓN & TALENTO HUMANO -->
-                <div>
+                <div class="pt-4 mt-4 border-t border-white/5">
                     <h3 class="px-3 text-[10px] font-bold text-gray-600 dark:text-gray-500 uppercase tracking-widest mb-4">Admón & Talento Humano</h3>
                     <div class="space-y-1">
-                        <a href="{{ route('team.index') }}" class="group flex items-center px-3 py-2 text-sm font-medium rounded-xl hover:bg-white dark:hover:bg-white/5 transition-all {{ request()->routeIs('team.*') ? 'text-orange-500 bg-white/5' : 'text-gray-600 dark:text-gray-400 hover:text-white' }}">
-                            <i class="fas fa-users-cog w-6 text-center mr-2"></i>
-                            Gestión de Equipo
-                        </a>
+                        <div x-data="{ showTeam: true }">
+                            <div class="flex items-center group">
+                                <a href="{{ route('team.index') }}" class="flex-1 flex items-center px-3 py-2 text-sm font-medium rounded-xl hover:bg-white dark:hover:bg-white/5 transition-all {{ request()->routeIs('team.*') ? 'text-orange-500 bg-white/5' : 'text-gray-600 dark:text-gray-400 hover:text-white' }}">
+                                    <i class="fas fa-users-cog w-6 text-center mr-2"></i>
+                                    Gestión de Equipo
+                                </a>
+                                @if(in_array(Auth::user()->role, ['admin', 'ceo']))
+                                <button onclick="window.location.href='{{ route('team.index') }}?action=create'" class="p-1.5 text-orange-500/50 hover:text-orange-500 transition-colors" title="Añadir Miembro">
+                                    <i class="fas fa-plus-circle text-sm"></i>
+                                </button>
+                                @endif
+                                <button @click="showTeam = !showTeam" class="p-2 text-gray-500 hover:text-white transition-colors">
+                                    <i class="fas fa-chevron-down text-[8px] transition-transform" :class="showTeam ? 'rotate-0' : '-rotate-90'"></i>
+                                </button>
+                            </div>
+                            
+                            <div x-show="showTeam" x-collapse class="mt-2 space-y-2 pl-4 pb-4">
+                                @if(isset($team))
+                                    @foreach($team as $member)
+                                    <div class="flex items-center px-4 py-1 group cursor-pointer opacity-70 hover:opacity-100 transition-opacity">
+                                        <div class="relative">
+                                            @if($member->photo)
+                                                <img src="{{ asset('storage/' . $member->photo) }}" class="w-6 h-6 rounded-full object-cover border border-white/10 group-hover:border-orange-500/50 transition-colors">
+                                            @else
+                                                <div class="w-6 h-6 rounded-full bg-orange-500/20 border border-orange-500/30 flex items-center justify-center text-[10px] font-bold text-orange-500">
+                                                    {{ strtoupper(substr($member->name, 0, 2)) }}
+                                                </div>
+                                            @endif
+                                            <div class="absolute -bottom-0.5 -right-0.5 w-2 h-2 bg-green-500 border-2 border-[#121212] rounded-full"></div>
+                                        </div>
+                                        <span class="ml-3 text-[11px] font-medium text-gray-500 group-hover:text-gray-300 transition-colors uppercase tracking-wider">{{ $member->name }}</span>
+                                    </div>
+                                    @endforeach
+                                @endif
+                            </div>
+                        </div>
+
                         <a href="{{ route('billing.index') }}" class="group flex items-center px-3 py-2 text-sm font-medium rounded-xl hover:bg-white dark:hover:bg-white/5 transition-all {{ request()->routeIs('billing.*') ? 'text-orange-500 bg-white/5' : 'text-gray-600 dark:text-gray-400 hover:text-white' }}">
                             <i class="fas fa-money-check-alt w-6 text-center mr-2"></i>
                             Nómina & Pagos
@@ -176,24 +209,6 @@
                     @endif
                 </div>
 
-                <div>
-                    <h3 class="px-3 text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-4">Equipo</h3>
-                    <div class="space-y-3 px-3">
-                        @if(isset($team))
-                            @foreach($team as $member)
-                            <div class="flex items-center gap-3 opacity-60 hover:opacity-100 transition-opacity cursor-pointer">
-                                @if($member->photo)
-                                    <img src="{{ asset('storage/' . $member->photo) }}" class="w-8 h-8 rounded-full object-cover border border-white/10">
-                                @else
-                                    <div class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-xs font-bold text-white border border-white/10">
-                                        {{ substr($member->name, 0, 2) }}
-                                    </div>
-                                @endif
-                                <span class="text-sm font-medium">{{ $member->name }}</span>
-                            </div>
-                            @endforeach
-                        @endif
-                </div>
             </nav>
 
             <div class="border-t border-black/5 dark:border-white/5 p-4 bg-gray-100 dark:bg-white/[0.02]">
