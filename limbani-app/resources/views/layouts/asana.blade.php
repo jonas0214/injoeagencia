@@ -66,21 +66,7 @@
                 </button>
             </div>
 
-            <nav class="flex-1 px-4 py-6 space-y-8 overflow-y-auto">
-                
-                <!-- Toggle Dark Mode -->
-                <div class="px-3">
-                    <button @click="toggleDarkMode()" class="w-full flex items-center justify-between p-3 rounded-xl bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-400 hover:text-orange-500 transition-all border border-transparent dark:border-white/5 hover:border-orange-500/30">
-                        <div class="flex items-center gap-3">
-                            <i class="fas" :class="darkMode ? 'fa-moon' : 'fa-sun'"></i>
-                            <span class="text-xs font-bold uppercase tracking-widest" x-text="darkMode ? 'Modo Oscuro' : 'Modo Claro'"></span>
-                        </div>
-                        <div class="w-8 h-4 bg-gray-300 dark:bg-gray-700 rounded-full relative transition-colors">
-                            <div class="absolute top-1 left-1 w-2 h-2 rounded-full bg-white transition-transform duration-300" :class="darkMode ? 'translate-x-4 bg-orange-500' : 'translate-x-0 bg-gray-500'"></div>
-                        </div>
-                    </button>
-                </div>
-            <nav class="flex-1 px-3 space-y-8 overflow-y-auto mt-6 custom-scrollbar">
+            <nav class="flex-1 px-3 py-6 space-y-8 overflow-y-auto custom-scrollbar">
                 
                 @php
                     $allProjects = \App\Models\Project::with('tasks.subtasks')->orderBy('position')->get();
@@ -94,6 +80,7 @@
                 @endphp
 
                 <!-- 1. DIRECCIÓN GENERAL -->
+                @if(in_array(Auth::user()->role, ['admin', 'ceo', 'rrhh', 'contabilidad']))
                 <div class="space-y-1">
                     <h3 class="px-4 text-[10px] font-bold text-gray-500 dark:text-gray-600 uppercase tracking-widest mb-3">Dirección General</h3>
                     <div x-data="{ open: false }">
@@ -117,6 +104,7 @@
                         </div>
                     </div>
                 </div>
+                @endif
 
                 <!-- 2. OPERACIÓN & PRODUCCIÓN -->
                 <div class="space-y-1">
@@ -257,8 +245,18 @@
                     </div>
                 </div>
 
-                <!-- Botón Cerrar Sesión al Final -->
-                <div class="px-4 pb-4">
+                <!-- Opciones de pie -->
+                <div class="px-4 pb-4 space-y-2">
+                    <button @click="toggleDarkMode()" class="w-full flex items-center justify-between px-4 py-2 rounded-xl bg-gray-200/50 dark:bg-white/5 text-gray-600 dark:text-gray-400 hover:text-orange-500 transition-all border border-transparent dark:border-white/5 hover:border-orange-500/30">
+                        <div class="flex items-center gap-3">
+                            <i class="fas" :class="darkMode ? 'fa-moon' : 'fa-sun'"></i>
+                            <span class="text-[10px] font-bold uppercase tracking-widest" x-text="darkMode ? 'Modo Oscuro' : 'Modo Claro'"></span>
+                        </div>
+                        <div class="w-6 h-3 bg-gray-300 dark:bg-gray-700 rounded-full relative transition-colors">
+                            <div class="absolute top-0.5 left-0.5 w-2 h-2 rounded-full bg-white transition-transform duration-300" :class="darkMode ? 'translate-x-3 bg-orange-500' : 'translate-x-0 bg-gray-500'"></div>
+                        </div>
+                    </button>
+
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit" class="w-full flex items-center justify-center gap-2 py-2 text-xs font-bold text-gray-400 hover:text-red-500 transition-colors uppercase tracking-widest border border-gray-200 dark:border-white/10 rounded-xl hover:bg-red-500/5">
