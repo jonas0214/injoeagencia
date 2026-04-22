@@ -34,14 +34,9 @@
         <a href="{{ route('dashboard') }}" class="pb-4 {{ request()->routeIs('dashboard') ? 'text-gray-900 dark:text-white border-b-2 border-orange-500' : 'text-gray-500 hover:text-gray-300 transition-colors' }}">
             Proyectos
         </a>
-        @if(in_array(Auth::user()->role, ['admin', 'ceo', 'rrhh', 'contabilidad']))
-        <a href="{{ route('team.index') }}" class="pb-4 {{ request()->routeIs('team.index') ? 'text-gray-900 dark:text-white border-b-2 border-orange-500' : 'text-gray-500 hover:text-gray-300 transition-colors' }}">
-            Equipo & Nómina
-        </a>
         <a href="#" class="pb-4 text-gray-500 hover:text-gray-300 transition-colors opacity-50 cursor-not-allowed">
             Informes
         </a>
-        @endif
         <a href="{{ route('billing.index') }}" class="pb-4 {{ request()->routeIs('billing.index') ? 'text-gray-900 dark:text-white border-b-2 border-orange-500' : 'text-gray-500 hover:text-gray-300 transition-colors' }}">
             Cuentas de Cobro
         </a>
@@ -88,11 +83,6 @@
                             <input type="text" x-model="search" placeholder="Buscar proyecto..." class="w-full bg-white/50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-full py-2 pl-10 pr-4 text-xs focus:ring-1 focus:ring-orange-500 outline-none transition-all placeholder-gray-500 dark:text-white">
                         </div>
 
-                        @if(in_array(Auth::user()->role, ['admin', 'ceo']))
-                        <a href="{{ route('projects.create') }}" class="w-full sm:w-auto text-center bg-gray-900 dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors px-6 py-2.5 rounded-full font-medium text-[10px] uppercase tracking-widest shadow-lg">
-                            Crear Nuevo
-                        </a>
-                        @endif
                     </div>
                 </div>
 
